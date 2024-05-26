@@ -24,6 +24,8 @@ package discUtils.ntfs;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -47,11 +49,15 @@ import dotnet4j.io.Stream;
 import dotnet4j.util.compat.Tuple;
 import vavi.util.ByteUtil;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * Class that checks NTFS file system integrity. Poor relation of chkdsk/fsck.
  */
 public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
+
+    private static final Logger logger = getLogger(NtfsFileSystemChecker.class.getName());
 
     private final Stream target;
 
@@ -301,7 +307,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                 try {
                     s.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.DEBUG, e.getMessage(), e);
                 }
         }
         Bitmap indexBitmap = null;
@@ -496,7 +502,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.DEBUG, e.getMessage(), e);
                 reportError("Failure parsing attribute at pos=%s", pos);
                 return false;
             }

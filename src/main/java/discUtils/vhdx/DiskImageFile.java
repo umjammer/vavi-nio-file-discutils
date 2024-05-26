@@ -24,6 +24,8 @@
 package discUtils.vhdx;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -55,11 +57,15 @@ import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
 import vavi.util.ByteUtil;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * Represents a single .VHDX file.
  */
 public final class DiskImageFile extends VirtualDiskLayer {
+
+    private static final Logger logger = getLogger(DiskImageFile.class.getName());
 
     private static final UUID EMPTY = new UUID(0L, 0L);
 
@@ -170,7 +176,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             try {
                 fileStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.DEBUG, e.getMessage(), e);
             }
         }
     }

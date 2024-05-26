@@ -25,12 +25,13 @@ package discUtils.ntfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
 
 import discUtils.core.internal.ObjectCache;
 import discUtils.streams.IByteArraySerializable;
@@ -39,10 +40,13 @@ import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
 import dotnet4j.util.compat.Tuple;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 class Index implements Closeable {
+
+    private static final Logger logger = getLogger(Index.class.getName());
 
     private final ObjectCache<Long, IndexBlock> blockCache;
 
@@ -267,11 +271,11 @@ class Index implements Closeable {
                 return "{" + keyValue + "-->" + dataValue + "}";
             }
         } catch (Exception e) {
-            Debug.printStackTrace(e);
+            logger.log(Level.DEBUG, e.getMessage(), e);
             return "{Parsing-Error}";
         }
 
-        Debug.println(Level.WARNING, indexName);
+        logger.log(Level.WARNING, indexName);
         return "{Unknown-Index-Type}";
     }
 
@@ -340,7 +344,7 @@ class Index implements Closeable {
     }
 
     int compare(byte[] x, byte[] y) {
-//Debug.println(comparer.getClass() + ": " + comparer.compare(x, y));
+//logger.log(Level.DEBUG, comparer.getClass() + ": " + comparer.compare(x, y));
         return comparer.compare(x, y);
     }
 

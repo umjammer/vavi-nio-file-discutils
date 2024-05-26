@@ -24,6 +24,8 @@ package discUtils.net.dns;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -31,13 +33,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
  * Provides access to DNS-SD functionality.
  */
 public final class ServiceDiscoveryClient implements Closeable {
+
+    private static final Logger logger = getLogger(ServiceDiscoveryClient.class.getName());
 
     private final UnicastDnsClient dnsClient;
 
@@ -244,7 +248,7 @@ public final class ServiceDiscoveryClient implements Closeable {
 
     private List<ResourceRecord> doLookup(String name, RecordType recordType) {
         String fullName = DnsClient.normalizeDomainName(name);
-Debug.println("fullname: " + fullName);
+logger.log(Level.DEBUG, "fullname: " + fullName);
 
         DnsClient dnsClient;
 

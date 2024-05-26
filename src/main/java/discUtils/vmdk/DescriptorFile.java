@@ -336,7 +336,7 @@ public class DescriptorFile {
     private String getHeader(String key) {
         for (DescriptorFileEntry entry : header) {
             if (entry.getKey().equals(key)) {
-//Debug.println(entry.getKey() + ", " + key);
+//logger.log(Level.DEBUG, entry.getKey() + ", " + key);
                 return entry.getValue();
             }
         }

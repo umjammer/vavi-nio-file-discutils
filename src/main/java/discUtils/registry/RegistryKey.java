@@ -307,7 +307,7 @@ public final class RegistryKey {
             while (i < cell.numValues) {
                 int valueIndex = ByteUtil.readLeInt(valueList, i * 4);
                 ValueCell valueCell = hive.getCell(valueIndex);
-//Debug.println(valueCell.getName() + ", " + name);
+//logger.log(Level.DEBUG, valueCell.getName() + ", " + name);
                 if (StringUtilities.compare(valueCell.getName(), name, true) == 0) {
                     foundValue = true;
                     hive.freeCell(valueIndex);
@@ -413,7 +413,7 @@ public final class RegistryKey {
         }
 
         String[] split = path.split(StringUtilities.escapeForRegex(FS), 2);
-//Debug.println(StringUtil.paramString(split));
+//logger.log(Level.DEBUG, StringUtil.paramString(split));
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
             return null;
@@ -524,7 +524,7 @@ public final class RegistryKey {
             for (int i = 0; i < cell.numValues; ++i) {
                 int valueIndex = ByteUtil.readLeInt(valueList, i * 4);
                 ValueCell cell = hive.getCell(valueIndex);
-//Debug.println(name + ", " + cell);
+//logger.log(Level.DEBUG, name + ", " + cell);
                 if (StringUtilities.compare(cell.getName(), name, true) == 0) {
                     return new RegistryValue(hive, cell);
                 }
@@ -576,7 +576,7 @@ public final class RegistryKey {
         hive.updateCell(cell, false);
 
         // Finally, set the data in the value cell
-//Debug.println(valueCell);
+//logger.log(Level.DEBUG, valueCell);
         return new RegistryValue(hive, valueCell);
     }
 

@@ -23,6 +23,8 @@
 package discUtils.squashFs;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +36,12 @@ import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
 import vavi.util.ByteUtil;
 
+import static java.lang.System.getLogger;
+
 
 public final class BuilderFile extends BuilderNode {
+
+    private static final Logger logger = getLogger(BuilderFile.class.getName());
 
     private RegularInode inode;
 
@@ -112,7 +118,7 @@ public final class BuilderFile extends BuilderNode {
                 try {
                     source.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.DEBUG, e.getMessage(), e);
                 }
             }
         }

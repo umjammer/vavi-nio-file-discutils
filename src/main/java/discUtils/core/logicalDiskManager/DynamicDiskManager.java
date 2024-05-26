@@ -23,6 +23,8 @@
 package discUtils.core.logicalDiskManager;
 
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +37,8 @@ import discUtils.core.VirtualDisk;
 import discUtils.core.partitions.BiosPartitionTypes;
 import discUtils.core.partitions.GuidPartitionTypes;
 import discUtils.core.partitions.PartitionInfo;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -43,6 +46,8 @@ import vavi.util.Debug;
  * logical volumes.
  */
 public class DynamicDiskManager implements IDiagnosticTraceable {
+
+    private static final Logger logger = getLogger(DynamicDiskManager.class.getName());
 
     private final Map<String, DynamicDiskGroup> groups;
 
@@ -135,7 +140,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
                 LogicalVolumeInfo lvi = new LogicalVolumeInfo(volume
                         .getIdentity(), null, volume::open, volume.getLength(), volume.getBiosType(), volume.getStatus());
                 result.add(lvi);
-Debug.println("Lv2: " + lvi.getIdentity() + ", " + volume.getLength());
+logger.log(Level.DEBUG, "Lv2: " + lvi.getIdentity() + ", " + volume.getLength());
             }
         }
         return result;

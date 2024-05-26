@@ -46,7 +46,7 @@ public class DiscFileSystemInfo {
 
         this.fileSystem = fileSystem;
         this.path = path.replaceAll(StringUtilities.escapeForRegex("(^" + FS + "*|" + FS + "*$)"), "");
-//Debug.println(_path);
+//logger.log(Level.DEBUG, _path);
     }
 
     /**

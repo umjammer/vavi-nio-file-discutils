@@ -7,11 +7,12 @@
 package vavi.nio.file.du;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.logging.Level;
 
 import com.github.fge.filesystem.driver.FileSystemDriver;
 import com.github.fge.filesystem.provider.FileSystemRepositoryBase;
@@ -24,7 +25,8 @@ import discUtils.core.VirtualDisk;
 import discUtils.core.VolumeManager;
 import discUtils.core.internal.VirtualDiskFactory;
 import dotnet4j.io.FileAccess;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -40,6 +42,8 @@ import vavi.util.Debug;
  */
 public final class DuFileSystemRepository extends FileSystemRepositoryBase {
 
+    private static final Logger logger = getLogger(DuFileSystemRepository.class.getName());
+
     /** */
     public DuFileSystemRepository() {
         super("discutils", new DuFileSystemFactoryProvider());
@@ -54,7 +58,7 @@ public final class DuFileSystemRepository extends FileSystemRepositoryBase {
     @Override
     public FileSystemDriver createDriver(URI uri, Map<String, ?> env) throws IOException {
         String[] rawSchemeSpecificParts = uri.getRawSchemeSpecificPart().split("!");
-Debug.println(Level.FINE, "part[0]: " + rawSchemeSpecificParts[0]);
+logger.log(Level.DEBUG, "part[0]: " + rawSchemeSpecificParts[0]);
         URI filePart = URI.create(rawSchemeSpecificParts[0]);
         if (!"file".equals(filePart.getScheme())) {
             // currently only support "file"
@@ -73,19 +77,19 @@ Debug.println(Level.FINE, "part[0]: " + rawSchemeSpecificParts[0]);
             volumeNumber = (int) env.get("volumeNumber");
         }
 
-Debug.println(Level.FINE, "file: " + file);
+logger.log(Level.DEBUG, "file: " + file);
 
         VirtualDisk disk = VirtualDisk.openDisk(file, forceType, FileAccess.Read, null, null);
-Debug.println(Level.FINE, "disk: " + disk);
+logger.log(Level.DEBUG, "disk: " + disk);
         VolumeManager manager = new VolumeManager();
-Debug.println(Level.FINE, "manager: " + manager);
+logger.log(Level.DEBUG, "manager: " + manager);
         manager.addDisk(disk);
         LogicalVolumeInfo lvi = manager.getLogicalVolumes().get(volumeNumber);
-Debug.println(Level.FINE, "lvi: " + lvi + " / " + manager.getLogicalVolumes().size());
+logger.log(Level.DEBUG, "lvi: " + lvi + " / " + manager.getLogicalVolumes().size());
         FileSystemInfo fsi = FileSystemManager.detectFileSystems(lvi).get(0);
-Debug.println(Level.FINE, "fsi: " + fsi + " / " + FileSystemManager.detectFileSystems(lvi).size());
+logger.log(Level.DEBUG, "fsi: " + fsi + " / " + FileSystemManager.detectFileSystems(lvi).size());
         DiscFileSystem fs = fsi.open(lvi, new FileSystemParameters());
-Debug.println(Level.FINE, "fs: " + fs);
+logger.log(Level.DEBUG, "fs: " + fs);
         DuFileStore fileStore = new DuFileStore(fs, factoryProvider.getAttributesFactory());
         return new DuFileSystemDriver(fileStore, factoryProvider, fs, env);
     }

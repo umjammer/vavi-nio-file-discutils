@@ -172,7 +172,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
     }
 
     @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
-//Debug.println(count + ", " + attribute.getRawBuffer().getExtentsInRange(start, count) + ", " + new StreamExtent(0, getCapacity()));
+//logger.log(Level.DEBUG, count + ", " + attribute.getRawBuffer().getExtentsInRange(start, count) + ", " + new StreamExtent(0, getCapacity()));
         return StreamExtent.intersect(attribute.getRawBuffer().getExtentsInRange(start, count),
                                       new StreamExtent(0, getCapacity()));
     }

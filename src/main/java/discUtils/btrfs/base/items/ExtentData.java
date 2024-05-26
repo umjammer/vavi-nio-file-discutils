@@ -252,13 +252,13 @@ public class ExtentData extends BaseItem {
             long processed = 4; // sizeof(int)
             List<SparseStream> parts = new ArrayList<>();
             long remaining = logicalSize;
-//Debug.println("remaining: " + remaining + ", " + stream);
+//logger.log(Level.DEBUG, "remaining: " + remaining + ", " + stream);
             while (processed < totalLength) {
                 stream.position(processed);
                 StreamUtilities.readExact(stream, buffer, 0, 4); // sizeof(int)
                 int partLength = ByteUtil.readLeInt(buffer, 0);
                 processed += 4; // sizeof(int)
-//Debug.println("processed: " + processed + ", partLength: " + partLength + ", remaining: " + remaining);
+//logger.log(Level.DEBUG, "processed: " + processed + ", partLength: " + partLength + ", remaining: " + remaining);
                 SubStream part = new SubStream(stream, Ownership.Dispose, processed, partLength);
                 SeekableLzoStream uncompressed = new SeekableLzoStream(part, CompressionMode.Decompress, false);
                 uncompressed.setLength(Math.min(Sizes.OneKiB * 4, remaining));

@@ -24,19 +24,24 @@ package discUtils.opticalDiscSharing;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.net.dns.ServiceDiscoveryClient;
 import discUtils.net.dns.ServiceInstance;
 import discUtils.net.dns.ServiceInstanceFields;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
  * Provides access to Optical Disc Sharing services.
  */
 public final class OpticalDiscServiceClient implements Closeable {
+
+    private static final Logger logger = getLogger(OpticalDiscServiceClient.class.getName());
 
     private ServiceDiscoveryClient sdClient;
 
@@ -78,7 +83,7 @@ public final class OpticalDiscServiceClient implements Closeable {
         for (ServiceInstance instance : sdClient.lookupInstances("_odisk._tcp", domain, ServiceInstanceFields.All)) {
             services.add(new OpticalDiscService(instance, sdClient));
         }
-Debug.println("services: " + services.size());
+logger.log(Level.DEBUG, "services: " + services.size());
         return services;
     }
 }

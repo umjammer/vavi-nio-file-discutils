@@ -7,13 +7,16 @@
 package vavi.nio.file.du;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.logging.Level;
 
 import com.github.fge.filesystem.provider.FileSystemProviderBase;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -23,6 +26,8 @@ import vavi.util.Debug;
  * @version 0.00 2019/11/17 umjammer initial version <br>
  */
 public final class DuFileSystemProvider extends FileSystemProviderBase {
+
+    private static final Logger logger = getLogger(DuFileSystemProvider.class.getName());
 
     public DuFileSystemProvider() {
         super(new DuFileSystemRepository());
@@ -37,7 +42,7 @@ public final class DuFileSystemProvider extends FileSystemProviderBase {
         url = url.replace("%2F", "/");
         url = url.replace("+", "%20");
         URI uri = URI.create("discutils:file:" + url);
-Debug.println(Level.FINE, "uri: " + uri);
+logger.log(Level.DEBUG, "uri: " + uri);
         return uri;
     }
 }

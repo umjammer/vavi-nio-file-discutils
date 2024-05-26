@@ -49,7 +49,7 @@ public class BasicHeaderSegment implements IByteArraySerializable {
     @Override public int readFrom(byte[] buffer, int offset) {
         immediate = (buffer[offset] & 0x40) != 0;
         opCode = OpCode.valueOf(buffer[offset] & 0x3F);
-//Debug.println("OpCode: " + (buffer[offset] & 0x3F));
+//logger.log(Level.DEBUG, "OpCode: " + (buffer[offset] & 0x3F));
         finalPdu = (buffer[offset + 1] & 0x80) != 0;
         totalAhsLength = buffer[offset + 4];
         dataSegmentLength = ByteUtil.readBeInt(buffer, offset + 4) & 0x00FF_FFFF;

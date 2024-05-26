@@ -22,11 +22,17 @@
 
 package discUtils.hfsPlus;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentKey> {
+
+    private static final Logger logger = getLogger(ExtentKey.class.getName());
 
     // 0 is data, 0xff is rsrc
     private byte forkType;
@@ -85,7 +91,7 @@ final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentK
         forkType = buffer[offset + 2];
         nodeId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 4));
         startBlock = ByteUtil.readBeInt(buffer, offset + 8);
-Debug.println((keyLength & 0xffff) + 2);
+logger.log(Level.DEBUG, (keyLength & 0xffff) + 2);
         return (keyLength & 0xffff) + 2;
     }
 

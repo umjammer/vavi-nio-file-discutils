@@ -23,16 +23,18 @@
 package discUtils.core;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.logging.Level;
 
 import discUtils.core.vfs.VfsFileSystemFactory;
 import dotnet4j.io.BufferedStream;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -43,6 +45,8 @@ import vavi.util.Debug;
  * file systems, create an instance of this class and call RegisterFileSystems.
  */
 public class FileSystemManager {
+
+    private static final Logger logger = getLogger(FileSystemManager.class.getName());
 
     private static final List<VfsFileSystemFactory> factories;
 
@@ -87,10 +91,10 @@ public class FileSystemManager {
         BufferedStream detectStream = new BufferedStream(stream);
         List<FileSystemInfo> detected = new ArrayList<>();
         for (VfsFileSystemFactory factory : factories) {
-Debug.println(Level.FINE, factory);
+logger.log(Level.DEBUG, factory);
             detected.addAll(Arrays.asList(factory.detect(detectStream, volume)));
         }
-Debug.println(Level.FINE, detected);
+logger.log(Level.DEBUG, detected);
         return detected;
     }
 }

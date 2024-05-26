@@ -1,36 +1,41 @@
 
 package discUtils.core;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.logging.Level;
 
 import discUtils.core.internal.VirtualDiskFactory;
 import discUtils.core.internal.VirtualDiskFactoryAttribute;
 import discUtils.core.internal.VirtualDiskTransport;
 import discUtils.core.internal.VirtualDiskTransportAttribute;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
  * Helps discover and use VirtualDiskFactory's
  */
 public class VirtualDiskManager {
+
+    private static final Logger logger = getLogger(VirtualDiskManager.class.getName());
+
     static {
         extensionMap = new HashMap<>();
         typeMap = new HashMap<>();
         diskTransports = new HashMap<>();
     }
 
-    private static Map<String, VirtualDiskTransport> diskTransports;
+    private static final Map<String, VirtualDiskTransport> diskTransports;
 
     public static Map<String, VirtualDiskTransport> getDiskTransports() {
         return diskTransports;
     }
 
-    private static Map<String, VirtualDiskFactory> extensionMap;
+    private static final Map<String, VirtualDiskFactory> extensionMap;
 
     public static Map<String, VirtualDiskFactory> getExtensionMap() {
         return extensionMap;
@@ -74,8 +79,8 @@ public class VirtualDiskManager {
                 }
             }
         }
-Debug.println(Level.FINE, "typeMap: " + typeMap);
-Debug.println(Level.FINE, "extensionMap: " + extensionMap);
+logger.log(Level.DEBUG, "typeMap: " + typeMap);
+logger.log(Level.DEBUG, "extensionMap: " + extensionMap);
 
         ServiceLoader<VirtualDiskTransport> transports = ServiceLoader.load(VirtualDiskTransport.class);
 
@@ -85,6 +90,6 @@ Debug.println(Level.FINE, "extensionMap: " + extensionMap);
                 diskTransports.put(annotation.scheme().toUpperCase(), transport);
             }
         }
-Debug.println(Level.FINE, "diskTransports: " + diskTransports);
+logger.log(Level.DEBUG, "diskTransports: " + diskTransports);
     }
 }

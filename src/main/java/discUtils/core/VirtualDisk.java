@@ -25,6 +25,8 @@ package discUtils.core;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -43,13 +45,16 @@ import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.FileAccess;
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
  * base class representing virtual hard disks.
  */
 public abstract class VirtualDisk implements Serializable, Closeable {
+
+    private static final Logger logger = getLogger(VirtualDisk.class.getName());
 
     private VirtualDiskTransport transport;
 
@@ -417,20 +422,23 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                        String user,
                                        String password) throws IOException {
         URI uri = pathToUri(path);
-//Debug.println(uri);
+logger.log(Level.TRACE, uri);
         VirtualDisk result = null;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
             throw new dotnet4j.io.FileNotFoundException(String.format("Unable to parse path '%s'", path));
         }
 
         VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
+logger.log(Level.TRACE, transport.getExtraInfo());
         transport.connect(uri, user, password);
         if (transport.isRawDisk()) {
             result = transport.openDisk(access);
+logger.log(Level.TRACE, "isRawDisk: " + result);
         } else {
             boolean foundFactory;
             VirtualDiskFactory factory;
             if (forceType != null && !forceType.isEmpty()) {
+logger.log(Level.TRACE, "forceType: " + forceType);
                 foundFactory = VirtualDiskManager.getTypeMap().containsKey(forceType);
                 factory = VirtualDiskManager.getTypeMap().get(forceType);
             } else {
@@ -439,16 +447,21 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                 if (extension.startsWith(".")) {
                     extension = extension.substring(1);
                 }
+logger.log(Level.TRACE, "extension: " + extension);
 
                 foundFactory = VirtualDiskManager.getExtensionMap().containsKey(extension);
                 factory = VirtualDiskManager.getExtensionMap().get(extension);
             }
             if (foundFactory) {
                 result = factory.openDisk(transport.getFileLocator(), transport.getFileName(), access);
+            } else {
+logger.log(Level.TRACE, "no factory");
             }
         }
         if (result != null) {
             result.transport = transport;
+        } else {
+logger.log(Level.TRACE, "no transport");
         }
 
         return result;
@@ -541,7 +554,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
             return VirtualDiskManager.getExtensionMap().get(extension).openDiskLayer(locator, path, access);
         }
 
-Debug.println(extension + " / " + VirtualDiskManager.getExtensionMap());
+logger.log(Level.DEBUG, extension + " / " + VirtualDiskManager.getExtensionMap());
         return null;
     }
 

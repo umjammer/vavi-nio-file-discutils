@@ -141,7 +141,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
             TarFileBuilder tarBuilder = new TarFileBuilder();
             int[][] diskIds = new int[1][];
             String ovaFileContent = generateOvaXml(diskIds);
-//Debug.println(ovaFileContent);
+//logger.log(Level.DEBUG, ovaFileContent);
             tarBuilder.addFile("ova.xml", ovaFileContent.getBytes(StandardCharsets.US_ASCII));
             int diskIdx = 0;
             for (DiskRecord diskRec : disks) {

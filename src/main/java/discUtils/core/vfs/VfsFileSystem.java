@@ -23,6 +23,8 @@
 package discUtils.core.vfs;
 
 import java.io.File;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +42,8 @@ import discUtils.streams.buffer.BufferStream;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.util.compat.StringUtilities;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -53,6 +56,8 @@ import vavi.util.Debug;
  * @param <TContext> The concrete type holding global state.
  */
 public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext> extends DiscFileSystem {
+
+    private static final Logger logger = getLogger(VfsFileSystem.class.getName());
 
     private static final String FS = File.separator;
     private static final char FSC = File.separatorChar;
@@ -524,7 +529,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             file = convertDirEntryToFile(dirEntry);
             fileCache.put(cacheKey, file);
         }
-//Debug.println(file);
+//logger.log(Level.DEBUG, file);
         return file;
     }
 
@@ -709,7 +714,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
                                                 symlink.getTargetPath());
             currentEntry = getDirectoryEntry(currentPath);
             if (currentEntry == null) {
-Debug.println(currentPath);
+logger.log(Level.DEBUG, currentPath);
                 throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink: " + path);
             }
 

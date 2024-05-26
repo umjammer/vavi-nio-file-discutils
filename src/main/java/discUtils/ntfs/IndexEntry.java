@@ -22,6 +22,8 @@
 
 package discUtils.ntfs;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -29,8 +31,12 @@ import java.util.EnumSet;
 import discUtils.streams.util.MathUtilities;
 import vavi.util.ByteUtil;
 
+import static java.lang.System.getLogger;
+
 
 public class IndexEntry {
+
+    private static final Logger logger = getLogger(IndexEntry.class.getName());
 
     public static final int EndNodeSize = 0x18;
 
@@ -163,7 +169,7 @@ public class IndexEntry {
                 System.arraycopy(dataBuffer, 0, buffer, offset + dataOffset, dataBuffer.length);
             }
             ByteUtil.writeLeShort((short) keyLength, buffer, offset + 0x0A);
-//Debug.println(keyBuffer.length + " | " + buffer.length + ", " + (offset + 0x10));
+//logger.log(Level.DEBUG, keyBuffer.length + " | " + buffer.length + ", " + (offset + 0x10));
             assert buffer.length > offset  + 0x10 + keyBuffer.length : buffer.length + ", " + (offset + 0x10) + ", " + keyBuffer.length;
             System.arraycopy(keyBuffer, 0, buffer, offset + 0x10, keyBuffer.length);
         } else {
@@ -184,7 +190,7 @@ public class IndexEntry {
             return (keyBuffer != null ? new String(keyBuffer, StandardCharsets.US_ASCII) : "null") + ": " +
                    (dataBuffer != null ? Arrays.toString(dataBuffer) : "null");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.DEBUG, e.getMessage(), e);
             return super.toString();
         }
     }

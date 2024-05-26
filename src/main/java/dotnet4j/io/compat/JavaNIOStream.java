@@ -132,14 +132,14 @@ public class JavaNIOStream extends Stream {
         }
 
         try {
-//Debug.println(buffer.length + ", " + offset + ", " + length + ", " + is.available());
+//logger.log(Level.DEBUG, buffer.length + ", " + offset + ", " + length + ", " + is.available());
             int r = sbc.read(ByteBuffer.wrap(buffer, offset, length));
-//Debug.println(StringUtil.getDump(buffer, 16));
+//logger.log(Level.DEBUG, StringUtil.getDump(buffer, 16));
             if (r == -1) {
-//Debug.println("EOF");
+//logger.log(Level.DEBUG, "EOF");
                 return 0; // C# Spec.
             }
-//Debug.println("position: " + position);
+//logger.log(Level.DEBUG, "position: " + position);
             return r;
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -162,7 +162,7 @@ public class JavaNIOStream extends Stream {
         }
 
         try {
-//Debug.println("w: " + count + ", " + os);
+//logger.log(Level.DEBUG, "w: " + count + ", " + os);
             sbc.write(ByteBuffer.wrap(buffer, offset, count));
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);

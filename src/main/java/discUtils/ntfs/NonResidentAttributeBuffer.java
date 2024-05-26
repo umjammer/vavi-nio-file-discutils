@@ -241,7 +241,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
     private static CookedDataRuns cookRuns(NtfsAttribute attribute) {
         CookedDataRuns result = new CookedDataRuns();
 
-//if (debug) Debug.println("3: " + attribute.getRecords().size());
+//if (debug) logger.log(Level.DEBUG, "3: " + attribute.getRecords().size());
         for (Object _record : attribute.getRecords()) {
             NonResidentAttributeRecord record = (NonResidentAttributeRecord) _record;
             if (record.getStartVcn() != result.getNextVirtualCluster()) {

@@ -304,7 +304,7 @@ class Connection implements Closeable {
 
         LoginRequest req = new LoginRequest(this);
         byte[] packet = req.getBytes(paramBuffer, 0, paramBuffer.length, true);
-//Debug.println("\n" + StringUtil.getDump(packet));
+//logger.log(Level.DEBUG, "\n" + StringUtil.getDump(packet));
 
         stream.write(packet, 0, packet.length);
         stream.flush();
@@ -323,15 +323,15 @@ class Connection implements Closeable {
 
         if (resp.continue_) {
             MemoryStream ms = new MemoryStream();
-            ms.write(resp.textData, 0, resp.textData.length);
-
-            while (resp.continue_) {
-                pdu = readPdu();
-                resp = parseResponse(LoginResponse.class, pdu);
                 ms.write(resp.textData, 0, resp.textData.length);
-            }
 
-            settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
+                while (resp.continue_) {
+                    pdu = readPdu();
+                    resp = parseResponse(LoginResponse.class, pdu);
+                    ms.write(resp.textData, 0, resp.textData.length);
+                }
+
+                settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
         } else if (resp.textData != null) {
             settings.readFrom(resp.textData, 0, resp.textData.length);
         }
@@ -439,15 +439,15 @@ class Connection implements Closeable {
 
         if (resp.continue_) {
             MemoryStream ms = new MemoryStream();
-            ms.write(resp.textData, 0, resp.textData.length);
-
-            while (resp.continue_) {
-                pdu = readPdu();
-                resp = parseResponse(LoginResponse.class, pdu);
                 ms.write(resp.textData, 0, resp.textData.length);
-            }
 
-            settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
+                while (resp.continue_) {
+                    pdu = readPdu();
+                    resp = parseResponse(LoginResponse.class, pdu);
+                    ms.write(resp.textData, 0, resp.textData.length);
+                }
+
+                settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
         } else if (resp.textData != null) {
             settings.readFrom(resp.textData, 0, resp.textData.length);
         }

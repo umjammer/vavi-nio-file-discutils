@@ -22,6 +22,8 @@
 
 package discUtils.ntfs;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -29,10 +31,13 @@ import java.util.List;
 
 import discUtils.streams.util.MathUtilities;
 import dotnet4j.io.IOException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 class IndexNode {
+
+    private static final Logger logger = getLogger(IndexNode.class.getName());
 
     private final List<IndexEntry> entries;
 
@@ -396,7 +401,7 @@ class IndexNode {
         int index = getEntry(newEntry.getKeyBuffer(), exactMatch);
 
         if (exactMatch[0]) {
-Debug.println(newEntry + " / " + entries);
+logger.log(Level.DEBUG, newEntry + " / " + entries);
             throw new IOException("Entry already exists");
         }
 

@@ -22,20 +22,24 @@
 
 package discUtils.core.vfs;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import discUtils.core.DiscFileSystem;
 import discUtils.core.FileSystemInfo;
 import discUtils.core.FileSystemParameters;
 import discUtils.core.VolumeInfo;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
  * Class holding information about a file system.
  */
 public final class VfsFileSystemInfo extends FileSystemInfo {
+
+    private static final Logger logger = getLogger(VfsFileSystemInfo.class.getName());
 
     private final VfsFileSystemOpener openDelegate;
 
@@ -82,7 +86,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
      */
     @Override
     public DiscFileSystem open(VolumeInfo volume, FileSystemParameters parameters) {
-Debug.println(Level.INFO, openDelegate + ", " + volume);
+logger.log(Level.INFO, openDelegate + ", " + volume);
         return openDelegate.invoke(volume.open(), volume, parameters);
     }
 

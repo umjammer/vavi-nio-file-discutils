@@ -23,6 +23,8 @@
 package discUtils.ntfs;
 
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -38,8 +40,12 @@ import discUtils.streams.util.Range;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
 
+import static java.lang.System.getLogger;
+
 
 class NtfsAttribute implements IDiagnosticTraceable {
+
+    private static final Logger logger = getLogger(NtfsAttribute.class.getName());
 
     private IBuffer cachedRawBuffer;
 
@@ -57,7 +63,7 @@ class NtfsAttribute implements IDiagnosticTraceable {
         primaryRecord = record;
         extents = new HashMap<>();
         extents.put(new AttributeReference(containingFile, record.getAttributeId()), primaryRecord);
-//if (NonResidentAttributeBuffer.debug) Debug.println("4c: " + extents.size());
+//if (NonResidentAttributeBuffer.debug) logger.log(Level.DEBUG, "4c: " + extents.size());
     }
 
     protected String getAttributeTypeName() {
@@ -238,7 +244,7 @@ class NtfsAttribute implements IDiagnosticTraceable {
                     writer.println(indent + "    Data: " + hex + (numBytes < s.getLength() ? "..." : ""));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.DEBUG, e.getMessage(), e);
                 writer.println(indent + "    Data: <can't read>");
             }
         }
@@ -282,13 +288,13 @@ class NtfsAttribute implements IDiagnosticTraceable {
         primaryRecord = record;
         extents.clear();
         extents.put(new AttributeReference(containingFile, record.getAttributeId()), record);
-//if (NonResidentAttributeBuffer.debug) Debug.println("4a: " + extents.size());
+//if (NonResidentAttributeBuffer.debug) logger.log(Level.DEBUG, "4a: " + extents.size());
     }
 
     public void addExtent(FileRecordReference containingFile, AttributeRecord record) {
         cachedRawBuffer = null;
         extents.put(new AttributeReference(containingFile, record.getAttributeId()), record);
-//if (NonResidentAttributeBuffer.debug) Debug.println("4b: " + extents.size() + ", " + record.getAttributeId());
+//if (NonResidentAttributeBuffer.debug) logger.log(Level.DEBUG, "4b: " + extents.size() + ", " + record.getAttributeId());
     }
 
     public void removeExtentCacheSafe(AttributeReference reference) {

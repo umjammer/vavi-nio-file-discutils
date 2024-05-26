@@ -91,7 +91,7 @@ final class MetablockReader {
             }
 
             int toRead = Math.min(count - totalRead, block.getAvailable() - currentOffset);
-//Debug.println(currentOffset + ", " + offset + ", " + totalRead + ", " + toRead + ", " + count + ", " + block.getAvailable());
+//logger.log(Level.DEBUG, currentOffset + ", " + offset + ", " + totalRead + ", " + toRead + ", " + count + ", " + block.getAvailable());
             System.arraycopy(block.getData(), currentOffset, buffer, offset + totalRead, toRead);
             totalRead += toRead;
             currentOffset += toRead;

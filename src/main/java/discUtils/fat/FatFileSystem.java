@@ -24,6 +24,8 @@ package discUtils.fat;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -33,7 +35,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import discUtils.core.DiscFileSystem;
@@ -54,13 +55,16 @@ import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.Stream;
 import dotnet4j.util.compat.StringUtilities;
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
  * Class for accessing FAT file systems.
  */
 public final class FatFileSystem extends DiscFileSystem {
+
+    private static final Logger logger = getLogger(FatFileSystem.class.getName());
 
     private static final String FS = File.separator;
 
@@ -247,7 +251,7 @@ public final class FatFileSystem extends DiscFileSystem {
      */
     public static boolean detect(Stream stream) {
         if (stream.getLength() < 512) {
-Debug.println(Level.FINE, "stream length < 512");
+logger.log(Level.DEBUG, "stream length < 512");
             return false;
         }
 
@@ -255,7 +259,7 @@ Debug.println(Level.FINE, "stream length < 512");
         byte[] bytes = StreamUtilities.readExact(stream, 512);
         short bpbBytesPerSec = ByteUtil.readLeShort(bytes, 11);
         if (bpbBytesPerSec != 512) {
-Debug.println(Level.FINE, "bpb bytes per sec != 512");
+logger.log(Level.DEBUG, "bpb bytes per sec != 512");
             return false;
         }
 
@@ -267,12 +271,12 @@ Debug.println(Level.FINE, "bpb bytes per sec != 512");
         short bpbTotSec16 = ByteUtil.readLeShort(bytes, 19);
         int bpbTotSec32 = ByteUtil.readLeInt(bytes, 32);
         if (!((bpbTotSec16 == 0) ^ (bpbTotSec32 == 0))) {
-Debug.println(Level.FINE, "bpb tot sec == 0");
+logger.log(Level.DEBUG, "bpb tot sec == 0");
             return false;
         }
 
         int totalSectors = bpbTotSec16 + bpbTotSec32;
-Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerSec <= stream.getLength()), totalSectors, stream.getLength());
+logger.log(Level.DEBUG, String.format("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerSec <= stream.getLength()), totalSectors, stream.getLength()));
         return totalSectors * (long) bpbBytesPerSec <= stream.getLength();
     }
 
@@ -1093,7 +1097,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
     private void loadRootDirectory() {
         Stream fatStream;
         if (bs.getFatVariant() != FatType.Fat32) {
-//Debug.printf(Level.FINE, "%016x, %016x\n", (bs.getReservedSectorCount() + (long) bs.getFatCount() * bs.getFatSize16()) * bs.getBytesPerSector(), bs.getMaxRootDirectoryEntries() * 32L);
+//logger.log(Level.DEBUG, String.format(Level.FINE, "%016x, %016x\n", (bs.getReservedSectorCount() + (long) bs.getFatCount() * bs.getFatSize16()) * bs.getBytesPerSector(), bs.getMaxRootDirectoryEntries() * 32L));
             fatStream = new SubStream(data,
                     (bs.getReservedSectorCount() + (long) bs.getFatCount() * bs.getFatSize16()) * bs.getBytesPerSector(),
                     bs.getMaxRootDirectoryEntries() * 32L);
@@ -1159,7 +1163,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
             boolean isDir = de.getAttributes().contains(FatAttributes.Directory);
 
             if ((isDir && dirs) || (!isDir && files)) {
-//Debug.println(regex+ ", " + de.getName().getSearchName(getFatOptions().getFileNameEncoding()) + ", " + regex.matcher(de.getName().getSearchName(getFatOptions().getFileNameEncoding())).find());
+//logger.log(Level.DEBUG, regex+ ", " + de.getName().getSearchName(getFatOptions().getFileNameEncoding()) + ", " + regex.matcher(de.getName().getSearchName(getFatOptions().getFileNameEncoding())).find());
                 if (regex.matcher(de.getName().getSearchName(getFatOptions().getFileNameEncoding())).find()) {
                     results.add(Utilities.combinePaths(path,
                                                        de.getName().getDisplayName(getFatOptions().getFileNameEncoding())));

@@ -25,13 +25,14 @@ package discUtils.ntfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import discUtils.core.ClusterMap;
 import discUtils.core.ClusterRoles;
@@ -44,7 +45,8 @@ import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -54,6 +56,8 @@ import vavi.util.Debug;
  * File classes.
  */
 public class MasterFileTable implements IDiagnosticTraceable, Closeable {
+
+    private static final Logger logger = getLogger(MasterFileTable.class.getName());
 
     /**
      * MFT index of the MFT file itself.
@@ -154,7 +158,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             while (mftStream.position() < mftStream.getLength()) {
                 byte[] recordData = StreamUtilities.readExact(mftStream, getRecordSize());
 
-Debug.println(Level.FINE, "MFT records[" + index + "]: " + new String(recordData, 0, 4, StandardCharsets.US_ASCII));
+logger.log(Level.TRACE, "MFT records[" + index + "]: " + new String(recordData, 0, 4, StandardCharsets.US_ASCII));
                 if (!new String(recordData, 0, 4, StandardCharsets.US_ASCII).equals("FILE")) {
                     continue;
                 }
@@ -373,7 +377,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + new String(recordData
     public FileRecord getRecord(long index, boolean ignoreMagic, boolean ignoreBitmap) {
         if (ignoreBitmap || bitmap == null || bitmap.isPresent(index)) {
             FileRecord result = recordCache.get(index);
-//if (NonResidentAttributeBuffer.debug) Debug.println(result + " / " + recordCache);
+//if (NonResidentAttributeBuffer.debug) logger.log(Level.DEBUG, result + " / " + recordCache);
             if (result != null) {
                 return result;
             }

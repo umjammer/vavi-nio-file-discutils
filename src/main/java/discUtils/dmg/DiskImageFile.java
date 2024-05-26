@@ -23,10 +23,11 @@
 package discUtils.dmg;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import discUtils.core.FileLocator;
 import discUtils.core.Geometry;
@@ -40,10 +41,13 @@ import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 public final class DiskImageFile extends VirtualDiskLayer {
+
+    private static final Logger logger = getLogger(DiskImageFile.class.getName());
 
     private final Ownership ownsStream;
 
@@ -65,8 +69,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
         this.stream = stream;
         this.ownsStream = ownsStream;
 
-Debug.println(Level.FINE, "stream.getLength(): " + stream.getLength());
-Debug.println(Level.FINE, "udifHeader.size(): " + udifHeader.size());
+logger.log(Level.DEBUG, "stream.getLength(): " + stream.getLength());
+logger.log(Level.DEBUG, "udifHeader.size(): " + udifHeader.size());
         stream.position(stream.getLength() - udifHeader.size());
         byte[] data = StreamUtilities.readExact(stream, udifHeader.size());
 
@@ -81,7 +85,7 @@ Debug.println(Level.FINE, "udifHeader.size(): " + udifHeader.size());
             buffer = new UdifBuffer(stream, resources, udifHeader.sectorCount);
         } else {
             // TODO fat32 dmg doesn't have udif header
-Debug.printf(Level.WARNING, "udifHeader: %08x\n", udifHeader.signature);
+logger.log(Level.WARNING, String.format("udifHeader: %08x\n", udifHeader.signature));
         }
     }
 

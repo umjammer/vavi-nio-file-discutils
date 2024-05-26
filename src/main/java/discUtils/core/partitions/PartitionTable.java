@@ -22,17 +22,19 @@
 
 package discUtils.core.partitions;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import discUtils.core.VirtualDisk;
 import discUtils.core.raw.Disk;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -42,6 +44,8 @@ import vavi.util.Debug;
  * Re-enumerate the partitions to discover the next index-to-partition mapping.
  */
 public abstract class PartitionTable {
+
+    private static final Logger logger = getLogger(PartitionTable.class.getName());
 
     protected static final UUID EMPTY = new UUID(0L, 0L);
 
@@ -117,12 +121,12 @@ public abstract class PartitionTable {
         for (PartitionTableFactory factory : factories) {
             PartitionTable table = factory.detectPartitionTable(disk);
             if (table != null) {
-Debug.println(Level.FINE, factory + ", " + table);
+logger.log(Level.DEBUG, factory + ", " + table);
                 tables.add(table);
             }
             factory.adhoc(tables); // TODO
         }
-Debug.println(Level.FINE, tables);
+logger.log(Level.DEBUG, tables);
         return tables;
     }
 

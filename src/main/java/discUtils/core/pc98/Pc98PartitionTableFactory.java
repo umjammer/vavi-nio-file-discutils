@@ -8,10 +8,11 @@ package discUtils.core.pc98;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 
 import discUtils.core.VirtualDisk;
 import discUtils.core.partitions.PartitionTable;
@@ -20,9 +21,10 @@ import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
 import vavi.util.serdes.Serdes;
 import vavix.io.partition.PC98PartitionEntry;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -33,6 +35,8 @@ import vavix.io.partition.PC98PartitionEntry;
  */
 public final class Pc98PartitionTableFactory implements PartitionTableFactory {
 
+    private static final Logger logger = getLogger(Pc98PartitionTableFactory.class.getName());
+
     private static final String[] iplSignatures = {
         "IPL1", "Linux 98", "GRUB/98 "
     };
@@ -40,29 +44,29 @@ public final class Pc98PartitionTableFactory implements PartitionTableFactory {
     @Override
     public boolean detectIsPartitioned(Stream stream) {
         if (stream.getLength() < Sizes.Sector * 2) {
-Debug.printf(Level.FINE, "Not enough data for detection: %04x/%04x%n", stream.getLength(), Sizes.Sector);
+logger.log(Level.DEBUG, String.format("Not enough data for detection: %04x/%04x%n", stream.getLength(), Sizes.Sector));
             return false;
         }
 
         stream.position(0);
 
         byte[] bootSector = StreamUtilities.readExact(stream, Sizes.Sector * 2);
-//Debug.printf(Level.FINE, "%n" + StringUtil.getDump(bootSector, 512));
+//logger.log(Level.DEBUG, String.format(Level.FINE, "%n" + StringUtil.getDump(bootSector, 512)));
 
         if ((ByteUtil.readLeShort(bootSector, 510) & 0xffff) != 0xaa55) {
-Debug.printf(Level.FINE, "No aa55 magic: %04x%n", (ByteUtil.readBeShort(bootSector, 510) & 0xffff));
+logger.log(Level.DEBUG, String.format("No aa55 magic: %04x%n", (ByteUtil.readBeShort(bootSector, 510) & 0xffff)));
             return false;
         }
 
         if (Arrays.stream(iplSignatures).noneMatch(s ->
             new String(bootSector, 4, s.length(), StandardCharsets.US_ASCII).equals(s)
         )) {
-Debug.println(Level.FINE, "no matching signature is found: " + new String(bootSector, 4, 4, StandardCharsets.US_ASCII));
+logger.log(Level.DEBUG, "no matching signature is found: " + new String(bootSector, 4, 4, StandardCharsets.US_ASCII));
             return false;
         }
 
         if (new String(bootSector, 0x36, 3, StandardCharsets.US_ASCII).equals("FAT")) {
-Debug.println(Level.FINE, "strings FAT is found, this partition might be for AT");
+logger.log(Level.DEBUG, "strings FAT is found, this partition might be for AT");
             return false;
         }
 
@@ -73,14 +77,14 @@ Debug.println(Level.FINE, "strings FAT is found, this partition might be for AT"
             try {
                 Serdes.Util.deserialize(baos, pe);
                 if (!pe.isValid()) {
-Debug.println(Level.FINE, "pe is invalid: " + pe);
+logger.log(Level.DEBUG, "pe is invalid: " + pe);
                     continue;
                 }
             } catch (IOException e) {
-Debug.println(Level.FINE, e);
+logger.log(Level.DEBUG, e);
                 continue;
             }
-Debug.println(Level.FINE, "[" + count + "]: " + pe);
+logger.log(Level.DEBUG, "[" + count + "]: " + pe);
             count++;
         }
 
@@ -91,7 +95,7 @@ Debug.println(Level.FINE, "[" + count + "]: " + pe);
      * adding {@link discUtils.core.partitions.BiosPartitionTable#isValid(Stream disk)}
      * <pre>
      * if (!record.isValid()) {
-     *  Debug.println("vavi original check: " + record.isValid());
+     *  logger.log(Level.DEBUG, "vavi original check: " + record.isValid());
      *  return false;
      * }
      * </pre>
@@ -111,7 +115,7 @@ Debug.println(Level.FINE, "[" + count + "]: " + pe);
         }
         for (PartitionTable table: tables) {
             if (table instanceof discUtils.core.partitions.BiosPartitionTable) {
-Debug.println("ad-hoc remove partition, conflict w/ pc98 partition table: " + table);
+logger.log(Level.DEBUG, "ad-hoc remove partition, conflict w/ pc98 partition table: " + table);
                 tables.remove(table);
             }
         }

@@ -8,6 +8,8 @@ package discUtils.core.pc98;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +24,10 @@ import discUtils.streams.SparseStream;
 import discUtils.streams.SubStream;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
 import vavi.util.serdes.Serdes;
 import vavix.io.partition.PC98PartitionEntry;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -36,6 +39,8 @@ import vavix.io.partition.PC98PartitionEntry;
 public class Pc98PartitionTable extends PartitionTable {
 
     private Stream diskData;
+    private static final Logger logger = getLogger(Pc98PartitionTable.class.getName());
+
 
     private int bytesPerSector;
 
@@ -60,7 +65,7 @@ public class Pc98PartitionTable extends PartitionTable {
                 if (!pe.isValid()) {
                     continue;
                 }
-//Debug.println("[" + i + "]: " + pe);
+//logger.log(Level.DEBUG, "[" + i + "]: " + pe);
                 partitions.put(pe, new Pc98PartitionInfo(pe, this, disk.getGeometry()));
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
@@ -107,10 +112,7 @@ public class Pc98PartitionTable extends PartitionTable {
     SparseStream open(PC98PartitionEntry pe) {
         long s = partitions.get(pe).getFirstSector() * bytesPerSector;
         long e = partitions.get(pe).getLastSector() * bytesPerSector;
-Debug.printf("%s: %08x, %08x", pe, s, e);
-        return new SubStream(diskData,
-                Ownership.None,
-                s,
-                e - s);
+logger.log(Level.DEBUG, String.format("%s: %08x, %08x", pe, s, e));
+        return new SubStream(diskData, Ownership.None, s, e - s);
     }
 }

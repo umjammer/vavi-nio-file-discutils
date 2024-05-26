@@ -7,9 +7,10 @@
 package discUtils.fat;
 
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.logging.Level;
 
 import discUtils.core.Geometry;
 import discUtils.streams.util.EndianUtilities;
@@ -17,7 +18,8 @@ import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -29,6 +31,8 @@ import vavi.util.Debug;
 public class ATBootSector implements BootSector {
 
     private byte[] bootSector;
+    private static final Logger logger = getLogger(ATBootSector.class.getName());
+
 
     private String oemName;
     private byte sectorsPerCluster;
@@ -61,7 +65,7 @@ public class ATBootSector implements BootSector {
     public ATBootSector(Stream stream) {
         stream.position(0);
         bootSector = StreamUtilities.readSector(stream);
-//Debug.println(Level.FINE, "\n" + StringUtil.getDump(bootSector, 64));
+//logger.log(Level.DEBUG, "\n" + StringUtil.getDump(bootSector, 64));
         fatVariant = detectFATType(bootSector);
         readBPB();
     }
