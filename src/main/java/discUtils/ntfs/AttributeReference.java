@@ -27,7 +27,7 @@ package discUtils.ntfs;
  */
 public class AttributeReference implements Comparable<AttributeReference> {
 
-    private FileRecordReference fileReference;
+    private final FileRecordReference fileReference;
 
     /**
      * Initializes a new instance of the AttributeReference class.
@@ -43,7 +43,7 @@ public class AttributeReference implements Comparable<AttributeReference> {
     /**
      * Gets the identity of the attribute within the file record.
      */
-    private short attributeId;
+    private final short attributeId;
 
     public short getAttributeId() {
         return attributeId;

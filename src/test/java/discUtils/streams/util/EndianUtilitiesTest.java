@@ -158,5 +158,3 @@ class EndianUtilitiesTest {
         assertEquals(s, EndianUtilities.bytesToString(bytes, 0, bytes.length));
     }
 }
-
-/* */

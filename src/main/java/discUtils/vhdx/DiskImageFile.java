@@ -24,6 +24,8 @@
 package discUtils.vhdx;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -55,11 +57,15 @@ import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
 import vavi.util.ByteUtil;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * Represents a single .VHDX file.
  */
 public final class DiskImageFile extends VirtualDiskLayer {
+
+    private static final Logger logger = getLogger(DiskImageFile.class.getName());
 
     private static final UUID EMPTY = new UUID(0L, 0L);
 
@@ -170,7 +176,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             try {
                 fileStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.log(Level.DEBUG, e.getMessage(), e);
             }
         }
     }
@@ -644,7 +650,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         LogSequence activeLogSequence = findActiveLogSequence();
 
-        if (activeLogSequence == null || activeLogSequence.size() == 0) {
+        if (activeLogSequence == null || activeLogSequence.isEmpty()) {
             throw new dotnet4j.io.IOException("Unable to replay VHDX log, suspected corrupt VHDX file");
         }
 
@@ -687,18 +693,18 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 LogSequence currentSequence = new LogSequence();
 
                 while (LogEntry.tryRead(logStream, logEntry) && logEntry[0].getLogGuid().equals(header.logGuid) &&
-                       (currentSequence.size() == 0 ||
+                       (currentSequence.isEmpty() ||
                         logEntry[0].getSequenceNumber() == currentSequence.getHead().getSequenceNumber() + 1)) {
                     currentSequence.add(logEntry[0]);
                     logEntry[0] = null;
                 }
 
-                if (currentSequence.size() > 0 && currentSequence.contains(currentSequence.getHead().getTail()) &&
+                if (!currentSequence.isEmpty() && currentSequence.contains(currentSequence.getHead().getTail()) &&
                     currentSequence.higherSequenceThan(candidateActiveSequence)) {
                     candidateActiveSequence = currentSequence;
                 }
 
-                if (currentSequence.size() == 0) {
+                if (currentSequence.isEmpty()) {
                     currentTail += LogEntry.LogSectorSize;
                 } else {
                     currentTail = currentSequence.getHead().getPosition() + LogEntry.LogSectorSize;

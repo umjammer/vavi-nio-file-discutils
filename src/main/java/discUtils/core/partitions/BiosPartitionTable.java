@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import discUtils.core.ChsAddress;
 import discUtils.core.Geometry;
@@ -610,7 +609,7 @@ public final class BiosPartitionTable extends PartitionTable {
     }
 
     private int findCylinderGap(int numCylinders) {
-        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(BiosPartitionRecord::isValid).sorted().collect(Collectors.toList());
+        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(BiosPartitionRecord::isValid).sorted().toList();
 
         int startCylinder = 0;
         for (BiosPartitionRecord r : list) {
@@ -641,7 +640,7 @@ public final class BiosPartitionTable extends PartitionTable {
     }
 
     private long findGap(long numSectors, long alignmentSectors) {
-        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(BiosPartitionRecord::isValid).sorted().collect(Collectors.toList());
+        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(BiosPartitionRecord::isValid).sorted().toList();
         long startSector = MathUtilities.roundUp(diskGeometry.toLogicalBlockAddress(0, 1, 1), alignmentSectors);
         int idx = 0;
         while (idx < list.size()) {

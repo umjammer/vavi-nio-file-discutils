@@ -25,12 +25,12 @@ import dotnet4j.io.FileAccess;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2022/07/24 umjammer initial version <br>
  */
-@VirtualDiskFactoryAttribute(type = "EMU", fileExtensions = { ".nhd" })
+@VirtualDiskFactoryAttribute(type = "EMU", fileExtensions = { ".nhd", ".hdi" })
 public final class DiskFactory implements VirtualDiskFactory {
 
     @Override
     public String[] getVariants() {
-        return new String[] { "nhd", "d88" };
+        return new String[] { "nhd", "d88", "hdi" };
     }
 
     @Override

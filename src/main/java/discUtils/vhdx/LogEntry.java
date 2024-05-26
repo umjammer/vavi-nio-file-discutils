@@ -59,7 +59,7 @@ public final class LogEntry {
     }
 
     public boolean isEmpty() {
-        return descriptors.size() == 0;
+        return descriptors.isEmpty();
     }
 
     public long getLastFileOffset() {

@@ -23,18 +23,22 @@
 
 package discUtils.lvm;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import discUtils.core.LogicalVolumeInfo;
 import discUtils.core.PhysicalVolumeInfo;
 import discUtils.core.VirtualDisk;
 import discUtils.core.internal.LogicalVolumeFactory;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 public class LogicalVolumeManagerFactory implements LogicalVolumeFactory {
+
+    private static final Logger logger = getLogger(LogicalVolumeManagerFactory.class.getName());
 
     @Override
     public boolean handlesPhysicalVolume(PhysicalVolumeInfo volume) {
@@ -46,7 +50,7 @@ public class LogicalVolumeManagerFactory implements LogicalVolumeFactory {
         LogicalVolumeManager mgr = new LogicalVolumeManager(disks);
         for (LogicalVolumeInfo vol : mgr.getLogicalVolumes()) {
             result.put(vol.getIdentity(), vol);
-Debug.println(Level.FINE, "Ll: " + vol.getIdentity());
+logger.log(Level.DEBUG, "Ll: " + vol.getIdentity());
         }
     }
 }

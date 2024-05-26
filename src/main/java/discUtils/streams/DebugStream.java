@@ -7,11 +7,13 @@
 package discUtils.streams;
 
 import java.io.IOException;
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -22,16 +24,18 @@ import vavi.util.Debug;
  */
 public class DebugStream extends Stream {
 
+    private static final Logger logger = getLogger(DebugStream.class.getName());
+
     private Stream wrapped;
 
     public DebugStream(Stream toWrap) {
         wrapped = toWrap;
 try {
  wrapped.position(0);
- Debug.println("wrapped: " + wrapped.getClass() + "@" + wrapped.hashCode());
+ logger.log(Level.DEBUG, "wrapped: " + wrapped.getClass() + "@" + wrapped.hashCode());
 } catch (Throwable t) {
- Debug.println(Level.SEVERE, "wrapped null stream?");
- t.printStackTrace();
+ logger.log(Level.ERROR, "wrapped null stream?");
+ t.printStackTrace(System.err);
 }
     }
 
@@ -59,7 +63,7 @@ try {
 try {
         wrapped.position(value);
 } catch (Throwable t) {
- Debug.println(wrapped.getClass() + "@" + wrapped.hashCode() + ", " + t);
+ logger.log(Level.DEBUG, wrapped.getClass() + "@" + wrapped.hashCode() + ", " + t);
  throw t;
 }
     }
@@ -85,7 +89,7 @@ try {
     }
 
     @Override public void close() throws IOException {
-new Exception("*** DUMMY ***").printStackTrace();
+new Exception("*** DUMMY ***").printStackTrace(System.err);
         wrapped.close();
         wrapped = null;
     }

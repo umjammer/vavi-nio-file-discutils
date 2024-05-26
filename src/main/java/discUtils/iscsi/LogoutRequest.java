@@ -44,7 +44,7 @@ public class LogoutRequest {
         basicHeader.initiatorTaskTag = connection.getSession().getCurrentTaskTag();
         byte[] buffer = new byte[MathUtilities.roundUp(48, 4)];
         basicHeader.writeTo(buffer, 0);
-        buffer[1] |= (byte) (reason.ordinal() & 0x7F);
+        buffer[1] = (byte) (buffer[1] | (byte) (reason.ordinal() & 0x7F));
         ByteUtil.writeBeShort(connection.getId(), buffer, 20);
         ByteUtil.writeBeInt(connection.getSession().getCommandSequenceNumber(), buffer, 24);
         ByteUtil.writeBeInt(connection.getExpectedStatusSequenceNumber(), buffer, 28);

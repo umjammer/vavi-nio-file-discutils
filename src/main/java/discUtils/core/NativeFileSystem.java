@@ -27,6 +27,8 @@ package discUtils.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,13 +48,16 @@ import discUtils.streams.util.Ownership;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
  * Provides an implementation for OS-mounted file systems.
  */
 public class NativeFileSystem extends DiscFileSystem {
+
+    private static final Logger logger = getLogger(NativeFileSystem.class.getName());
 
     private static final String FS = File.separator;
 
@@ -311,7 +316,7 @@ public class NativeFileSystem extends DiscFileSystem {
                     .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.DEBUG, e.getMessage(), e);
             return Collections.emptyList();
         }
     }
@@ -358,7 +363,7 @@ Debug.printStackTrace(e);
                     .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.DEBUG, e.getMessage(), e);
             return Collections.emptyList();
         }
     }
@@ -392,7 +397,7 @@ Debug.printStackTrace(e);
                     .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
-Debug.printStackTrace(e);
+logger.log(Level.DEBUG, e.getMessage(), e);
             return Collections.emptyList();
         }
     }

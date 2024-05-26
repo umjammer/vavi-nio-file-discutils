@@ -34,9 +34,9 @@ import vavi.util.ByteUtil;
 
 public class DirectoryEntry {
 
-    private FatType fatVariant;
+    private final FatType fatVariant;
 
-    private FatFileSystemOptions options;
+    private final FatFileSystemOptions options;
 
     private byte attr;
 

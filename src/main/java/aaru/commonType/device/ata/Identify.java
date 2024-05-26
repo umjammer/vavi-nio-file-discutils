@@ -41,14 +41,18 @@ package aaru.commonType.device.ata;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Optional;
 
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
 import vavi.util.serdes.Element;
 import vavi.util.serdes.Serdes;
+
+import static java.lang.System.getLogger;
 
 
 /** 
@@ -58,6 +62,8 @@ import vavi.util.serdes.Serdes;
  * &amp; CF Specification rev. 1.4 (CFA)
  */
 public class Identify {
+
+    private static final Logger logger = getLogger(Identify.class.getName());
 
     /** capabilities flag bits. */
     public enum CapabilitiesBit {
@@ -463,10 +469,10 @@ public class Identify {
     /** Word 80 Major version */
     //@flags
     public enum MajorVersionBit {
-        //#pragma warning disable 1591
+//#pragma warning disable 1591
         Reserved15(0x8000), Reserved14(0x4000), Reserved13(0x2000),
         Reserved12(0x1000),
-        //#pragma warning restore 1591
+//#pragma warning restore 1591
         /** ACS-4 */
         ACS4(0x0800),
         /** ACS-3 */
@@ -489,9 +495,9 @@ public class Identify {
         Ata2(0x0004),
         /** ATA-1 */
         Ata1(0x0002),
-        //#pragma warning disable 1591
+//#pragma warning disable 1591
         Reserved00(0x0001);
-        //#pragma warning restore 1591
+//#pragma warning restore 1591
         final int v;
 
         MajorVersionBit(int v) {
@@ -518,10 +524,10 @@ public class Identify {
         PowerReceipt(0x0200),
         /** Supports NCQ */
         NCQ(0x0100),
-        //#pragma warning disable 1591
+//#pragma warning disable 1591
         Reserved07(0x0080), Reserved06(0x0040), Reserved05(0x0020),
         Reserved04(0x0010),
-        //#pragma warning restore 1591
+//#pragma warning restore 1591
         /** Supports SATA Gen. 3 Signaling Speed (6.0Gb/s) */
         Gen3Speed(0x0008),
         /** Supports SATA Gen. 2 Signaling Speed (3.0Gb/s) */
@@ -573,11 +579,11 @@ public class Identify {
     /** SATA features flags */
     //@flags
     public enum SATAFeaturesBit {
-        //#pragma warning disable 1591
+//#pragma warning disable 1591
         Reserved15(0x8000), Reserved14(0x4000), Reserved13(0x2000),
         Reserved12(0x1000), Reserved11(0x0800), Reserved10(0x0400),
         Reserved09(0x0200), Reserved08(0x0100),
-        //#pragma warning restore 1591
+//#pragma warning restore 1591
         /** Supports NCQ autosense */
         NCQAutoSense(0x0080),
         /** Automatic Partial to Slumber transitions are enabled */
@@ -728,7 +734,7 @@ public class Identify {
          */
         @Element(sequence = 1, value = "unsigned short")
         public EnumSet<GeneralConfigurationBit> generalConfigurationBit;
-        /** Word 1 cylinders in default translation mode Obsoleted in ATA/ATAPI-6 */
+        /** Word 1: cylinders in default translation mode Obsoleted in ATA/ATAPI-6 */
         @Element(sequence = 2)
         public short cylinders;
         /** Word 2 Specific configuration */
@@ -1191,8 +1197,7 @@ public class Identify {
             return Optional.empty();
 
         if (IdentifyDeviceResponse.length != 512) {
-            Debug.printf("ATA/ATAPI IDENTIFY decoder",
-                    "IDENTIFY response is different than 512 bytes, not decoding.");
+logger.log(Level.DEBUG, "ATA/ATAPI IDENTIFY decoder IDENTIFY response is different than 512 bytes, not decoding.");
 
             return Optional.empty();
         }
@@ -1287,8 +1292,7 @@ public class Identify {
     static byte[] scrambleATAString(String str, int length) {
         byte[] buf = new byte[length];
 
-        for (int i = 0; i < length; i++)
-            buf[i] = 0x20;
+        Arrays.fill(buf, (byte) 0x20);
 
         if (str == null)
             return buf;

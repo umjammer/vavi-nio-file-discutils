@@ -70,36 +70,17 @@ public class DirEntry extends VfsDirEntry {
     }
 
     @Override public EnumSet<FileAttributes> getFileAttributes() {
-        UnixFileType unixFileType = UnixFileType.None;
-        switch (item.getChildType()) {
-        case Unknown:
-            unixFileType = UnixFileType.None;
-            break;
-        case RegularFile:
-            unixFileType = UnixFileType.Regular;
-            break;
-        case Directory:
-            unixFileType = UnixFileType.Directory;
-            break;
-        case CharDevice:
-            unixFileType = UnixFileType.Character;
-            break;
-        case BlockDevice:
-            unixFileType = UnixFileType.Block;
-            break;
-        case Fifo:
-            unixFileType = UnixFileType.Fifo;
-            break;
-        case Socket:
-            unixFileType = UnixFileType.Socket;
-            break;
-        case Symlink:
-            unixFileType = UnixFileType.Link;
-            break;
-        case ExtendedAttribute:
-            unixFileType = UnixFileType.None;
-            break;
-        }
+        UnixFileType unixFileType = switch (item.getChildType()) {
+            case Unknown -> UnixFileType.None;
+            case RegularFile -> UnixFileType.Regular;
+            case Directory -> UnixFileType.Directory;
+            case CharDevice -> UnixFileType.Character;
+            case BlockDevice -> UnixFileType.Block;
+            case Fifo -> UnixFileType.Fifo;
+            case Socket -> UnixFileType.Socket;
+            case Symlink -> UnixFileType.Link;
+            case ExtendedAttribute -> UnixFileType.None;
+        };
         EnumSet<FileAttributes> result = UnixFileType.toFileAttributes(unixFileType);
         if (inode != null && inode.getFlags().contains(InodeFlag.Readonly))
             result.add(FileAttributes.ReadOnly);

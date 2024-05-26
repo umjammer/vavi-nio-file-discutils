@@ -36,7 +36,7 @@ public class BlkxResource extends Resource {
         block = EndianUtilities.toStruct(CompressedBlock.class, data, 0);
     }
 
-    private CompressedBlock block;
+    private final CompressedBlock block;
 
     public CompressedBlock getBlock() {
         return block;

@@ -83,12 +83,12 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
         for (Range range : activeStream.getStoredClusters()) {
             extents.add(new StreamExtent(range.getOffset() * bytesPerCluster, range.getCount() * bytesPerCluster));
         }
-//Debug.println(extents + ", " + new StreamExtent(0, getCapacity()));
+//logger.log(Level.DEBUG, extents + ", " + new StreamExtent(0, getCapacity()));
         return StreamExtent.intersect(extents, new StreamExtent(0, getCapacity()));
     }
 
     @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
-//Debug.println(getExtents() + ", " + new StreamExtent(start, count));
+//logger.log(Level.DEBUG, getExtents() + ", " + new StreamExtent(start, count));
         return StreamExtent.intersect(getExtents(), new StreamExtent(start, count));
     }
 

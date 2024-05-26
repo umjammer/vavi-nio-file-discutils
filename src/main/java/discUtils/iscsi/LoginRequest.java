@@ -93,7 +93,7 @@ public class LoginRequest {
         byte val = 0;
 
         if (transit) {
-            val |= 0x80;
+            val = (byte) (val | 0x80);
         }
 
         if (continue_) {

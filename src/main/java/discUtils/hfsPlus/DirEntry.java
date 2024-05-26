@@ -97,18 +97,11 @@ final class DirEntry extends VfsDirEntry {
 
     private static CommonCatalogFileInfo parseDirEntryData(byte[] dirEntryData) {
         CatalogRecordType type = CatalogRecordType.values()[ByteUtil.readBeShort(dirEntryData, 0)];
-        CommonCatalogFileInfo result;
-        switch (type) {
-        case FolderRecord:
-            result = new CatalogDirInfo();
-            break;
-        case FileRecord:
-            result = new CatalogFileInfo();
-            break;
-        default:
-            throw new UnsupportedOperationException("Unknown catalog record type: " + type);
-
-        }
+        CommonCatalogFileInfo result = switch (type) {
+            case FolderRecord -> new CatalogDirInfo();
+            case FileRecord -> new CatalogFileInfo();
+            default -> throw new UnsupportedOperationException("Unknown catalog record type: " + type);
+        };
         result.readFrom(dirEntryData, 0);
         return result;
     }

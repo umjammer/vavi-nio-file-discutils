@@ -89,13 +89,13 @@ public final class SuspRecords {
 
     public boolean hasEntry(String extension, String name) {
         List<SystemUseEntry> entries = getEntries(extension, name);
-        return entries != null && entries.size() != 0;
+        return entries != null && !entries.isEmpty();
     }
 
     private ContinuationSystemUseEntry parse(IsoContext context, byte[] data, int offset) {
         ContinuationSystemUseEntry contEntry = null;
         SuspExtension extension = null;
-        if (context.getSuspExtensions() != null && context.getSuspExtensions().size() > 0) {
+        if (context.getSuspExtensions() != null && !context.getSuspExtensions().isEmpty()) {
             extension = context.getSuspExtensions().get(0);
         }
 

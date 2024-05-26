@@ -23,7 +23,8 @@
 package discUtils.opticalDiscSharing;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -37,11 +38,14 @@ import discUtils.core.internal.VirtualDiskTransport;
 import discUtils.core.internal.VirtualDiskTransportAttribute;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileNotFoundException;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 @VirtualDiskTransportAttribute(scheme = "ods")
 public final class DiscTransport implements VirtualDiskTransport {
+
+    private static final Logger logger = getLogger(DiscTransport.class.getName());
 
     private String disk;
 
@@ -59,7 +63,7 @@ public final class DiscTransport implements VirtualDiskTransport {
         try {
             String domain = uri.getHost();
             String[] pathParts;
-            pathParts = Arrays.stream(URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8.name()).split("/"))
+            pathParts = Arrays.stream(URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8).split("/"))
                     .filter(e -> !e.isEmpty())
                     .toArray(String[]::new);
             String instance = pathParts[0];
@@ -67,7 +71,7 @@ public final class DiscTransport implements VirtualDiskTransport {
 
             odsClient = new OpticalDiscServiceClient();
             for (OpticalDiscService service : odsClient.lookupServices(domain)) {
-Debug.println("service: " + service.getDisplayName());
+logger.log(Level.DEBUG, "service: " + service.getDisplayName());
                 if (service.getDisplayName().equals(instance)) {
                     this.service = service;
                     this.service.connect(System.getProperty("user.name"), InetAddress.getLocalHost().getHostName(), 30);
@@ -83,7 +87,7 @@ Debug.println("service: " + service.getDisplayName());
             if (disk == null) {
                 throw new FileNotFoundException("No such disk " + uri);
             }
-        } catch (UnsupportedEncodingException | UnknownHostException e) {
+        } catch (UnknownHostException e) {
             throw new IllegalStateException(e);
         }
     }

@@ -5,13 +5,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 public class ReflectionHelper {
+
+    private static final Logger logger = getLogger(ReflectionHelper.class.getName());
 
     public static <T extends Serializable> int sizeOf(Class<T> c) {
         try {
@@ -22,7 +26,7 @@ public class ReflectionHelper {
             } else if (UUID.class == c) {
                 return Long.BYTES * 2;
             } else {
-Debug.println(c);
+logger.log(Level.DEBUG, c);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(baos);
                 oos.writeObject(c.getDeclaredConstructor().newInstance());

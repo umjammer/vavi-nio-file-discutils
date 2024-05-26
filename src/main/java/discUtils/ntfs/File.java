@@ -83,7 +83,7 @@ class File {
     public String getBestName() {
         List<NtfsAttribute> attrs = getAttributes(AttributeType.FileName);
         String bestName = null;
-        if (attrs != null && attrs.size() != 0) {
+        if (attrs != null && !attrs.isEmpty()) {
             bestName = attrs.get(0).toString();
             for (int i = 1; i < attrs.size(); ++i) {
                 String name = attrs.get(i).toString();
@@ -439,7 +439,7 @@ class File {
         List<NtfsAttribute> attrs = getAttributes(AttributeType.FileName);
         StructuredNtfsAttribute<FileNameRecord> attr = null;
         if (name == null || name.isEmpty()) {
-            if (attrs.size() != 0) {
+            if (!attrs.isEmpty()) {
                 attr = (StructuredNtfsAttribute<FileNameRecord>) attrs.get(0);
             }
         } else {
@@ -490,7 +490,7 @@ class File {
         if (fileRec != null) {
             fileRec.removeAttribute(extentRef.getAttributeId());
             // Remove empty non-primary MFT records
-            if (fileRec.getAttributes().size() == 0 && fileRec.getBaseFile().getValue() != 0) {
+            if (fileRec.getAttributes().isEmpty() && fileRec.getBaseFile().getValue() != 0) {
                 removeFileRecord(extentRef.getFile());
             }
         }
@@ -916,7 +916,7 @@ class File {
         for (int i = 0; i < records.size(); ++i) {
             if (records.get(i).getMasterFileTableIndex() == fileReference.getMftIndex()) {
                 FileRecord record = records.get(i);
-                if (record.getAttributes().size() > 0) {
+                if (!record.getAttributes().isEmpty()) {
                     throw new dotnet4j.io.IOException("Attempting to remove non-empty MFT record");
                 }
 

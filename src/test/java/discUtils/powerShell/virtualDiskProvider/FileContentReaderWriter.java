@@ -126,7 +126,7 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
     @Override
     public List<?> write(List<?> content) {
         try {
-            if (content == null || content.size() == 0) {
+            if (content == null || content.isEmpty()) {
                 return content;
             }
 
@@ -180,19 +180,13 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
      * @see "https://ja.osdn.net/projects/sfnet_jutf7/"
      */
     private Charset getEncoding(Charset defEncoding) {
-        switch (encoding) {
-        case UTF16:
-            return StandardCharsets.UTF_16;
-        case UTF8:
-            return StandardCharsets.UTF_8;
-        case UTF7:
-            return Charset.forName("UTF-7");
-        case Unicode:
-            return Charset.forName("Unicode");
-        case Ascii:
-            return StandardCharsets.US_ASCII;
-        default:
-            return defEncoding;
-        }
+        return switch (encoding) {
+            case UTF16 -> StandardCharsets.UTF_16;
+            case UTF8 -> StandardCharsets.UTF_8;
+            case UTF7 -> Charset.forName("UTF-7");
+            case Unicode -> Charset.forName("Unicode");
+            case Ascii -> StandardCharsets.US_ASCII;
+            default -> defEncoding;
+        };
     }
 }

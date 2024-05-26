@@ -82,7 +82,7 @@ public class FileRecord extends FixupRecordBase {
     }
 
     public AttributeRecord getFirstAttribute() {
-        return attributes.size() > 0 ? attributes.get(0) : null;
+        return !attributes.isEmpty() ? attributes.get(0) : null;
     }
 
     private EnumSet<FileRecordFlags> flags;

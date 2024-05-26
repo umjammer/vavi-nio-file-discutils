@@ -1,2 +1,3 @@
 discImage=/somewhere/your.vdi
 mountPoint=/Users/you/mnt/fuse
+#chd=/somewhere/Games/PS2/ps2-game.chd

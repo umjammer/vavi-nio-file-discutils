@@ -81,13 +81,13 @@ public class DiskStream extends SparseStream {
 
     @Override public long position() {
         checkDisposed();
-//Debug.printf("GETPOS: %08x", (fileStream.position() - disk.getOffset()));
+//logger.log(Level.DEBUG, String.format("GETPOS: %08x", (fileStream.position() - disk.getOffset())));
         return fileStream.position() - disk.getOffset();
     }
 
     @Override public void position(long value) {
         checkDisposed();
-//Debug.printf("SETPOS: %08x", value);
+//logger.log(Level.DEBUG, String.format("SETPOS: %08x", value));
         fileStream.position(value + disk.getOffset());
         atEof = false;
     }
@@ -100,8 +100,8 @@ public class DiskStream extends SparseStream {
 
     @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
-//new Exception().printStackTrace();
-//Debug.printf("READ: %08x, %d, %d", fileStream.position(), offset, count);
+//new Exception().printStackTrace(System.err);
+//logger.log(Level.DEBUG, String.format("READ: %08x, %d, %d", fileStream.position(), offset, count));
         if (atEof || fileStream.position() > disk.getLength()) {
             atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of file");

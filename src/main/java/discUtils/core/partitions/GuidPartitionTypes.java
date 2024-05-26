@@ -77,17 +77,10 @@ public class GuidPartitionTypes {
      * @return The GUID value.
      */
     public static UUID convert(WellKnownPartitionType wellKnown) {
-        switch (wellKnown) {
-        case Linux:
-        case WindowsFat:
-        case WindowsNtfs:
-            return WindowsBasicData;
-        case LinuxLvm:
-            return LinuxLvm;
-        case LinuxSwap:
-            return LinuxSwap;
-        default:
-            throw new IllegalArgumentException("Unknown partition type");
-        }
+        return switch (wellKnown) {
+            case Linux, WindowsFat, WindowsNtfs -> WindowsBasicData;
+            case LinuxLvm -> LinuxLvm;
+            case LinuxSwap -> LinuxSwap;
+        };
     }
 }

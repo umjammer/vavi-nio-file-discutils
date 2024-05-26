@@ -23,11 +23,19 @@
 package discUtils.core;
 
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
+import static java.lang.System.getLogger;
+
+
 /**
  * Class whose instances represent a CHS (Cylinder, Head, Sector) address on a
  * disk. Instances of this class are immutable.
  */
 public final class ChsAddress {
+
+    private static final Logger logger = getLogger(ChsAddress.class.getName());
 
     /**
      * The address of the first sector on any disk.
@@ -46,7 +54,7 @@ public final class ChsAddress {
         this.cylinder = cylinder;
         this.head = head;
         this.sector = sector;
-//Debug.print(this);
+logger.log(Level.TRACE, this);
     }
 
     /**

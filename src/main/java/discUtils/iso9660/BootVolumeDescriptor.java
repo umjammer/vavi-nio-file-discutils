@@ -43,7 +43,7 @@ public class BootVolumeDescriptor extends BaseVolumeDescriptor {
         catalogSector = ByteUtil.readLeInt(src, offset + 0x47);
     }
 
-    private int catalogSector;
+    private final int catalogSector;
 
     public int getCatalogSector() {
         return catalogSector;

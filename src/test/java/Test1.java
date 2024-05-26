@@ -180,5 +180,3 @@ class Test1 {
 Debug.println(new String(b));
     }
 }
-
-/* */

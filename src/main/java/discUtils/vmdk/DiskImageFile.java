@@ -818,28 +818,15 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private static ExtentType createTypeToExtentType(DiskCreateType type) {
-        switch (type) {
-        case FullDevice:
-        case MonolithicFlat:
-        case PartitionedDevice:
-        case TwoGbMaxExtentFlat:
-            return ExtentType.Flat;
-        case MonolithicSparse:
-        case StreamOptimized:
-        case TwoGbMaxExtentSparse:
-            return ExtentType.Sparse;
-        case Vmfs:
-            return ExtentType.Vmfs;
-        case VmfsPassthroughRawDeviceMap:
-            return ExtentType.VmfsRdm;
-        case VmfsRaw:
-        case VmfsRawDeviceMap:
-            return ExtentType.VmfsRaw;
-        case VmfsSparse:
-            return ExtentType.VmfsSparse;
-        default:
-            throw new IllegalArgumentException(String.format("Unable to convert %s", type));
-        }
+        return switch (type) {
+            case FullDevice, MonolithicFlat, PartitionedDevice, TwoGbMaxExtentFlat -> ExtentType.Flat;
+            case MonolithicSparse, StreamOptimized, TwoGbMaxExtentSparse -> ExtentType.Sparse;
+            case Vmfs -> ExtentType.Vmfs;
+            case VmfsPassthroughRawDeviceMap -> ExtentType.VmfsRdm;
+            case VmfsRaw, VmfsRawDeviceMap -> ExtentType.VmfsRaw;
+            case VmfsSparse -> ExtentType.VmfsSparse;
+            default -> throw new IllegalArgumentException(String.format("Unable to convert %s", type));
+        };
     }
 
     private static DescriptorFile createDifferencingDiskDescriptor(DiskCreateType type,
@@ -874,21 +861,16 @@ public final class DiskImageFile extends VirtualDiskLayer {
             }
         }
 
-        switch (extent.getType()) {
-        case Flat:
-        case Vmfs:
-            return SparseStream.fromStream(fileLocator.open(extent.getFileName(), FileMode.Open, access, share), Ownership.Dispose);
-        case Zero:
-            return new ZeroStream(extent.getSizeInSectors() * Sizes.Sector);
-        case Sparse:
-            return new HostedSparseExtentStream(fileLocator
+        return switch (extent.getType()) {
+            case Flat, Vmfs ->
+                    SparseStream.fromStream(fileLocator.open(extent.getFileName(), FileMode.Open, access, share), Ownership.Dispose);
+            case Zero -> new ZeroStream(extent.getSizeInSectors() * Sizes.Sector);
+            case Sparse -> new HostedSparseExtentStream(fileLocator
                     .open(extent.getFileName(), FileMode.Open, access, share), Ownership.Dispose, extentStart, parent, ownsParent);
-        case VmfsSparse:
-            return new ServerSparseExtentStream(fileLocator
+            case VmfsSparse -> new ServerSparseExtentStream(fileLocator
                     .open(extent.getFileName(), FileMode.Open, access, share), Ownership.Dispose, extentStart, parent, ownsParent);
-        default:
-            throw new UnsupportedOperationException();
-        }
+            default -> throw new UnsupportedOperationException();
+        };
     }
 
     private void loadDescriptor(Stream s) {

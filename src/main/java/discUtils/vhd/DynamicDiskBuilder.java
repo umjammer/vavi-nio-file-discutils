@@ -102,12 +102,12 @@ public final class DynamicDiskBuilder extends StreamBuilder {
         extents.add(0, batExtent);
         extents.add(0, new BuilderBufferExtent(FooterSize, dynHeaderBuffer));
         extents.add(0, new BuilderBufferExtent(0, footerBuffer));
-//Debug.println(extents);
+//logger.log(Level.DEBUG, extents);
 //extents.forEach(e -> {
 //    e.prepareForRead();
 //    byte[] b = new byte[128];
 //    int r = e.read(e.getStart(), b, 0, 64);
-//    Debug.println(e + "\n" + StringUtil.getDump(b, 0, r));
+//    logger.log(Level.DEBUG, e + "\n" + StringUtil.getDump(b, 0, r));
 //});
         return extents;
     }
@@ -198,7 +198,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             for (Range range: StreamExtent.blocks(content.getExtents(), Sizes.Sector)) {
                 for (int i = 0; i < range.getCount(); ++i) {
                     byte mask = (byte) (1 << (7 - (int) ((range.getOffset() + i) % 8)));
-                    bitmap[(int) ((range.getOffset() + i) / 8)] |= mask;
+                    bitmap[(int) ((range.getOffset() + i) / 8)] = (byte) (bitmap[(int) ((range.getOffset() + i) / 8)] | mask);
                 }
             }
 

@@ -208,34 +208,26 @@ public class Context extends VfsContext {
     }
 
     BaseItem findKey(Key key) {
-        switch (key.getItemType()) {
-        case RootItem:
-        case DirItem:
-            return rootTreeRoot.findFirst(key, this);
-        default:
-            throw new UnsupportedOperationException();
-        }
+        return switch (key.getItemType()) {
+            case RootItem, DirItem -> rootTreeRoot.findFirst(key, this);
+            default -> throw new UnsupportedOperationException();
+        };
     }
 
     List<BaseItem> findKey_(long treeId, Key key) {
         NodeHeader tree = getFsTree(treeId);
-        switch (key.getItemType()) {
-        case DirItem:
-            return tree.find(key, this);
-        default:
-            throw new UnsupportedOperationException();
-        }
+        return switch (key.getItemType()) {
+            case DirItem -> tree.find(key, this);
+            default -> throw new UnsupportedOperationException();
+        };
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     <T extends BaseItem> List<T> findKey(long treeId, Key key) {
         NodeHeader tree = getFsTree(treeId);
-        switch (key.getItemType()) {
-        case DirItem:
-        case ExtentData:
-            return (List) tree.find(ExtentData.class, key, this);
-        default:
-            throw new UnsupportedOperationException();
-        }
+        return switch (key.getItemType()) {
+            case DirItem, ExtentData -> (List) tree.find(ExtentData.class, key, this);
+            default -> throw new UnsupportedOperationException();
+        };
     }
 }

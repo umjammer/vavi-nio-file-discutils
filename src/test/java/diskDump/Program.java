@@ -50,6 +50,7 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
+import vavi.util.Debug;
 
 
 @Options
@@ -201,7 +202,7 @@ String[] inFiles = new String[] {inFile};
                 System.err.println();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Debug.printStackTrace(e);
         }
 
         try {
@@ -237,7 +238,7 @@ String[] inFiles = new String[] {inFile};
                             HexDump.generate(s, System.err);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Debug.printStackTrace(e);
                     }
                     System.err.println();
                 }
@@ -255,7 +256,7 @@ String[] inFiles = new String[] {inFile};
                                 }
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Debug.printStackTrace(e);
                             System.err.println("      Unable to show boot code: " + e.getMessage());
                         }
                         System.err.println();
@@ -274,7 +275,7 @@ String[] inFiles = new String[] {inFile};
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Debug.printStackTrace(e);
         }
 
         try {
@@ -293,17 +294,18 @@ String[] inFiles = new String[] {inFile};
                 dynDiskManager.dump(new PrintWriter(System.err), "  ");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Debug.printStackTrace(e);
         }
 
         if (showContent) {
             for (String path : inFiles) {
-                VirtualDisk disk = VirtualDisk.openDisk(path, FileAccess.Read, getUserName(), getPassword());
-                System.err.println();
-                System.err.printf("DISK CONTENTS (%s)\n", path);
-                System.err.println();
-                HexDump.generate(disk.getContent(), System.err);
-                System.err.println();
+                try (VirtualDisk disk = VirtualDisk.openDisk(path, FileAccess.Read, getUserName(), getPassword())) {
+                    System.err.println();
+                    System.err.printf("DISK CONTENTS (%s)\n", path);
+                    System.err.println();
+                    HexDump.generate(disk.getContent(), System.err);
+                    System.err.println();
+                }
             }
         }
     }
@@ -318,7 +320,7 @@ try {
             showDir(subDir, indent + 0);
         }
 } catch (Exception e) {
- e.printStackTrace();
+ Debug.printStackTrace(e);
  return;
 }
         for (DiscFileInfo file : dirInfo.getFiles()) {
@@ -328,12 +330,12 @@ try {
                               cleanName(file.getFullName()),
                               Instant.ofEpochMilli(file.getCreationTimeUtc()));
 } catch (Exception e) {
- e.printStackTrace();
+ Debug.printStackTrace(e);
 }
         }
     }
 
-    private static char[] BadNameChars = {
+    private static final char[] BadNameChars = {
         '\r', '\n', '\0'
     };
 

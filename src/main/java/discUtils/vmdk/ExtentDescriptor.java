@@ -124,16 +124,11 @@ public class ExtentDescriptor {
     }
 
     public static String formatAccess(ExtentAccess access) {
-        switch (access) {
-        case None:
-            return "NOACCESS";
-        case ReadOnly:
-            return "RDONLY";
-        case ReadWrite:
-            return "RW";
-        default:
-            throw new IllegalArgumentException("Unknown access type");
-        }
+        return switch (access) {
+            case None -> "NOACCESS";
+            case ReadOnly -> "RDONLY";
+            case ReadWrite -> "RW";
+        };
     }
 
     public static ExtentType parseType(String type) {
@@ -169,24 +164,15 @@ public class ExtentDescriptor {
     }
 
     public static String formatExtentType(ExtentType type) {
-        switch (type) {
-        case Flat:
-            return "FLAT";
-        case Sparse:
-            return "SPARSE";
-        case Zero:
-            return "ZERO";
-        case Vmfs:
-            return "VMFS";
-        case VmfsSparse:
-            return "VMFSSPARSE";
-        case VmfsRdm:
-            return "VMFSRDM";
-        case VmfsRaw:
-            return "VMFSRAW";
-        default:
-            throw new IllegalArgumentException("Unknown extent type");
-        }
+        return switch (type) {
+            case Flat -> "FLAT";
+            case Sparse -> "SPARSE";
+            case Zero -> "ZERO";
+            case Vmfs -> "VMFS";
+            case VmfsSparse -> "VMFSSPARSE";
+            case VmfsRdm -> "VMFSRDM";
+            case VmfsRaw -> "VMFSRAW";
+        };
     }
 
     public String toString() {

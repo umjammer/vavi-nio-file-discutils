@@ -101,20 +101,14 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     public Comparator<byte[]> getCollator(UpperCase upCase) {
-        switch (collationRule) {
-        case Filename:
-            return new FileNameComparer(upCase);
-        case SecurityHash:
-            return new SecurityHashComparer();
-        case UnsignedLong:
-            return new UnsignedLongComparer();
-        case MultipleUnsignedLongs:
-            return new MultipleUnsignedLongComparer();
-        case Sid:
-            return new SidComparer();
-        default:
-            throw new UnsupportedOperationException();
-        }
+        return switch (collationRule) {
+            case Filename -> new FileNameComparer(upCase);
+            case SecurityHash -> new SecurityHashComparer();
+            case UnsignedLong -> new UnsignedLongComparer();
+            case MultipleUnsignedLongs -> new MultipleUnsignedLongComparer();
+            case Sid -> new SidComparer();
+            default -> throw new UnsupportedOperationException();
+        };
     }
 
     private final static class SecurityHashComparer implements Comparator<byte[]> {

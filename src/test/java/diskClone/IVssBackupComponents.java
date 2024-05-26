@@ -408,9 +408,9 @@ public interface IVssBackupComponents {
 //    __in const VSS_ID *rgWriterInstanceId,
 //    __in UINT cInstanceId
 //    ) = 0;
-/**
- * called to expose a snapshot
- */
+///**
+// * called to expose a snapshot
+// */
 //STDMETHOD(ExposeSnapshot)
 //    (
 //    __in VSS_ID snapshotId,

@@ -114,28 +114,24 @@ public final class DiskExtent extends VirtualDiskExtent {
         }
 
         // Early-out for monolithic VMDKs
-        switch (descriptor.getType()) {
-        case Flat:
-        case Vmfs:
-            return MappedStream.fromStream(fileLocator.open(descriptor.getFileName(), FileMode.Open, access, share),
-                                           Ownership.Dispose);
-        case Zero:
-            return new ZeroStream(descriptor.getSizeInSectors() * Sizes.Sector);
-        case Sparse:
-            return new HostedSparseExtentStream(fileLocator.open(descriptor.getFileName(), FileMode.Open, access, share),
-                                                Ownership.Dispose,
-                    diskOffset,
-                                                parent,
-                                                ownsParent);
-        case VmfsSparse:
-            return new ServerSparseExtentStream(fileLocator.open(descriptor.getFileName(), FileMode.Open, access, share),
-                                                Ownership.Dispose,
-                    diskOffset,
-                                                parent,
-                                                ownsParent);
-        default:
-            throw new UnsupportedOperationException();
-
-        }
+        return switch (descriptor.getType()) {
+            case Flat, Vmfs ->
+                    MappedStream.fromStream(fileLocator.open(descriptor.getFileName(), FileMode.Open, access, share),
+                            Ownership.Dispose);
+            case Zero -> new ZeroStream(descriptor.getSizeInSectors() * Sizes.Sector);
+            case Sparse ->
+                    new HostedSparseExtentStream(fileLocator.open(descriptor.getFileName(), FileMode.Open, access, share),
+                            Ownership.Dispose,
+                            diskOffset,
+                            parent,
+                            ownsParent);
+            case VmfsSparse ->
+                    new ServerSparseExtentStream(fileLocator.open(descriptor.getFileName(), FileMode.Open, access, share),
+                            Ownership.Dispose,
+                            diskOffset,
+                            parent,
+                            ownsParent);
+            default -> throw new UnsupportedOperationException();
+        };
     }
 }

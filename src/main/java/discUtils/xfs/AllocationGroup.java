@@ -24,13 +24,19 @@
 
 package discUtils.xfs;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 public class AllocationGroup {
+
+    private static final Logger logger = getLogger(AllocationGroup.class.getName());
 
     public static final int IbtMagic = 0x49414254;
 
@@ -100,7 +106,7 @@ public class AllocationGroup {
         inodeBtreeInfo.loadBtree(context, offset);
         if (superblock.getSbVersion() < 5 && inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtMagic ||
             superblock.getSbVersion() >= 5 && inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtCrcMagic) {
-Debug.printf("%d, %x\n", superblock.getSbVersion(), inodeBtreeInfo.getRootInodeBtree().getMagic());
+logger.log(Level.DEBUG, String.format("%d, %x\n", superblock.getSbVersion(), inodeBtreeInfo.getRootInodeBtree().getMagic()));
             throw new IOException("Invalid IBT magic - probably not an xfs file system");
         }
 

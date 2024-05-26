@@ -16,6 +16,7 @@ import dotnet4j.io.FileStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
@@ -44,10 +45,11 @@ class Qcow2Test {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
     void test1() throws Exception {
         Qcow2 qcow2 = new Qcow2();
         Debug.println(this.qcow2);
         qcow2.open(new FileStream(this.qcow2, FileMode.Open, FileAccess.Read));
-        Debug.println(qcow2.getInfo());
+Debug.println(qcow2.getInfo());
     }
 }

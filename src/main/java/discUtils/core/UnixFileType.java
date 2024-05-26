@@ -72,23 +72,15 @@ public enum UnixFileType {
     Socket;
 
     public static EnumSet<FileAttributes> toFileAttributes(UnixFileType fileType) {
-        switch (fileType) {
-        case Fifo:
-            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
-        case Character:
-            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
-        case Directory:
-            return EnumSet.of(FileAttributes.Directory);
-        case Block:
-            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
-        case Regular:
-            return EnumSet.of(FileAttributes.Normal);
-        case Link:
-            return EnumSet.of(FileAttributes.ReparsePoint);
-        case Socket:
-            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
-        default:
-            return EnumSet.noneOf(FileAttributes.class);
-        }
+        return switch (fileType) {
+            case Fifo -> EnumSet.of(FileAttributes.Device, FileAttributes.System);
+            case Character -> EnumSet.of(FileAttributes.Device, FileAttributes.System);
+            case Directory -> EnumSet.of(FileAttributes.Directory);
+            case Block -> EnumSet.of(FileAttributes.Device, FileAttributes.System);
+            case Regular -> EnumSet.of(FileAttributes.Normal);
+            case Link -> EnumSet.of(FileAttributes.ReparsePoint);
+            case Socket -> EnumSet.of(FileAttributes.Device, FileAttributes.System);
+            default -> EnumSet.noneOf(FileAttributes.class);
+        };
     }
 }

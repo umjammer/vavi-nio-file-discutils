@@ -23,6 +23,8 @@
 package discUtils.vhd;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,11 +50,15 @@ import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * Represents a single .VHD file.
  */
 public final class DiskImageFile extends VirtualDiskLayer {
+
+    private static final Logger logger = getLogger(DiskImageFile.class.getName());
 
     /**
      * The VHD file's dynamic header (if not static).
@@ -146,9 +152,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
             try {
                 fileStream.close();
             } catch (IOException f) {
-                f.printStackTrace();
+                logger.log(Level.DEBUG, f.getMessage(), f);
             }
-            e.printStackTrace();
+            logger.log(Level.DEBUG, e.getMessage(), e);
             throw e;
         }
     }
@@ -387,6 +393,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return list of candidate file locations.
      * @deprecated Use {@link #getParentLocations()} by preference
      */
+    @Deprecated
     public List<String> getParentLocations(String basePath) {
         return getParentLocations(new LocalFileLocator(basePath));
     }
@@ -595,7 +602,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 fileStream.position(pl.platformDataOffset);
                 byte[] buffer = StreamUtilities.readExact(fileStream, pl.platformDataLength);
                 String locationVal = new String(buffer, StandardCharsets.UTF_16LE);
-//Debug.println(locationVal + ", " + pl.platformCode + ", "+ StringUtil.getDump(locationVal));
+//logger.log(Level.DEBUG, locationVal + ", " + pl.platformCode + ", "+ StringUtil.getDump(locationVal));
                 if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.platformCode)) {
                     absPaths.add(locationVal);
                 } else {
@@ -610,7 +617,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         paths.addAll(relPaths);
 
         // As a back-up, try to infer from the parent name...
-        if (paths.size() == 0) {
+        if (paths.isEmpty()) {
             paths.add(fileLocator.resolveRelativePath(dynamicHeader.parentUnicodeName));
         }
 

@@ -22,15 +22,19 @@
 
 package discUtils.registry;
 
-import java.util.logging.Level;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import discUtils.streams.IByteArraySerializable;
 import dotnet4j.io.IOException;
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 public final class BinHeader implements IByteArraySerializable {
+
+    private static final Logger logger = getLogger(BinHeader.class.getName());
 
     public static final int HeaderSize = 0x20;
 
@@ -47,7 +51,7 @@ public final class BinHeader implements IByteArraySerializable {
     @Override public int readFrom(byte[] buffer, int offset) {
         int sig = ByteUtil.readLeInt(buffer, offset + 0);
         if (sig != Signature) {
-Debug.printf(Level.SEVERE, "%x\n", sig);
+logger.log(Level.ERROR, String.format("%x", sig));
             throw new IOException("Invalid signature for registry bin");
         }
 

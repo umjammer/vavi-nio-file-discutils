@@ -71,15 +71,10 @@ public class DescriptorFileEntry {
     public String toString(boolean spaceOut) {
         // VMware workstation appears to be sensitive to spaces, wants them for 'header' values, not for DiskDataBase...
         String sep = spaceOut ? " " : "";
-        switch (type) {
-        case NoValue:
-            return getKey();
-        case Plain:
-            return getKey() + sep + "=" + sep + getValue();
-        case Quoted:
-            return getKey() + sep + "=" + sep + "\"" + getValue() + "\"";
-        default:
-            throw new IllegalStateException(String.format("Unknown type: %s", type));
-        }
+        return switch (type) {
+            case NoValue -> getKey();
+            case Plain -> getKey() + sep + "=" + sep + getValue();
+            case Quoted -> getKey() + sep + "=" + sep + "\"" + getValue() + "\"";
+        };
     }
 }

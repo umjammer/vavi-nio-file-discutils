@@ -24,6 +24,8 @@ package discUtils.squashFs;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
@@ -45,11 +47,15 @@ import dotnet4j.io.Stream;
 import dotnet4j.io.compression.CompressionMode;
 import dotnet4j.util.compat.StringUtilities;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * Class that creates squashFs file systems.
  */
 public final class SquashFileSystemBuilder {
+
+    private static final Logger logger = getLogger(SquashFileSystemBuilder.class.getName());
 
     private static final int DefaultBlockSize = 131072;
 
@@ -301,7 +307,7 @@ public final class SquashFileSystemBuilder {
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.DEBUG, e.getMessage(), e);
                 }
             }
         }

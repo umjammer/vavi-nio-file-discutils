@@ -22,6 +22,7 @@
 
 package discUtils.iso9660;
 
+import java.lang.System.Logger.Level;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -31,15 +32,18 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import java.lang.System.Logger;
 
 import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.IOException;
 import vavi.util.ByteUtil;
 
+import static java.lang.System.getLogger;
+
 
 public class IsoUtilities {
-    private static Logger logger = Logger.getLogger(IsoUtilities.class.getName());
+
+    private static final Logger logger = getLogger(IsoUtilities.class.getName());
 
     public static final int SectorSize = 2048;
 
@@ -191,7 +195,7 @@ public class IsoUtilities {
 
     static String normalizeFileName(String name) {
         String[] parts = splitFileName(name);
-//Debug.println("@: " + parts[0] + '.' + parts[1] + ';' + parts[2]);
+//logger.log(Level.DEBUG, "@: " + parts[0] + '.' + parts[1] + ';' + parts[2]);
         return parts[0] + '.' + parts[1] + ';' + parts[2];
     }
 
@@ -225,7 +229,7 @@ public class IsoUtilities {
                 ver = 1;
             }
         } catch (NumberFormatException e) {
-e.printStackTrace();
+            logger.log(Level.DEBUG, e.getMessage(), e);
             ver = 1;
         }
 
@@ -309,7 +313,7 @@ e.printStackTrace();
             ZonedDateTime time = ZonedDateTime.of(year, month, day, hour, min, sec, hundredths * 10, ZoneId.of("UTC"));
             return time.minus(Duration.ofMinutes(15 * (data[offset + 16] & 0xff))).toInstant().toEpochMilli();
         } catch (DateTimeException e) {
-            logger.warning(e.getMessage());
+            logger.log(Level.WARNING, e.getMessage(), e);
             return Long.MIN_VALUE;
         }
     }

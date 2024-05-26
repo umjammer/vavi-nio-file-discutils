@@ -7,9 +7,10 @@
 package discUtils.fat;
 
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.logging.Level;
 
 import discUtils.core.Geometry;
 import discUtils.streams.util.EndianUtilities;
@@ -17,7 +18,8 @@ import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -28,7 +30,9 @@ import vavi.util.Debug;
  */
 public class ATBootSector implements BootSector {
 
-    private byte[] bootSector;
+    private static final Logger logger = getLogger(ATBootSector.class.getName());
+
+    private final byte[] bootSector;
 
     private String oemName;
     private byte sectorsPerCluster;
@@ -36,7 +40,7 @@ public class ATBootSector implements BootSector {
     private byte media;
     private byte biosDriveNumber;
     private String fileSystemType;
-    private FatType fatVariant;
+    private final FatType fatVariant;
 
     private short bpbBkBootSec;
     private short bpbBytesPerSec;
@@ -61,7 +65,7 @@ public class ATBootSector implements BootSector {
     public ATBootSector(Stream stream) {
         stream.position(0);
         bootSector = StreamUtilities.readSector(stream);
-//Debug.println(Level.FINE, "\n" + StringUtil.getDump(bootSector, 64));
+//logger.log(Level.DEBUG, "\n" + StringUtil.getDump(bootSector, 64));
         fatVariant = detectFATType(bootSector);
         readBPB();
     }
@@ -236,19 +240,19 @@ public class ATBootSector implements BootSector {
         int totalSec = bpbTotSec16 != 0 ? bpbTotSec16 : bpbTotSec32;
         int dataSec = totalSec - (bpbResvdSecCnt + bpbNumFATs * fatSz + rootDirSectors);
         int countOfClusters = dataSec / bpbSecPerClus;
-//Debug.println(Level.FINE, "bpbBytesPerSec: " + bpbBytesPerSec);
-//Debug.println(Level.FINE, "bpbRootEntCnt: " + bpbRootEntCnt);
-//Debug.println(Level.FINE, "bpbFATSz16: " + bpbFATSz16);
-//Debug.println(Level.FINE, "bpbFATSz32: " + bpbFATSz32);
-//Debug.println(Level.FINE, "bpbTotSec16: " + bpbTotSec16);
-//Debug.println(Level.FINE, "bpbTotSec32: " + bpbTotSec32);
-//Debug.println(Level.FINE, "bpbNumFATs: " + bpbNumFATs);
-//Debug.println(Level.FINE, "bpbSecPerClus: " + bpbSecPerClus);
-//Debug.println(Level.FINE, "rootDirSectors: " + rootDirSectors);
-//Debug.println(Level.FINE, "fatSz: " + fatSz);
-//Debug.println(Level.FINE, "totalSec: " + totalSec);
-//Debug.println(Level.FINE, "dataSec: " + dataSec);
-//Debug.println(Level.FINE, "countOfClusters: " + countOfClusters);
+//logger.log(Level.DEBUG, "bpbBytesPerSec: " + bpbBytesPerSec);
+//logger.log(Level.DEBUG, "bpbRootEntCnt: " + bpbRootEntCnt);
+//logger.log(Level.DEBUG, "bpbFATSz16: " + bpbFATSz16);
+//logger.log(Level.DEBUG, "bpbFATSz32: " + bpbFATSz32);
+//logger.log(Level.DEBUG, "bpbTotSec16: " + bpbTotSec16);
+//logger.log(Level.DEBUG, "bpbTotSec32: " + bpbTotSec32);
+//logger.log(Level.DEBUG, "bpbNumFATs: " + bpbNumFATs);
+//logger.log(Level.DEBUG, "bpbSecPerClus: " + bpbSecPerClus);
+//logger.log(Level.DEBUG, "rootDirSectors: " + rootDirSectors);
+//logger.log(Level.DEBUG, "fatSz: " + fatSz);
+//logger.log(Level.DEBUG, "totalSec: " + totalSec);
+//logger.log(Level.DEBUG, "dataSec: " + dataSec);
+//logger.log(Level.DEBUG, "countOfClusters: " + countOfClusters);
         if (countOfClusters < 4085) {
             return FatType.Fat12;
         }
@@ -285,18 +289,18 @@ public class ATBootSector implements BootSector {
             bpbBkBootSec = ByteUtil.readLeShort(bootSector, 50);
             readBS(64);
         }
-//Debug.println(Level.FINE, "bpbBytesPerSec: " + bpbBytesPerSec);
-//Debug.println(Level.FINE, "sectorsPerCluster: " + getSectorsPerCluster());
-//Debug.println(Level.FINE, "bpbRsvdSecCnt: " + bpbRsvdSecCnt);
-//Debug.println(Level.FINE, "fatCount: " + getFatCount());
-//Debug.println(Level.FINE, "bpbRootEntCnt: " + bpbRootEntCnt);
-//Debug.println(Level.FINE, "bpbTotSec16: " + bpbTotSec16);
-Debug.printf(Level.FINE, "media: %02x\n", media);
-//Debug.println(Level.FINE, "bpbFATSz16: " + bpbFATSz16);
-//Debug.println(Level.FINE, "bpbSecPerTrk: " + bpbSecPerTrk);
-//Debug.println(Level.FINE, "bpbNumHeads: " + bpbNumHeads);
-//Debug.println(Level.FINE, "bpbHiddSec: " + bpbHiddSec);
-//Debug.println(Level.FINE, "bpbTotSec32: " + bpbTotSec32);
+//logger.log(Level.DEBUG, "bpbBytesPerSec: " + bpbBytesPerSec);
+//logger.log(Level.DEBUG, "sectorsPerCluster: " + getSectorsPerCluster());
+//logger.log(Level.DEBUG, "bpbRsvdSecCnt: " + bpbRsvdSecCnt);
+//logger.log(Level.DEBUG, "fatCount: " + getFatCount());
+//logger.log(Level.DEBUG, "bpbRootEntCnt: " + bpbRootEntCnt);
+//logger.log(Level.DEBUG, "bpbTotSec16: " + bpbTotSec16);
+logger.log(Level.DEBUG, String.format("media: %02x\n", media));
+//logger.log(Level.DEBUG, "bpbFATSz16: " + bpbFATSz16);
+//logger.log(Level.DEBUG, "bpbSecPerTrk: " + bpbSecPerTrk);
+//logger.log(Level.DEBUG, "bpbNumHeads: " + bpbNumHeads);
+//logger.log(Level.DEBUG, "bpbHiddSec: " + bpbHiddSec);
+//logger.log(Level.DEBUG, "bpbTotSec32: " + bpbTotSec32);
     }
 
     private void readBS(int offset) {

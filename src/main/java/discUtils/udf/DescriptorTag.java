@@ -74,7 +74,7 @@ public class DescriptorTag implements IByteArraySerializable {
         }
 
         for (int i = 0; i < 4; ++i) {
-            checkSum += buffer[offset + i];
+            checkSum = (byte) (checkSum + buffer[offset + i]);
         }
         for (int i = 5; i < 16; ++i) {
             checkSum += buffer[offset + i];

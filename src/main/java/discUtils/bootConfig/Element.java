@@ -376,25 +376,17 @@ public class Element {
     }
 
     private ElementValue loadValue() {
-//Debug.println("getFormat():" + getFormat());
-        switch (getFormat()) {
-        case Boolean:
-            return new BooleanElementValue(storage.getBinary(obj, identifier));
-        case Device:
-            return new DeviceElementValue(storage.getBinary(obj, identifier));
-        case Guid:
-            return new GuidElementValue(storage.getString(obj, identifier));
-        case GuidList:
-            return new GuidListElementValue(storage.getMultiString(obj, identifier));
-        case Integer:
-            return new IntegerElementValue(storage.getBinary(obj, identifier));
-        case IntegerList:
-            return new IntegerListElementValue(storage.getBinary(obj, identifier));
-        case String:
-            return new StringElementValue(storage.getString(obj, identifier));
-        default:
-            throw new IllegalArgumentException("Unknown element format: " + getFormat());
-        }
+//logger.log(Level.DEBUG, "getFormat():" + getFormat());
+        return switch (getFormat()) {
+            case Boolean -> new BooleanElementValue(storage.getBinary(obj, identifier));
+            case Device -> new DeviceElementValue(storage.getBinary(obj, identifier));
+            case Guid -> new GuidElementValue(storage.getString(obj, identifier));
+            case GuidList -> new GuidListElementValue(storage.getMultiString(obj, identifier));
+            case Integer -> new IntegerElementValue(storage.getBinary(obj, identifier));
+            case IntegerList -> new IntegerListElementValue(storage.getBinary(obj, identifier));
+            case String -> new StringElementValue(storage.getString(obj, identifier));
+            default -> throw new IllegalArgumentException("Unknown element format: " + getFormat());
+        };
     }
 
     private void writeValue() {

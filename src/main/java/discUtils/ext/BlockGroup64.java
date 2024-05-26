@@ -27,7 +27,7 @@ import vavi.util.ByteUtil;
 
 public class BlockGroup64 extends BlockGroup {
 
-    private int descriptorSize;
+    private final int descriptorSize;
 
     public int blockBitmapBlockHigh;
 

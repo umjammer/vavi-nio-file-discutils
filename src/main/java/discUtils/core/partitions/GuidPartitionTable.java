@@ -103,7 +103,7 @@ public final class GuidPartitionTable extends PartitionTable {
      * file-systems.
      */
     @Override public List<PartitionInfo> getPartitions() {
-        return Collections.unmodifiableList(getAllEntries().stream().map(e -> new GuidPartitionInfo(this, e)).collect(Collectors.toList()));
+        return getAllEntries().stream().map(e -> new GuidPartitionInfo(this, e)).collect(Collectors.toUnmodifiableList());
     }
 
     /**

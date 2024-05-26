@@ -407,21 +407,17 @@ public final class Geometry {
             capacity = getTotalSectorsLong() * 512L;
         }
 
-        switch (translation) {
-        case None:
-            return this;
-        case Auto:
-            if (isBiosSafe()) {
-                return this;
+        return switch (translation) {
+            case None -> this;
+            case Auto -> {
+                if (isBiosSafe()) {
+                    yield this;
+                }
+                yield lbaAssistedBiosGeometry(capacity);
             }
-            return lbaAssistedBiosGeometry(capacity);
-        case Lba:
-            return lbaAssistedBiosGeometry(capacity);
-        case Large:
-            return largeBiosGeometry(this);
-        default:
-            throw new IllegalArgumentException(String.format("Translation mode '%s' not yet implemented", translation));
-        }
+            case Lba -> lbaAssistedBiosGeometry(capacity);
+            case Large -> largeBiosGeometry(this);
+        };
     }
 
     /**

@@ -171,13 +171,13 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
         return crc;
     }
 
-    private int size;
+    private final int size;
 
     @Override public int size() {
         return size;
     }
 
-    private int sbVersion;
+    private final int sbVersion;
 
     public int getSbVersion() {
         return sbVersion;

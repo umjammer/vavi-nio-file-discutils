@@ -3,47 +3,14 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-nio-file-discutils</artifactId>
-  <version>0.14.5</version>
+  <version>0.14.6</version>
 
   <properties>
-    <vavi-net-fuse.groupId>com.github.umjammer.vavi-apps-fuse</vavi-net-fuse.groupId> <!-- com.github.umjammer.vavi-apps-fuse -->
-    <vavi-net-fuse.version>0.1.8</vavi-net-fuse.version>
+    <vavi-nio-file-fuse.groupId>com.github.umjammer</vavi-nio-file-fuse.groupId> <!-- vavi / com.github.umjammer -->
+    <vavi-nio-file-fuse.version>0.0.16</vavi-nio-file-fuse.version>
   </properties>
 
   <profiles>
-    <profile>
-      <id>use jdk9 above</id>
-      <activation>
-        <jdk>(1.4, 8]</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>3.1.0</version>
-            <executions>
-              <execution>
-                <id>echo-message</id>
-                <phase>validate</phase>
-                <configuration>
-                  <target>
-                    <echo message="🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫" />
-                    <echo message="use jdk9 above !!!!" />
-                    <echo message="🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫" />
-                    <fail/>
-                  </target>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
     <profile>
       <id>spotbugs</id>
       <activation>
@@ -52,12 +19,12 @@
           <value/>
         </property>
       </activation>
-      <build>
+      <reports>
         <plugins>
           <plugin>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-maven-plugin</artifactId>
-            <version>4.7.3.0</version>
+            <version>4.7.3.2</version>
             <dependencies>
               <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
               <dependency>
@@ -68,7 +35,7 @@
               <dependency>
                 <groupId>com.formdev</groupId>
                 <artifactId>flatlaf</artifactId>
-                <version>2.6</version>
+                <version>3.4.1</version>
               </dependency>
             </dependencies>
             <configuration>
@@ -102,7 +69,7 @@
             </executions>
           </plugin>
         </plugins>
-      </build>
+      </reports>
     </profile>
 
     <profile>
@@ -148,14 +115,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>3.11.0</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <encoding>utf-8</encoding>
-          <excludes>
-            <exclude>aaru/image/chd/util/**</exclude>
-          </excludes>
+          <release>17</release>
           <testExcludes>
             <testExclude>discUtils/powerShell/**</testExclude>
             <testExclude>diskClone/**</testExclude>
@@ -166,9 +128,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M7</version>
+        <version>3.2.2</version>
         <configuration>
-          <forkMode>once</forkMode>
+          <reuseForks>true</reuseForks>
           <argLine>
             -Xms2048m -Xmx4096m
             -Djava.util.logging.config.file=${project.build.testOutputDirectory}/logging.properties
@@ -196,7 +158,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.9.2</version>
+        <version>5.10.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -207,19 +169,19 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.9</version>
+      <version>1.1.12</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.umjammer</groupId>
-      <artifactId>java7-fs-base</artifactId>
-      <version>0.0.13v</version>
+      <artifactId>vavi-nio-file-base</artifactId>
+      <version>0.0.14v</version>
     </dependency>
 
     <dependency>
-      <groupId>com.github.umjammer</groupId> <!-- moe.yo3explorer -->
+      <groupId>com.github.umjammer</groupId> <!-- moe.yo3explorer / com.github.umjammer -->
       <artifactId>dotnet4j</artifactId>
-      <version>1.2.2</version>
+      <version>1.2.4</version>
     </dependency>
 
     <dependency>
@@ -236,19 +198,36 @@
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-nio-file-emu</artifactId>
-      <version>2.0.2</version>
+      <version>2.0.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-awt</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>net.java.dev.jna</groupId>
       <artifactId>jna</artifactId>
-      <version>5.12.1</version>
+      <version>5.14.0</version>
     </dependency>
 
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
-      <version>4.10.0</version>
+      <version>4.12.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.tukaani</groupId>
+      <artifactId>xz</artifactId>
+      <version>1.9</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.umjammer</groupId>
+      <artifactId>vavi-sound-flac-nayuki</artifactId>
+      <version>0.0.2</version>
     </dependency>
 
     <dependency>
@@ -273,15 +252,15 @@
     </dependency>
 
     <dependency>
-      <groupId>${vavi-net-fuse.groupId}</groupId>
-      <artifactId>vavi-net-fuse</artifactId>
-      <version>${vavi-net-fuse.version}</version>
+      <groupId>${vavi-nio-file-fuse.groupId}</groupId>
+      <artifactId>vavi-nio-file-fuse</artifactId>
+      <version>${vavi-nio-file-fuse.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${vavi-net-fuse.groupId}</groupId>
-      <artifactId>vavi-net-fuse</artifactId>
-      <version>${vavi-net-fuse.version}</version>
+      <groupId>${vavi-nio-file-fuse.groupId}</groupId>
+      <artifactId>vavi-nio-file-fuse</artifactId>
+      <version>${vavi-nio-file-fuse.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -289,20 +268,20 @@
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.6.4</version>
+      <version>3.12.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.8.5</version>
+      <version>3.9.6</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>com.github.k9mail</groupId>
       <artifactId>jutf7</artifactId>
-      <version>master-SNAPSHOT</version>
+      <version>b931e67a62</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

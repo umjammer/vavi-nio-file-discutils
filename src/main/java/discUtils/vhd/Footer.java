@@ -140,14 +140,14 @@ public class Footer {
     }
 
     public boolean isValid() {
-//Debug.println(FileCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (fileFormatVersion == Version1));
+//logger.log(Level.DEBUG, FileCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (fileFormatVersion == Version1));
         return FileCookie.equals(cookie) && isChecksumValid()
         // && ((features & FeatureReservedMustBeSet) != 0)
                && fileFormatVersion == Version1;
     }
 
     public boolean isChecksumValid() {
-//Debug.printf("%x, %x\n", Checksum, calculateChecksum());
+//logger.log(Level.DEBUG, String.format("%x, %x\n", Checksum, calculateChecksum()));
         return checksum == calculateChecksum();
     }
 
@@ -213,6 +213,6 @@ public class Footer {
         ByteUtil.writeBeUUID(uniqueId, buffer, offset + 68);
         buffer[84] = savedState;
         Arrays.fill(buffer, 85, 85 + 427, (byte) 0);
-//Debug.println("\n" + StringUtil.getDump(buffer));
+//logger.log(Level.DEBUG, "\n" + StringUtil.getDump(buffer));
     }
 }

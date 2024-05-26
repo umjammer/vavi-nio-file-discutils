@@ -93,6 +93,7 @@ public class DiskImageFileTest {
                             .toEpochMilli())) {
                 Disk disk = new Disk(Arrays.asList(diffFile, baseFile), Ownership.None);
                 disk.getContent().write(new byte[512], 0, 512);
+                disk.close();
             }
         }
 

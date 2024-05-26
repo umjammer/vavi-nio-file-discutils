@@ -188,7 +188,7 @@ public class Directory extends File {
         do {
             String suffix = String.format("~%d", i);
             candidate = baseName.substring(0, Math.min(8 - suffix.length(), baseName.length())) + suffix +
-                        (ext.length() > 0 ? "." + ext : "");
+                        (!ext.isEmpty() ? "." + ext : "");
             i++;
         } while (getEntryByName(candidate) != null);
         return candidate;

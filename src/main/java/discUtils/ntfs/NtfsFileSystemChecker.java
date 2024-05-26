@@ -24,6 +24,8 @@ package discUtils.ntfs;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -47,11 +49,15 @@ import dotnet4j.io.Stream;
 import dotnet4j.util.compat.Tuple;
 import vavi.util.ByteUtil;
 
+import static java.lang.System.getLogger;
+
 
 /**
  * Class that checks NTFS file system integrity. Poor relation of chkdsk/fsck.
  */
 public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
+
+    private static final Logger logger = getLogger(NtfsFileSystemChecker.class.getName());
 
     private final Stream target;
 
@@ -135,7 +141,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
         context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
 
-        // -----------------------------------------------------------------------
+        //
         // MASTER FILE TABLE
         //
 
@@ -153,7 +159,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         verifyMft();
         context.getMft().dump(report, "INFO: ");
 
-        // -----------------------------------------------------------------------
+        //
         // INDEXES
         //
 
@@ -162,22 +168,22 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         context.setUpperCase(new UpperCase(ucFile));
         selfCheckIndexes();
 
-        // -----------------------------------------------------------------------
+        //
         // DIRECTORIES
         //
         verifyDirectories();
 
-        // -----------------------------------------------------------------------
+        //
         // WELL KNOWN FILES
         //
         verifyWellKnownFilesExist();
 
-        // -----------------------------------------------------------------------
+        //
         // OBJECT IDS
         //
         verifyObjectIds();
 
-        // -----------------------------------------------------------------------
+        //
         // FINISHED
         //
 
@@ -241,7 +247,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
         for (Map.Entry<UUID, ObjectIdRecord> objIdRec : context.getObjectIds().getAll().entrySet()) {
             if (context.getMft().getRecord(objIdRec.getValue().mftReference) == null) {
-                reportError("ObjectId %s refers to non-existant file %s", objIdRec.getKey(), objIdRec.getValue().mftReference);
+                reportError("ObjectId %s refers to non-existent file %s", objIdRec.getKey(), objIdRec.getValue().mftReference);
             }
         }
     }
@@ -301,7 +307,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                 try {
                     s.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.log(Level.DEBUG, e.getMessage(), e);
                 }
         }
         Bitmap indexBitmap = null;
@@ -414,12 +420,12 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                 } else {
                     if (!verifyMftRecord(recordData, bitmap.isPresent(index), bytesPerSector)) {
                         reportError("Invalid MFT record at index %s", index);
-                        StringBuilder bldr = new StringBuilder();
+                        StringBuilder sb = new StringBuilder();
                         for (byte recordDatum : recordData) {
-                            bldr.append(String.format(" %2x}", recordDatum));
+                            sb.append(String.format(" %2x}", recordDatum));
                         }
 
-                        reportInfo("MFT record binary data for index %s:%s", index, bldr.toString());
+                        reportInfo("MFT record binary data for index %s:%s", index, sb.toString());
                     }
                 }
 
@@ -430,8 +436,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
     }
 
+    /** Cluster allocation check - check for double allocations */
     private void verifyMft() {
-        // Cluster allocation check - check for double allocations
         Map<Long, String> clusterMap = new HashMap<>();
         for (FileRecord fr : context.getMft().getRecords()) {
             if (fr.getFlags().contains(FileRecordFlags.InUse)) {
@@ -483,7 +489,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
                 if (ar.isNonResident()) {
                     NonResidentAttributeRecord nrr = (NonResidentAttributeRecord) ar;
-                    if (nrr.getDataRuns().size() > 0) {
+                    if (!nrr.getDataRuns().isEmpty()) {
                         long totalVcn = 0;
                         for (DataRun run : nrr.getDataRuns()) {
                             totalVcn += run.getRunLength();
@@ -496,7 +502,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.log(Level.DEBUG, e.getMessage(), e);
                 reportError("Failure parsing attribute at pos=%s", pos);
                 return false;
             }

@@ -23,6 +23,8 @@
 package discUtils.vhd;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,13 +44,16 @@ import discUtils.streams.util.Ownership;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
 import dotnet4j.util.compat.Tuple;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
  * Represents a VHD-backed disk.
  */
 public final class Disk extends VirtualDisk {
+
+    private static final Logger logger = getLogger(Disk.class.getName());
 
     /**
      * The stream representing the disk's contents.
@@ -130,7 +135,7 @@ public final class Disk extends VirtualDisk {
      *            the image files.
      */
     public Disk(List<DiskImageFile> files, Ownership ownsFiles) {
-        if (files == null || files.size() == 0) {
+        if (files == null || files.isEmpty()) {
             throw new IllegalArgumentException("At least one file must be provided");
         }
 
@@ -521,7 +526,7 @@ public final class Disk extends VirtualDisk {
 
                     if (!newFile.getUniqueId().equals(file.getParentUniqueId())) {
                         newFile.close(); // TODO check
-Debug.println("close newFile: " + newFile);
+logger.log(Level.DEBUG, "close newFile: " + newFile);
                         throw new IOException(String
                                 .format("Invalid disk chain found looking for parent with id %s, found %s with id %s",
                                         file.getParentUniqueId(),

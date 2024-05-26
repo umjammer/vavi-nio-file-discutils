@@ -80,7 +80,7 @@ public final class BlockBitmap {
                 bytePos++;
             } else {
                 if ((data[offset + bytePos] & (1 << bitPos)) == 0) {
-                    data[offset + bytePos] |= (byte) (1 << bitPos);
+                    data[offset + bytePos] = (byte) (data[offset + bytePos] | (byte) (1 << bitPos));
                     changed = true;
                 }
 

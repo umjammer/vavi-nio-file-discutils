@@ -109,7 +109,7 @@ public class BuiltStream extends SparseStream {
                     int idx = Collections.binarySearch(extents, searchExtent, new ExtentRangeComparer());
                     if (idx >= 0) {
                         BuilderExtent extent = extents.get(idx);
-//Debug.println(position() + ", " + offset + ", " + extent);
+//logger.log(Level.DEBUG, position() + ", " + offset + ", " + extent);
                         extent.prepareForRead();
                         currentExtent = extent;
                     }
@@ -131,7 +131,7 @@ public class BuiltStream extends SparseStream {
                 }
             } else {
                 numRead = currentExtent.read(position, buffer, offset + totalRead, count - totalRead);
-//Debug.println(currentExtent + ", " + position + ", " + numRead + ", " + count + "\n" + StringUtil.getDump(buffer, offset + totalRead, 64));
+//logger.log(Level.DEBUG, currentExtent + ", " + position + ", " + numRead + ", " + count + "\n" + StringUtil.getDump(buffer, offset + totalRead, 64));
             }
 
             position += numRead;
@@ -179,7 +179,7 @@ public class BuiltStream extends SparseStream {
         int min = 0;
         int max = extents.size() - 1;
 
-        if (extents.size() == 0 ||
+        if (extents.isEmpty() ||
             extents.get(extents.size() - 1).getStart() + extents.get(extents.size() - 1).getLength() <= pos) {
             return null;
         }

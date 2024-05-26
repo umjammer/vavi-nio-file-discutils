@@ -33,6 +33,8 @@
 package aaru.image.qcow2;
 
 import java.io.ByteArrayInputStream;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.time.Instant;
@@ -62,12 +64,16 @@ import dotnet4j.io.compression.DeflateStream;
 import dotnet4j.util.compat.ArrayHelpers;
 import dotnet4j.util.compat.Tuple4;
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
 import vavi.util.serdes.Serdes;
+
+import static java.lang.System.getLogger;
 
 
 /** Implements reading and writing QEMU's Copy On Write v2 and v3 disk images */
 public class Qcow2 {
+
+    private static final Logger logger = getLogger(Qcow2.class.getName());
+
     Map<Long, byte[]> clusterCache;
     int clusterSectors;
     int clusterSize;
@@ -196,66 +202,56 @@ public class Qcow2 {
             throw new IOException(e);
         }
 
-        Debug.printf("QCOW plugin: qHdr.magic = 0x%08x", header.magic);
-        Debug.printf("QCOW plugin: qHdr.version = %d", header.version);
-        Debug.printf("QCOW plugin: qHdr.backingFileOffset = %d", header.backingFileOffset);
-        Debug.printf("QCOW plugin: qHdr.backingFileSize = %d", header.backingFileSize);
-        Debug.printf("QCOW plugin: qHdr.clusterBits = %d", header.clusterBits);
-        Debug.printf("QCOW plugin: qHdr.size = %d", header.size);
-        Debug.printf("QCOW plugin: qHdr.cryptMethod = %d", header.cryptMethod);
-        Debug.printf("QCOW plugin: qHdr.l1Size = %d", header.l1Size);
-        Debug.printf("QCOW plugin: qHdr.l1TableOffset = %d", header.l1TableOffset);
-        Debug.printf("QCOW plugin: qHdr.refCountTableOffset = %d", header.refCountTableOffset);
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.magic = 0x%08x", header.magic));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.version = %d", header.version));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.backingFileOffset = %d", header.backingFileOffset));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.backingFileSize = %d", header.backingFileSize));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.clusterBits = %d", header.clusterBits));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.size = %d", header.size));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.cryptMethod = %d", header.cryptMethod));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l1Size = %d", header.l1Size));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l1TableOffset = %d", header.l1TableOffset));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.refCountTableOffset = %d", header.refCountTableOffset));
 
-        Debug.printf("QCOW plugin: qHdr.refCountTableClusters = %d",
-                header.refCountTableClusters);
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.refCountTableClusters = %d", header.refCountTableClusters));
 
-        Debug.printf("QCOW plugin: qHdr.snapshots = %d", header.snapshots);
-        Debug.printf("QCOW plugin: qHdr.snapshotsOffset = %d", header.snapshotsOffset);
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.snapshots = %d", header.snapshots));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.snapshotsOffset = %d", header.snapshotsOffset));
 
         if (header.version >= Constants.QCOW_VERSION3) {
-            Debug.printf("QCOW plugin: qHdr.features = %x", header.features);
-            Debug.printf("QCOW plugin: qHdr.compatFeatures = %x", header.compatFeatures);
-            Debug.printf("QCOW plugin: qHdr.autoClearFeatures = %x", header.autoClearFeatures);
-            Debug.printf("QCOW plugin: qHdr.refCountOrder = %d", header.refCountOrder);
-            Debug.printf("QCOW plugin: qHdr.headerLength = %d", header.headerLength);
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.features = %x", header.features));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.compatFeatures = %x", header.compatFeatures));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.autoClearFeatures = %x", header.autoClearFeatures));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.refCountOrder = %d", header.refCountOrder));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.headerLength = %d", header.headerLength));
 
             if ((header.features & Constants.QCOW_FEATURE_MASK) != 0) {
-                Debug.printf("Unknown incompatible features %x enabled, not proceeding.", header.features & Constants.QCOW_FEATURE_MASK);
+logger.log(Level.DEBUG, String.format("Unknown incompatible features %x enabled, not proceeding.", header.features & Constants.QCOW_FEATURE_MASK));
 
                 throw new IllegalArgumentException();
             }
         }
 
         if (header.size <= 1) {
-            Debug.println("Image size is too small");
+            logger.log(Level.DEBUG, "Image size is too small");
 
             throw new IllegalArgumentException();
         }
 
-        if (header.clusterBits < 9 ||
-                header.clusterBits > 16) {
-            Debug.println("Cluster size must be between 512 bytes and 64 Kbytes");
-
-            throw new IllegalArgumentException();
+        if (header.clusterBits < 9 || header.clusterBits > 16) {
+            throw new IllegalArgumentException("Cluster size must be between 512 bytes and 64 Kbytes");
         }
 
         if (header.cryptMethod > Constants.QCOW_ENCRYPTION_AES) {
-            Debug.println("Invalid encryption method");
-
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid encryption method");
         }
 
         if (header.cryptMethod > Constants.QCOW_ENCRYPTION_NONE) {
-            Debug.println("AES encrypted images not yet supported");
-
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("AES encrypted images not yet supported");
         }
 
         if (header.backingFileOffset != 0) {
-            Debug.println("Differencing images not yet supported");
-
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Differencing images not yet supported");
         }
 
         clusterSize = 1 << header.clusterBits;
@@ -263,18 +259,18 @@ public class Qcow2 {
         l2Bits = header.clusterBits - 3;
         l2Size = 1 << l2Bits;
 
-        Debug.printf("QCOW plugin: qHdr.clusterSize = %d", clusterSize);
-        Debug.printf("QCOW plugin: qHdr.clusterSectors = %d", clusterSectors);
-        Debug.printf("QCOW plugin: qHdr.qHdr.l1Size = %d", header.l1Size);
-        Debug.printf("QCOW plugin: qHdr.l2Size = %d", l2Size);
-        Debug.printf("QCOW plugin: qHdr.sectors = %d", imageInfo.sectors);
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.clusterSize = %d", clusterSize));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.clusterSectors = %d", clusterSectors));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.qHdr.l1Size = %d", header.l1Size));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l2Size = %d", l2Size));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.sectors = %d", imageInfo.sectors));
 
         byte[] l1TableB = new byte[header.l1Size * 8];
         stream.seek(header.l1TableOffset, SeekOrigin.Begin);
         stream.read(l1TableB, 0, header.l1Size * 8);
         l1Table = new long[header.l1Size];
         ByteBuffer.wrap(l1TableB).order(ByteOrder.LITTLE_ENDIAN).asLongBuffer().put(l1Table);
-        Debug.printf("QCOW plugin: Reading L1 table");
+logger.log(Level.DEBUG, String.format("QCOW plugin: Reading L1 table"));
 
         l1Mask = 0;
         int c = 0;
@@ -302,10 +298,10 @@ public class Qcow2 {
         for (int i = 0; i < header.clusterBits; i++)
             sectorMask = (sectorMask << 1) + 1;
 
-        Debug.printf("QCOW plugin: qHdr.l1Mask = %x", l1Mask);
-        Debug.printf("QCOW plugin: qHdr.l1Shift = %d", l1Shift);
-        Debug.printf("QCOW plugin: qHdr.l2Mask = %x", l2Mask);
-        Debug.printf("QCOW plugin: qHdr.sectorMask = %x", sectorMask);
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l1Mask = %x", l1Mask));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l1Shift = %d", l1Shift));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l2Mask = %x", l2Mask));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.sectorMask = %x", sectorMask));
 
         maxL2TableCache = Constants.MAX_CACHE_SIZE / (l2Size * 8);
         maxClusterCache = Constants.MAX_CACHE_SIZE / clusterSize;
@@ -324,7 +320,7 @@ public class Qcow2 {
         imageInfo.xmlMediaType = XmlMediaType.BlockMedia;
         imageInfo.mediaType = "GENERIC_HDD";
         imageInfo.imageSize = header.size;
-        imageInfo.version = "" + header.version;
+        imageInfo.version = String.valueOf(header.version);
 
         imageInfo.cylinders = (int) (imageInfo.sectors / 16 / 63);
         imageInfo.heads = 16;
@@ -349,8 +345,7 @@ public class Qcow2 {
         long l1Off = (byteAddress & l1Mask) >> l1Shift;
 
         if (l1Off >= l1Table.length) {
-            Debug.printf("QCOW2 plugin",
-                    "Trying to read past L1 table, position %d of a max %d", l1Off, l1Table.length);
+logger.log(Level.DEBUG, String.format("QCOW2 plugin: Trying to read past L1 table, position %d of a max %d", l1Off, l1Table.length));
 
             throw new IllegalArgumentException();
         }
@@ -367,7 +362,7 @@ public class Qcow2 {
             imageStream.seek(l1Table[(int) l1Off] & Constants.QCOW_FLAGS_MASK, SeekOrigin.Begin);
             byte[] l2TableB = new byte[l2Size * 8];
             imageStream.read(l2TableB, 0, l2Size * 8);
-            Debug.printf("QCOW plugin: Reading L2 table #%d", l1Off);
+logger.log(Level.DEBUG, String.format("QCOW plugin: Reading L2 table #%d", l1Off));
             l2Table = ByteBuffer.wrap(l2TableB).order(ByteOrder.LITTLE_ENDIAN).asLongBuffer().array();
 
             if (l2TableCache.size() >= maxL2TableCache)
@@ -449,6 +444,8 @@ public class Qcow2 {
         }
 
         buffer[0] = ms.toArray();
+
+        ms.close();
 
         return 0;
     }
@@ -846,8 +843,8 @@ public class Qcow2 {
             throw new IOException(e);
         }
 
-        Debug.printf("QCOW plugin: qHdr.magic = 0x%08x", header.magic);
-        Debug.printf("QCOW plugin: qHdr.version = %d", header.version);
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.magic = 0x%08x", header.magic));
+logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.version = %d", header.version));
 
         return header.magic == Constants.QCOW_MAGIC && (header.version == Constants.QCOW_VERSION2 || header.version == Constants.QCOW_VERSION3);
     }

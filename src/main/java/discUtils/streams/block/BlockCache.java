@@ -117,7 +117,7 @@ public class BlockCache<T extends Block> {
     private T getFreeBlock(Class<T> c) {
         T block;
 
-        if (freeBlocks.size() > 0) {
+        if (!freeBlocks.isEmpty()) {
             int idx = freeBlocks.size() - 1;
             block = freeBlocks.get(idx);
             freeBlocks.remove(idx);

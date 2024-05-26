@@ -419,18 +419,11 @@ public final class Disk extends VirtualDisk {
     private static DiskCreateType diffDiskCreateType(VirtualDiskLayer layer) {
         DiskImageFile vmdkLayer = layer instanceof DiskImageFile ? (DiskImageFile) layer : null;
         if (vmdkLayer != null) {
-            switch (vmdkLayer.getCreateType()) {
-            case FullDevice:
-            case MonolithicFlat:
-            case MonolithicSparse:
-            case PartitionedDevice:
-            case StreamOptimized:
-            case TwoGbMaxExtentFlat:
-            case TwoGbMaxExtentSparse:
-                return DiskCreateType.MonolithicSparse;
-            default:
-                return DiskCreateType.VmfsSparse;
-            }
+            return switch (vmdkLayer.getCreateType()) {
+                case FullDevice, MonolithicFlat, MonolithicSparse, PartitionedDevice, StreamOptimized,
+                     TwoGbMaxExtentFlat, TwoGbMaxExtentSparse -> DiskCreateType.MonolithicSparse;
+                default -> DiskCreateType.VmfsSparse;
+            };
         }
 
         return DiskCreateType.MonolithicSparse;

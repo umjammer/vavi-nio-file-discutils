@@ -28,7 +28,7 @@ import discUtils.streams.util.StreamUtilities;
 
 final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
 
-    private Class<TKey> keyClass;
+    private final Class<TKey> keyClass;
 
     private final IBuffer data;
 

@@ -143,7 +143,7 @@ public class ZlibStream extends Stream {
                 stream.seek(-4, SeekOrigin.End);
                 byte[] footerBuffer = StreamUtilities.readExact(stream, 4);
                 if (ByteUtil.readBeInt(footerBuffer, 0) != adler32.getValue()) {
-//Debug.printf("R: %08x, %08x\n", ByteUtil.readBeInt(footerBuffer, 0), adler32.getValue());
+//logger.log(Level.DEBUG, String.format("R: %08x, %08x\n", ByteUtil.readBeInt(footerBuffer, 0), adler32.getValue()));
                     throw new dotnet4j.io.IOException("Corrupt decompressed data detected");
                 }
             }
@@ -154,7 +154,7 @@ public class ZlibStream extends Stream {
 
             byte[] footerBuffer = new byte[4];
             ByteUtil.writeBeInt(adler32.getValue(), footerBuffer, 0);
-//Debug.printf("W: %08x, %s\n", adler32.getValue(), stream);
+//logger.log(Level.DEBUG, String.format("W: %08x, %s\n", adler32.getValue(), stream));
             stream.write(footerBuffer, 0, 4);
         }
     }
@@ -178,7 +178,7 @@ public class ZlibStream extends Stream {
         checkParams(buffer, offset, count);
 
         int numRead = deflateStream.read(buffer, offset, count);
-//Debug.printf("r: %d\n", numRead);
+//logger.log(Level.DEBUG, String.format("r: %d\n", numRead));
         adler32.process(buffer, offset, numRead);
         return numRead;
     }
@@ -214,7 +214,7 @@ public class ZlibStream extends Stream {
         checkParams(buffer, offset, count);
 
         adler32.process(buffer, offset, count);
-//Debug.println("w: " + count + ", " + deflateStream);
+//logger.log(Level.DEBUG, "w: " + count + ", " + deflateStream);
         deflateStream.write(buffer, offset, count);
         deflateStream.flush();
     }

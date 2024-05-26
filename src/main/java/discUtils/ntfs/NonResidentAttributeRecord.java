@@ -99,7 +99,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
             compressionUnitSize = DefaultCompressionUnitSize;
         }
 
-        if (dataRuns != null && dataRuns.size() != 0) {
+        if (dataRuns != null && !dataRuns.isEmpty()) {
             lastVCN = startingVCN;
             for (DataRun run : dataRuns) {
                 lastVCN += run.getRunLength();
@@ -207,18 +207,18 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         }
 
         dataRuns.set(idx, newRun);
-//Debug.println("~~[" + idx + "]: " + newRun + " / " + StringUtil.paramString(getDataRuns()));
+//logger.log(Level.DEBUG, "~~[" + idx + "]: " + newRun + " / " + StringUtil.paramString(getDataRuns()));
     }
 
     public int removeRun(DataRun run) {
         int idx = dataRuns.indexOf(run);
         if (idx < 0) {
-//Debug.println("-x: " + run + " / " + StringUtil.paramString(getDataRuns()));
+//logger.log(Level.DEBUG, "-x: " + run + " / " + StringUtil.paramString(getDataRuns()));
             throw new NoSuchElementException("Attempt to remove non-existant run: " + run);
         }
 
         dataRuns.remove(idx);
-//Debug.println("--[" + idx + "]: " + run + " / " + StringUtil.paramString(getDataRuns()));
+//logger.log(Level.DEBUG, "--[" + idx + "]: " + run + " / " + StringUtil.paramString(getDataRuns()));
         return idx;
     }
 
@@ -229,12 +229,12 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         }
 
         dataRuns.add(idx + 1, newRun);
-//Debug.println("+2[" + (idx + 1) + "]: " + newRun + " / " + StringUtil.paramString(getDataRuns()));
+//logger.log(Level.DEBUG, "+2[" + (idx + 1) + "]: " + newRun + " / " + StringUtil.paramString(getDataRuns()));
     }
 
     public void insertRun(int index, DataRun newRun) {
         dataRuns.add(index, newRun);
-//Debug.println("+1[" + index + "]: " + newRun + " / " + getDataRuns());
+//logger.log(Level.DEBUG, "+1[" + index + "]: " + newRun + " / " + getDataRuns());
     }
 
     @Override public List<Range> getClusters() {

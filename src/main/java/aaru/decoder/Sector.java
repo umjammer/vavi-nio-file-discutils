@@ -299,7 +299,7 @@ public class Sector {
 
         if ((min & 0xff) > 0x90) {
             lba += 405000;
-            min -= 0x90;
+            min = (byte) (min - (byte) 0x90);
             moreThan90 = true;
         }
 

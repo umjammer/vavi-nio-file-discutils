@@ -22,18 +22,23 @@
 
 package discUtils.vdi;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 public class HeaderRecord {
+
+    private static final Logger logger = getLogger(HeaderRecord.class.getName());
+
     private FileVersion fileVersion;
 
     public int blockCount;
@@ -167,7 +172,7 @@ public class HeaderRecord {
     public void write(Stream s) {
         byte[] buffer = new byte[headerSize];
         write(buffer, 0);
-//Debug.println(s.position());
+//logger.log(Level.DEBUG, s.position());
         s.write(buffer, 0, buffer.length);
     }
 
@@ -186,7 +191,7 @@ public class HeaderRecord {
             ByteUtil.writeLeUUID(parentId, buffer, offset + 332);
         } else if (fileVersion.getMajor() == 1 && fileVersion.getMinor() == 1) {
             ByteUtil.writeLeInt(headerSize, buffer, offset + 0);
-Debug.println(Level.FINE, headerSize);
+logger.log(Level.DEBUG, headerSize);
             ByteUtil.writeLeInt(imageType.ordinal(), buffer, offset + 4);
             ByteUtil.writeLeInt(flags.ordinal(), buffer, offset + 8);
             EndianUtilities.stringToBytes(comment, buffer, offset + 12, 256);

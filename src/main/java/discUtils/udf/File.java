@@ -115,7 +115,7 @@ public class File implements IVfsFile {
             attribs.add(FileAttributes.Hidden);
         }
 
-        if (attribs.size() == 0) {
+        if (attribs.isEmpty()) {
             attribs.add(FileAttributes.Normal);
         }
 

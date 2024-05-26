@@ -24,6 +24,8 @@ package discUtils.core;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -32,7 +34,6 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import discUtils.core.internal.LogicalVolumeFactory;
 import discUtils.core.partitions.PartitionInfo;
@@ -40,7 +41,8 @@ import discUtils.core.partitions.PartitionTable;
 import discUtils.core.raw.Disk;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -51,6 +53,8 @@ import vavi.util.Debug;
  * redundancy or other purposes.
  */
 public final class VolumeManager implements Serializable {
+
+    private static final Logger logger = getLogger(VolumeManager.class.getName());
 
     private static final UUID EMPTY = new UUID(0L, 0L);
 
@@ -204,7 +208,7 @@ public final class VolumeManager implements Serializable {
                                                           LogicalVolumeStatus.Healthy);
 
             result.put(lvi.getIdentity(), lvi);
-Debug.println(Level.FINE, "Lp: " + lvi.getIdentity());
+logger.log(Level.DEBUG, "Lp: " + lvi.getIdentity());
         }
     }
 
@@ -261,13 +265,13 @@ Debug.println(Level.FINE, "Lp: " + lvi.getIdentity());
                     for (PartitionInfo part : table.getPartitions()) {
                         PhysicalVolumeInfo pvi = new PhysicalVolumeInfo(diskId, disk, part);
                         result.put(pvi.getIdentity(), pvi);
-Debug.println(Level.FINE, "P: " + pvi.getIdentity());
+logger.log(Level.DEBUG, "P: " + pvi.getIdentity());
                     }
                 }
             } else {
                 PhysicalVolumeInfo pvi = new PhysicalVolumeInfo(diskId, disk);
                 result.put(pvi.getIdentity(), pvi);
-Debug.println(Level.FINE, "P: " + pvi.getIdentity());
+logger.log(Level.DEBUG, "P: " + pvi.getIdentity());
             }
         }
 
@@ -278,7 +282,7 @@ Debug.println(Level.FINE, "P: " + pvi.getIdentity());
         VirtualDisk disk = disks.get(ordinal);
         if (disk.isPartitioned()) {
             UUID guid = disk.getPartitions().getDiskGuid();
-Debug.println(Level.FINER, "guid: " + guid);
+logger.log(Level.TRACE, "guid: " + guid);
             if (!guid.equals(EMPTY)) {
                 return "DG" + String.format("{%s}", guid);
             }

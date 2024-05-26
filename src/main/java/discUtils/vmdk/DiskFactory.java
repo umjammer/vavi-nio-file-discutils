@@ -37,6 +37,7 @@ import dotnet4j.io.FileAccess;
 
 @VirtualDiskFactoryAttribute(type = "VMDK", fileExtensions = { ".vmdk" })
 public final class DiskFactory implements VirtualDiskFactory {
+
     @Override
     public String[] getVariants() {
         return new String[] {
@@ -86,36 +87,23 @@ public final class DiskFactory implements VirtualDiskFactory {
     }
 
     private static DiskCreateType variantToCreateType(String variant) {
-        switch (variant) {
-        case "fixed":
-            return DiskCreateType.MonolithicFlat;
-        case "dynamic":
-            return DiskCreateType.MonolithicSparse;
-        case "vmfsfixed":
-            return DiskCreateType.Vmfs;
-        case "vmfsdynamic":
-            return DiskCreateType.VmfsSparse;
-        default:
-            throw new IllegalArgumentException(String.format("Unknown VMDK disk variant '%s'", variant));
-        }
+        return switch (variant) {
+            case "fixed" -> DiskCreateType.MonolithicFlat;
+            case "dynamic" -> DiskCreateType.MonolithicSparse;
+            case "vmfsfixed" -> DiskCreateType.Vmfs;
+            case "vmfsdynamic" -> DiskCreateType.VmfsSparse;
+            default -> throw new IllegalArgumentException(String.format("Unknown VMDK disk variant '%s'", variant));
+        };
     }
 
     private static String createTypeToVariant(DiskCreateType createType) {
-        switch (createType) {
-        case MonolithicFlat:
-        case TwoGbMaxExtentFlat:
-            return "fixed";
-        case MonolithicSparse:
-        case TwoGbMaxExtentSparse:
-            return "dynamic";
-        case Vmfs:
-            return "vmfsfixed";
-        case VmfsSparse:
-            return "vmfsdynamic";
-        default:
-            return "fixed";
-
-        }
+        return switch (createType) {
+            case MonolithicFlat, TwoGbMaxExtentFlat -> "fixed";
+            case MonolithicSparse, TwoGbMaxExtentSparse -> "dynamic";
+            case Vmfs -> "vmfsfixed";
+            case VmfsSparse -> "vmfsdynamic";
+            default -> "fixed";
+        };
     }
 
 }

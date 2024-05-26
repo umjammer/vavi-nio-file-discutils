@@ -105,7 +105,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
             fileName = locator.getFileFromPath(path);
         } catch (IOException e) {
-e.printStackTrace();
+e.printStackTrace(System.err);
             throw new dotnet4j.io.IOException(e);
         }
     }

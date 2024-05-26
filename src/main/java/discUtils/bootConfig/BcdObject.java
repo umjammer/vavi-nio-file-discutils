@@ -128,7 +128,7 @@ public class BcdObject {
 
     private static final Map<UUID, String> guidToName;
 
-    private UUID id;
+    private final UUID id;
 
     private final BaseStorage storage;
 

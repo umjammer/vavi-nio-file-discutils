@@ -149,12 +149,12 @@ public class DynamicHeader {
     }
 
     public boolean isValid() {
-//Debug.println(HeaderCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (headerVersion == Version1));
+//logger.log(Level.DEBUG, HeaderCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (headerVersion == Version1));
         return HeaderCookie.equals(cookie) && isChecksumValid() && headerVersion == Version1;
     }
 
     public boolean isChecksumValid() {
-//Debug.println(Checksum == calculateChecksum());
+//logger.log(Level.DEBUG, Checksum == calculateChecksum());
         return checksum == calculateChecksum();
     }
 

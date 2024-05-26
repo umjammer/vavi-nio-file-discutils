@@ -25,13 +25,14 @@ package discUtils.ntfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -65,7 +66,8 @@ import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.Stream;
 import dotnet4j.security.accessControl.RawSecurityDescriptor;
 import dotnet4j.util.compat.StringUtilities;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -75,6 +77,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                                   IClusterBasedFileSystem,
                                   IWindowsFileSystem,
                                   IDiagnosticTraceable {
+
+    private static final Logger logger = getLogger(NtfsFileSystem.class.getName());
 
     private static final String FS = java.io.File.separator;
 
@@ -136,7 +140,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         // Get volume information (includes version number)
         File volumeInfoFile = getFile(MasterFileTable.VolumeIndex);
         volumeInfo = volumeInfoFile.getStream(AttributeType.VolumeInformation, null).getContent(VolumeInformation.class);
-Debug.println(Level.FINE, volumeInfo);
+logger.log(Level.DEBUG, volumeInfo);
 
         // Initialize access to the other well-known metadata files
         context.setClusterBitmap(new ClusterBitmap(getFile(MasterFileTable.BitmapIndex)));
@@ -1740,8 +1744,7 @@ Debug.println(Level.FINE, volumeInfo);
         }
 
         BlockCompressor _disposableCompressor = context.getOptions().getCompressor();
-        if (_disposableCompressor instanceof Closeable) {
-            Closeable disposableCompressor = (Closeable) _disposableCompressor;
+        if (_disposableCompressor instanceof Closeable disposableCompressor) {
             disposableCompressor.close();
             context.getOptions().setCompressor(null);
         }

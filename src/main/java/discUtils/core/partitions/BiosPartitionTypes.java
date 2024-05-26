@@ -109,87 +109,47 @@ public class BiosPartitionTypes {
      * @return The string representation.
      */
     public static String toString(byte type) {
-        switch (type) {
-        case 0x00:
-            return "Unused";
-        case 0x01:
-            return "FAT12";
-        case 0x02:
-            return "XENIX root";
-        case 0x03:
-            return "XENIX /usr";
-        case 0x04:
-            return "FAT16 (<32M)";
-        case 0x05:
-            return "Extended (non-LBA)";
-        case 0x06:
-            return "FAT16 (>32M)";
-        case 0x07:
-            return "IFS (NTFS or HPFS)";
-        case 0x0B:
-            return "FAT32 (non-LBA)";
-        case 0x0C:
-            return "FAT32 (LBA)";
-        case 0x0E:
-            return "FAT16 (LBA)";
-        case 0x0F:
-            return "Extended (LBA)";
-        case 0x11:
-            return "Hidden FAT12";
-        case 0x12:
-            return "Vendor Config/Recovery/diagnostics";
-        case 0x14:
-            return "Hidden FAT16 (<32M)";
-        case 0x16:
-            return "Hidden FAT16 (>32M)";
-        case 0x17:
-            return "Hidden IFS (NTFS or HPFS)";
-        case 0x1B:
-            return "Hidden FAT32 (non-LBA)";
-        case 0x1C:
-            return "Hidden FAT32 (LBA)";
-        case 0x1E:
-            return "Hidden FAT16 (LBA)";
-        case 0x27:
-            return "Windows Recovery Environment";
-        case 0x42:
-            return "Windows Dynamic Volume";
-        case (byte) 0x80:
-            return "Minix v1.1 - v1.4a";
-        case (byte) 0x81:
-            return "Minix / Early Linux";
-        case (byte) 0x82:
-            return "Linux swap";
-        case (byte) 0x83:
-            return "Linux Native";
-        case (byte) 0x84:
-            return "Hibernation";
-        case (byte) 0x8E:
-            return "Linux LVM";
-        case (byte) 0xA0:
-            return "Laptop Hibernation";
-        case (byte) 0xA8:
-            return "Mac OS-X";
-        case(byte)  0xAB:
-            return "Mac OS-X Boot";
-        case (byte) 0xAF:
-            return "Mac OS-X HFS";
-        case (byte) 0xC0:
-            return "NTFT";
-        case (byte) 0xDE:
-            return "Dell OEM";
-        case (byte) 0xEE:
-            return "GPT Protective";
-        case (byte) 0xEF:
-            return "EFI";
-        case (byte) 0xFB:
-            return "VMware File System";
-        case (byte) 0xFC:
-            return "VMware swap";
-        case (byte) 0xFE:
-            return "IBM OEM";
-        default:
-            return "Unknown";
-        }
+        return switch (type) {
+            case 0x00 -> "Unused";
+            case 0x01 -> "FAT12";
+            case 0x02 -> "XENIX root";
+            case 0x03 -> "XENIX /usr";
+            case 0x04 -> "FAT16 (<32M)";
+            case 0x05 -> "Extended (non-LBA)";
+            case 0x06 -> "FAT16 (>32M)";
+            case 0x07 -> "IFS (NTFS or HPFS)";
+            case 0x0B -> "FAT32 (non-LBA)";
+            case 0x0C -> "FAT32 (LBA)";
+            case 0x0E -> "FAT16 (LBA)";
+            case 0x0F -> "Extended (LBA)";
+            case 0x11 -> "Hidden FAT12";
+            case 0x12 -> "Vendor Config/Recovery/diagnostics";
+            case 0x14 -> "Hidden FAT16 (<32M)";
+            case 0x16 -> "Hidden FAT16 (>32M)";
+            case 0x17 -> "Hidden IFS (NTFS or HPFS)";
+            case 0x1B -> "Hidden FAT32 (non-LBA)";
+            case 0x1C -> "Hidden FAT32 (LBA)";
+            case 0x1E -> "Hidden FAT16 (LBA)";
+            case 0x27 -> "Windows Recovery Environment";
+            case 0x42 -> "Windows Dynamic Volume";
+            case (byte) 0x80 -> "Minix v1.1 - v1.4a";
+            case (byte) 0x81 -> "Minix / Early Linux";
+            case (byte) 0x82 -> "Linux swap";
+            case (byte) 0x83 -> "Linux Native";
+            case (byte) 0x84 -> "Hibernation";
+            case (byte) 0x8E -> "Linux LVM";
+            case (byte) 0xA0 -> "Laptop Hibernation";
+            case (byte) 0xA8 -> "Mac OS-X";
+            case (byte) 0xAB -> "Mac OS-X Boot";
+            case (byte) 0xAF -> "Mac OS-X HFS";
+            case (byte) 0xC0 -> "NTFT";
+            case (byte) 0xDE -> "Dell OEM";
+            case (byte) 0xEE -> "GPT Protective";
+            case (byte) 0xEF -> "EFI";
+            case (byte) 0xFB -> "VMware File System";
+            case (byte) 0xFC -> "VMware swap";
+            case (byte) 0xFE -> "IBM OEM";
+            default -> "Unknown";
+        };
     }
 }

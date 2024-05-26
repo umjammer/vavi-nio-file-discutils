@@ -78,31 +78,24 @@ abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializ
         BTreeNodeDescriptor descriptor = EndianUtilities
                 .toStruct(BTreeNodeDescriptor.class, buffer, offset);
 
-        switch (descriptor.kind) {
-        case HeaderNode:
-            return new BTreeHeaderNode<>(clazz, tree, descriptor);
-        case IndexNode:
-        case LeafNode:
-            throw new UnsupportedOperationException("Attempt to read index/leaf node without key and data types");
-        default:
-            throw new UnsupportedOperationException("Unrecognized BTree node kind: " + descriptor.kind);
-        }
+        return switch (descriptor.kind) {
+            case HeaderNode -> new BTreeHeaderNode<>(clazz, tree, descriptor);
+            case IndexNode, LeafNode ->
+                    throw new UnsupportedOperationException("Attempt to read index/leaf node without key and data types");
+            default -> throw new UnsupportedOperationException("Unrecognized BTree node kind: " + descriptor.kind);
+        };
     }
 
     public static <TKey extends BTreeKey<?>> BTreeNode<TKey> readNode2(Class<TKey> clazz, BTree<?> tree, byte[] buffer, int offset) {
         BTreeNodeDescriptor descriptor = EndianUtilities
                 .toStruct(BTreeNodeDescriptor.class, buffer, offset);
 
-        switch (descriptor.kind) {
-        case HeaderNode:
-            return new BTreeHeaderNode<>(clazz, tree, descriptor);
-        case LeafNode:
-            return new BTreeLeafNode<>(clazz, tree, descriptor);
-        case IndexNode:
-            return new BTreeIndexNode<>(clazz, tree, descriptor);
-        default:
-            throw new UnsupportedOperationException("Unrecognized BTree node kind: " + descriptor.kind);
-        }
+        return switch (descriptor.kind) {
+            case HeaderNode -> new BTreeHeaderNode<>(clazz, tree, descriptor);
+            case LeafNode -> new BTreeLeafNode<>(clazz, tree, descriptor);
+            case IndexNode -> new BTreeIndexNode<>(clazz, tree, descriptor);
+            default -> throw new UnsupportedOperationException("Unrecognized BTree node kind: " + descriptor.kind);
+        };
     }
 
     protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {

@@ -130,7 +130,7 @@ public class SubStream extends MappedStream {
 
         parent.position(first + position);
         int numRead = parent.read(buffer, offset, (int) Math.min(count, Math.min(length - position, Integer.MAX_VALUE)));
-//if (numRead > 1) Debug.println(parent + ", " + first + ", " + position + ", " + numRead + "\n" + StringUtil.getDump(buffer, offset, Math.min(64, numRead)));
+//if (numRead > 1) logger.log(Level.DEBUG, parent + ", " + first + ", " + position + ", " + numRead + "\n" + StringUtil.getDump(buffer, offset, Math.min(64, numRead)));
         position += numRead;
         return numRead;
     }

@@ -22,13 +22,14 @@
 
 package discUtils.lvm;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import discUtils.core.LogicalVolumeInfo;
 import discUtils.core.PhysicalVolumeInfo;
@@ -36,7 +37,8 @@ import discUtils.core.VirtualDisk;
 import discUtils.core.partitions.BiosPartitionTypes;
 import discUtils.core.partitions.GuidPartitionTypes;
 import discUtils.core.partitions.PartitionInfo;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -45,9 +47,11 @@ import vavi.util.Debug;
  */
 public class LogicalVolumeManager {
 
-    private List<PhysicalVolume> devices;
+    private static final Logger logger = getLogger(LogicalVolumeManager.class.getName());
 
-    private List<MetadataVolumeGroupSection> volumeGroups;
+    private final List<PhysicalVolume> devices;
+
+    private final List<MetadataVolumeGroupSection> volumeGroups;
 
     /**
      * Initializes a new instance of the LogicalVolumeManager class.
@@ -76,7 +80,7 @@ public class LogicalVolumeManager {
             for (MetadataVolumeGroupSection vg : device.vgMetadata.parsedMetadata.volumeGroupSections) {
                 if (Collections.binarySearch(volumeGroups, vg, Comparator.comparing(x -> x.id)) < 0) {
                     volumeGroups.add(vg);
-Debug.println(Level.FINE, "Lg: " + vg.id);
+logger.log(Level.DEBUG, "Lg: " + vg.id);
                 }
             }
         }
@@ -140,7 +144,7 @@ Debug.println(Level.FINE, "Lg: " + vg.id);
                                                                   (byte) 0,
                                                                   discUtils.core.LogicalVolumeStatus.Healthy);
                     result.add(lvi);
-Debug.println(Level.FINE, "Lv: " + lvi.getIdentity() + ", " + lv.getExtentCount() * vg.extentSize * PhysicalVolume.SECTOR_SIZE);
+logger.log(Level.DEBUG, "Lv: " + lvi.getIdentity() + ", " + lv.getExtentCount() * vg.extentSize * PhysicalVolume.SECTOR_SIZE);
                 }
             }
         }

@@ -22,12 +22,18 @@
 
 package aaru.checksum;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
 import vavi.util.ByteUtil;
-import vavi.util.Debug;
+
+import static java.lang.System.getLogger;
 
 
 /** Implements ReedSolomon and CRC32 algorithms as used by CD-ROM */
 public class CdChecksums {
+
+    private static final Logger logger = getLogger(CdChecksums.class.getName());
 
     static byte[] eccFTable;
     static byte[] eccBTable;
@@ -65,23 +71,23 @@ public class CdChecksums {
 
         switch (buffer.length) {
         case 2448: {
-            byte[] subchannel = new byte[96];
+            byte[] subChannel = new byte[96];
             byte[] channel = new byte[2352];
 
             System.arraycopy(buffer, 0, channel, 0, 2352);
-            System.arraycopy(buffer, 2352, subchannel, 0, 96);
+            System.arraycopy(buffer, 2352, subChannel, 0, 96);
 
             Boolean channelStatus =
                     checkCdSectorChannel(channel, /*out*/ correctEccP, /*out*/ correctEccQ, /*out*/ correctEdc);
 
-            Boolean subchannelStatus = checkCdSectorSubChannel(subchannel);
+            Boolean subChannelStatus = checkCdSectorSubChannel(subChannel);
             Boolean status = null;
 
-            if (!channelStatus || !subchannelStatus)
+            if (!channelStatus || !subChannelStatus)
                 status = false;
-            if (channelStatus == null && subchannelStatus) {
+            if (channelStatus == null && subChannelStatus) {
                 status = true;
-            } else if (channelStatus && subchannelStatus == null) {
+            } else if (channelStatus && subChannelStatus == null) {
                 status = true;
             }
 
@@ -131,8 +137,8 @@ public class CdChecksums {
                 if (index >= size)
                     index -= size;
 
-                eccA ^= temp;
-                eccB ^= temp;
+                eccA = (byte) (eccA ^ temp);
+                eccB = (byte) (eccB ^ temp);
                 eccA = eccFTable[eccA];
             }
 
@@ -168,17 +174,13 @@ public class CdChecksums {
             channel[0x00B] != 0x00)
             return null;
 
-        //Debug.printf("CD checksum", "Data sector, address %2x:%2x:%2x", channel[0x00C],
-        //                          channel[0x00D], channel[0x00E]);
+//logger.log(Level.TRACE, String.format("CD checksum: Data sector, address %2x:%2x:%2x", channel[0x00C], channel[0x00D], channel[0x00E]));
 
         if ((channel[0x00F] & 0x03) == 0x00) { // mode (1 byte)
-            //Debug.printf("CD checksum", "Mode 0 sector at address %2x:%2x:%2x",
-            //                          channel[0x00C], channel[0x00D], channel[0x00E]);
+//logger.log(Level.TRACE, String.format("CD checksum: Mode 0 sector at address %2x:%2x:%2x", channel[0x00C], channel[0x00D], channel[0x00E]));
             for (int i = 0x010; i < 0x930; i++)
                 if (channel[i] != 0x00) {
-                    Debug.printf("CD checksum",
-                            "Mode 0 sector with error at address: %2x:%2x:%2x",
-                            channel[0x00C], channel[0x00D], channel[0x00E]);
+logger.log(Level.DEBUG, String.format("CD checksum: Mode 0 sector with error at address: %2x:%2x:%2x", channel[0x00C], channel[0x00D], channel[0x00E]));
 
                     return false;
                 }
@@ -187,8 +189,7 @@ public class CdChecksums {
         }
 
         if ((channel[0x00F] & 0x03) == 0x01) { // mode (1 byte)
-            //Debug.printf("CD checksum", "Mode 1 sector at address %2x:%2x:%2x",
-            //                          channel[0x00C], channel[0x00D], channel[0x00E]);
+//logger.log(Level.TRACE, String.format("CD checksum: Mode 1 sector at address %2x:%2x:%2x", channel[0x00C], channel[0x00D], channel[0x00E]));
 
             if (channel[0x814] != 0x00 || // reserved (8 bytes)
                     channel[0x815] != 0x00 ||
@@ -198,9 +199,7 @@ public class CdChecksums {
                     channel[0x819] != 0x00 ||
                     channel[0x81A] != 0x00 ||
                     channel[0x81B] != 0x00) {
-                Debug.printf("CD checksum",
-                        "Mode 1 sector with data in reserved bytes at address: %2x:%2x:%2x",
-                        channel[0x00C], channel[0x00D], channel[0x00E]);
+logger.log(Level.DEBUG, String.format("CD checksum: Mode 1 sector with data in reserved bytes at address: %2x:%2x:%2x", channel[0x00C], channel[0x00D], channel[0x00E]));
 
                 return false;
             }
@@ -223,33 +222,30 @@ public class CdChecksums {
             correctEccP[0] = !failedEccP;
             correctEccQ[0] = !failedEccQ;
 
-            if (failedEccP)
-                Debug.printf("CD checksum",
-                        "Mode 1 sector at address: %2x:%2x:%2x, fails ECC P check",
-                        channel[0x00C], channel[0x00D], channel[0x00E]);
+            if (failedEccP) {
+logger.log(Level.DEBUG, String.format("CD checksum: Mode 1 sector at address: %2x:%2x:%2x, fails ECC P check", channel[0x00C], channel[0x00D], channel[0x00E]));
+            }
 
-            if (failedEccQ)
-                Debug.printf("CD checksum",
-                        "Mode 1 sector at address: %2x:%2x:%2x, fails ECC Q check",
-                        channel[0x00C], channel[0x00D], channel[0x00E]);
+            if (failedEccQ) {
+logger.log(Level.DEBUG, String.format("CD checksum: Mode 1 sector at address: %2x:%2x:%2x, fails ECC Q check", channel[0x00C], channel[0x00D], channel[0x00E]));
+            }
 
             int storedEdc = ByteUtil.readLeInt(channel, 0x810);
             int calculatedEdc = computeEdc(0, channel, 0x810);
 
             correctEdc[0] = calculatedEdc == storedEdc;
 
-            if (calculatedEdc == storedEdc)
+            if (calculatedEdc == storedEdc) {
                 return !failedEccP && !failedEccQ;
+            }
 
-            Debug.printf("CD checksum",
-                    "Mode 1 sector at address: %2x:%2x:%2x, got CRC 0x{3:X8} expected 0x{4:X8}",
-                    channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc);
+logger.log(Level.DEBUG, String.format("CD checksum: Mode 1 sector at address: %2x:%2x:%2x, got CRC 0x%08x expected 0x%08x", channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc));
 
             return false;
         }
 
         if ((channel[0x00F] & 0x03) == 0x02) { // mode (1 byte)
-//Debug.printf("CD checksum", "Mode 2 sector at address %2x:%2x:%2x", channel[0x00C], channel[0x00D], channel[0x00E]);
+//logger.log(Level.TRACE, String.format("CD checksum: Mode 2 sector at address %2x:%2x:%2x", channel[0x00C], channel[0x00D], channel[0x00E]));
             byte[] mode2Sector = new byte[channel.length - 0x10];
             System.arraycopy(channel, 0x10, mode2Sector, 0, mode2Sector.length);
 
@@ -258,38 +254,34 @@ public class CdChecksums {
                         channel[0x011] != channel[0x015] ||
                         channel[0x012] != channel[0x016] ||
                         channel[0x013] != channel[0x017]) {
-Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at address: %2x:%2x:%2x",
-                            channel[0x00C], channel[0x00D], channel[0x00E]);
+logger.log(Level.DEBUG, String.format("CD checksum: Subheader copies differ in mode 2 form 2 sector at address: %2x:%2x:%2x",
+                            channel[0x00C], channel[0x00D], channel[0x00E]));
                 }
 
-                int storedEdc = ByteUtil.readLeInt(mode2Sector, 0x91C);
+                int storedEdc = ByteUtil.readLeInt(mode2Sector, 0x91c);
 
                 // No CRC stored!
                 if (storedEdc == 0x00000000)
                     return true;
 
-                int calculatedEdc = computeEdc(0, mode2Sector, 0x91C);
+                int calculatedEdc = computeEdc(0, mode2Sector, 0x91c);
 
                 correctEdc[0] = calculatedEdc == storedEdc || storedEdc == 0;
 
-                if (calculatedEdc == storedEdc ||
-                        storedEdc == 0x00000000)
+                if (calculatedEdc == storedEdc || storedEdc == 0x0000_0000)
                     return true;
 
-                Debug.printf("CD checksum",
-                        "Mode 2 form 2 sector at address: %2x:%2x:%2x, got CRC 0x{3:X8} expected 0x{4:X8}",
-                        channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc,
-                        storedEdc);
+logger.log(Level.DEBUG, String.format("CD checksum: Mode 2 form 2 sector at address: %2x:%2x:%2x, got CRC 0x%08x expected 0x%08x",
+                        channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc));
 
                 return false;
             } else {
                 if (channel[0x010] != channel[0x014] ||
                         channel[0x011] != channel[0x015] ||
                         channel[0x012] != channel[0x016] ||
-                        channel[0x013] != channel[0x017])
-                    Debug.printf("CD checksum",
-                            "Subheader copies differ in mode 2 form 1 sector at address: %2x:%2x:%2x",
-                            channel[0x00C], channel[0x00D], channel[0x00E]);
+                        channel[0x013] != channel[0x017]) {
+logger.log(Level.DEBUG, String.format("CD checksum: Subheader copies differ in mode 2 form 1 sector at address: %2x:%2x:%2x", channel[0x00C], channel[0x00D], channel[0x00E]));
+                }
 
                 byte[] address = new byte[4];
                 byte[] eccP = new byte[172];
@@ -304,15 +296,13 @@ Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at 
                 correctEccP[0] = !failedEccP;
                 correctEccQ[0] = !failedEccQ;
 
-                if (failedEccP)
-                    Debug.printf("CD checksum",
-                            "Mode 2 form 1 sector at address: %2x:%2x:%2x, fails ECC P check",
-                            channel[0x00C], channel[0x00D], channel[0x00E]);
+                if (failedEccP) {
+logger.log(Level.DEBUG, String.format("CD checksum: Mode 2 form 1 sector at address: %2x:%2x:%2x, fails ECC P check", channel[0x00C], channel[0x00D], channel[0x00E]));
+                }
 
-                if (failedEccQ)
-                    Debug.printf("CD checksum",
-                            "Mode 2 form 1 sector at address: %2x:%2x:%2x, fails ECC Q check",
-                            channel[0x00C], channel[0x00D], channel[0x00E]);
+                if (failedEccQ) {
+logger.log(Level.DEBUG, String.format("CD checksum: Mode 2 form 1 sector at address: %2x:%2x:%2x, fails ECC Q check", channel[0x00C], channel[0x00D], channel[0x00E]));
+                }
 
                 int storedEdc = ByteUtil.readLeInt(mode2Sector, 0x808);
                 int calculatedEdc = computeEdc(0, mode2Sector, 0x808);
@@ -322,17 +312,13 @@ Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at 
                 if (calculatedEdc == storedEdc)
                     return !failedEccP && !failedEccQ;
 
-                Debug.printf("CD checksum",
-                        "Mode 2 sector at address: %2x:%2x:%2x, got CRC 0x{3:X8} expected 0x{4:X8}",
-                        channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc,
-                        storedEdc);
+logger.log(Level.DEBUG, String.format("CD checksum: Mode 2 sector at address: %2x:%2x:%2x, got CRC 0x%4$08x expected 0x%5$08x", channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc));
 
                 return false;
             }
         }
 
-        Debug.printf("CD checksum", "Unknown mode {0} sector at address: %2x:%2x:%2x",
-                channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
+logger.log(Level.DEBUG, String.format("CD checksum: Unknown mode %d sector at address: %2x:%2x:%2x", channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]));
 
         return null;
     }
@@ -360,8 +346,9 @@ Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at 
 
         int i = 0;
 
-        for (int j = 0; j < 12; j++)
+        for (int j = 0; j < 12; j++) {
             qSubChannel[j] = 0;
+        }
 
         for (int j = 0; j < 18; j++) {
             cdTextPack1[j] = 0;
@@ -470,38 +457,35 @@ Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at 
 
         switch (cdSubRwPack1[0]) {
         case 0x00:
-            Debug.printf("CD checksum", "Detected Zero Pack in subchannel");
+logger.log(Level.DEBUG, "CD checksum: Detected Zero Pack in subchannel");
 
             break;
         case 0x08:
-            Debug.printf("CD checksum", "Detected Line Graphics Pack in subchannel");
+logger.log(Level.DEBUG, "CD checksum: Detected Line Graphics Pack in subchannel");
 
             break;
         case 0x09:
-            Debug.printf("CD checksum", "Detected CD+G Pack in subchannel");
+logger.log(Level.DEBUG, "CD checksum: Detected CD+G Pack in subchannel");
 
             break;
         case 0x0A:
-            Debug.printf("CD checksum", "Detected CD+EG Pack in subchannel");
+logger.log(Level.DEBUG, "CD checksum: Detected CD+EG Pack in subchannel");
 
             break;
         case 0x14:
-            Debug.printf("CD checksum", "Detected CD-TEXT Pack in subchannel");
+logger.log(Level.DEBUG, "CD checksum: Detected CD-TEXT Pack in subchannel");
 
             break;
         case 0x18:
-            Debug.printf("CD checksum", "Detected CD+MIDI Pack in subchannel");
+logger.log(Level.DEBUG, "CD checksum: Detected CD+MIDI Pack in subchannel");
 
             break;
         case 0x38:
-            Debug.printf("CD checksum", "Detected User Pack in subchannel");
+logger.log(Level.DEBUG, "CD checksum: Detected User Pack in subchannel");
 
             break;
         default:
-            Debug.printf("CD checksum",
-                    "Detected unknown Pack type in subchannel: mode %02x, item %02x",
-                    cdSubRwPack1[0] & 0x38,
-                    cdSubRwPack1[0] & 0x07);
+logger.log(Level.DEBUG, String.format("CD checksum: Detected unknown Pack type in subchannel: mode %02x, item %02x", cdSubRwPack1[0] & 0x38, cdSubRwPack1[0] & 0x07));
 
             break;
         }
@@ -512,8 +496,7 @@ Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at 
         short calculatedQcrc = CRC16CCITTContext.calculate(qSubChannelForCrc);
 
         if (qSubChannelCrc != calculatedQcrc) {
-            Debug.printf("CD checksum", "Q subchannel CRC 0x{0:X4}, expected 0x{1:X4}",
-                    calculatedQcrc, qSubChannelCrc);
+logger.log(Level.DEBUG, String.format("CD checksum: Q subchannel CRC 0x%04x, expected 0x%04x", calculatedQcrc, qSubChannelCrc));
 
             status = false;
         }
@@ -524,10 +507,8 @@ Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at 
             System.arraycopy(cdTextPack1, 0, cdTextPack1ForCrc, 0, 16);
             short calculatedCdtp1Crc = CRC16CCITTContext.calculate(cdTextPack1ForCrc);
 
-            if (cdTextPack1Crc != calculatedCdtp1Crc &&
-                    cdTextPack1Crc != 0) {
-                Debug.printf("CD checksum", "CD-Text Pack 1 CRC 0x{0:X4}, expected 0x{1:X4}",
-                        cdTextPack1Crc, calculatedCdtp1Crc);
+            if (cdTextPack1Crc != calculatedCdtp1Crc && cdTextPack1Crc != 0) {
+logger.log(Level.DEBUG, String.format("CD checksum: CD-Text Pack 1 CRC 0x%04x, expected 0x%04x", cdTextPack1Crc, calculatedCdtp1Crc));
 
                 status = false;
             }
@@ -539,13 +520,10 @@ Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at 
             System.arraycopy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
             short calculatedCdtp2Crc = CRC16CCITTContext.calculate(cdTextPack2ForCrc);
 
-            Debug.printf("CD checksum", "Cyclic CDTP2 0x{0:X4}, Calc CDTP2 0x{1:X4}", cdTextPack2Crc,
-                    calculatedCdtp2Crc);
+logger.log(Level.DEBUG, String.format("CD checksum: Cyclic CDTP2 0x%04x, Calc CDTP2 0x%04x", cdTextPack2Crc, calculatedCdtp2Crc));
 
-            if (cdTextPack2Crc != calculatedCdtp2Crc &&
-                    cdTextPack2Crc != 0) {
-                Debug.printf("CD checksum", "CD-Text Pack 2 CRC 0x{0:X4}, expected 0x{1:X4}",
-                        cdTextPack2Crc, calculatedCdtp2Crc);
+            if (cdTextPack2Crc != calculatedCdtp2Crc && cdTextPack2Crc != 0) {
+logger.log(Level.DEBUG, String.format("CD checksum: CD-Text Pack 2 CRC 0x%04x, expected 0x%04x", cdTextPack2Crc, calculatedCdtp2Crc));
 
                 status = false;
             }
@@ -557,13 +535,10 @@ Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at 
             System.arraycopy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
             short calculatedCdtp3Crc = CRC16CCITTContext.calculate(cdTextPack3ForCrc);
 
-            Debug.printf("CD checksum", "Cyclic CDTP3 0x{0:X4}, Calc CDTP3 0x{1:X4}", cdTextPack3Crc,
-                    calculatedCdtp3Crc);
+logger.log(Level.DEBUG, String.format("CD checksum: Cyclic CDTP3 0x%04x, Calc CDTP3 0x%04x", cdTextPack3Crc, calculatedCdtp3Crc));
 
-            if (cdTextPack3Crc != calculatedCdtp3Crc &&
-                    cdTextPack3Crc != 0) {
-                Debug.printf("CD checksum", "CD-Text Pack 3 CRC 0x{0:X4}, expected 0x{1:X4}",
-                        cdTextPack3Crc, calculatedCdtp3Crc);
+            if (cdTextPack3Crc != calculatedCdtp3Crc && cdTextPack3Crc != 0) {
+logger.log(Level.DEBUG, String.format("CD checksum: CD-Text Pack 3 CRC 0x%04x, expected 0x%04x", cdTextPack3Crc, calculatedCdtp3Crc));
 
                 status = false;
             }
@@ -577,15 +552,12 @@ Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at 
         System.arraycopy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
         short calculatedCdtp4Crc = CRC16CCITTContext.calculate(cdTextPack4ForCrc);
 
-        Debug.printf("CD checksum", "Cyclic CDTP4 0x{0:X4}, Calc CDTP4 0x{1:X4}", cdTextPack4Crc,
-                calculatedCdtp4Crc);
+logger.log(Level.DEBUG, String.format("CD checksum: Cyclic CDTP4 0x%04x, Calc CDTP4 0x%04x", cdTextPack4Crc, calculatedCdtp4Crc));
 
-        if (cdTextPack4Crc == calculatedCdtp4Crc ||
-                cdTextPack4Crc == 0)
+        if (cdTextPack4Crc == calculatedCdtp4Crc || cdTextPack4Crc == 0)
             return status;
 
-        Debug.printf("CD checksum", "CD-Text Pack 4 CRC 0x{0:X4}, expected 0x{1:X4}", cdTextPack4Crc,
-                calculatedCdtp4Crc);
+logger.log(Level.DEBUG, String.format("CD checksum: CD-Text Pack 4 CRC 0x%04x, expected 0x%04x", cdTextPack4Crc, calculatedCdtp4Crc));
 
         return false;
     }

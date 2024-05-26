@@ -24,6 +24,8 @@ package discUtils.net.dns;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.InetSocketAddress;
 import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
@@ -38,9 +40,8 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
-import vavi.util.Debug;
+import static java.lang.System.getLogger;
 
 
 /**
@@ -54,7 +55,7 @@ import vavi.util.Debug;
  */
 public final class MulticastDnsClient extends DnsClient implements Closeable {
 
-    private static final Logger logger = Logger.getLogger(MulticastDnsClient.class.getName());
+    private static final Logger logger = getLogger(MulticastDnsClient.class.getName());
 
     private Map<String, Map<RecordType, List<ResourceRecord>>> cache;
 
@@ -92,17 +93,18 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
                                     DatagramChannel channel = (DatagramChannel) key.channel();
                                     ByteBuffer packetBytes = ByteBuffer.allocate(8972);
                                     channel.receive(packetBytes);
-Debug.println("receive: " + packetBytes.position());
+logger.log(Level.DEBUG, "receive: " + packetBytes.position());
                                     packetBytes.flip();
                                     receiveCallback(packetBytes.array());
+                                    channel.close();
                                 }
                             }
                         }
                     } catch (IOException e) {
-                        logger.info(e.getMessage());
+                        logger.log(Level.INFO, e.getMessage(), e);
                     }
                 }
-Debug.println("receiver exit");
+logger.log(Level.DEBUG, "receiver exit");
             });
             cache = new HashMap<>();
         } catch (IOException e) {
@@ -202,7 +204,7 @@ Debug.println("receiver exit");
             channel.connect(mDnsAddress);
             while (!channel.isConnected())
                 Thread.yield();
-Debug.println("send: " + msgBytes.length);
+logger.log(Level.DEBUG, "send: " + msgBytes.length);
             channel.send(ByteBuffer.wrap(msgBytes), mDnsAddress);
 
             transaction.getCompleteEvent().await(2000, TimeUnit.MILLISECONDS);
@@ -235,7 +237,7 @@ Debug.println("send: " + msgBytes.length);
                     }
                 }
 
-                if (typeRecords.getValue().size() == 0) {
+                if (typeRecords.getValue().isEmpty()) {
                     removeTypes.add(typeRecords.getKey());
                 }
             }
@@ -244,7 +246,7 @@ Debug.println("send: " + msgBytes.length);
                 nameRecord.getValue().remove(recordType);
             }
 
-            if (nameRecord.getValue().size() == 0) {
+            if (nameRecord.getValue().isEmpty()) {
                 removeNames.add(nameRecord.getKey());
             }
         }
