@@ -115,7 +115,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.12.1</version>
         <configuration>
           <release>17</release>
           <testExcludes>
@@ -128,7 +128,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.5</version>
         <configuration>
           <reuseForks>true</reuseForks>
           <argLine>
@@ -158,7 +158,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.10.2</version>
+        <version>5.10.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -169,25 +169,25 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.12</version>
+      <version>1.1.14</version>
     </dependency>
 
     <dependency>
-      <groupId>com.github.umjammer</groupId>
+      <groupId>com.github.umjammer</groupId> <!-- com.github.fge / com.github.umjammer -->
       <artifactId>vavi-nio-file-base</artifactId>
-      <version>0.0.14v</version>
+      <version>0.0.15</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- moe.yo3explorer / com.github.umjammer -->
       <artifactId>dotnet4j</artifactId>
-      <version>1.2.4</version>
+      <version>1.2.5</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>klab-commons-cli</artifactId>
-      <version>1.3.2</version>
+      <version>1.3.3</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- com.github.umjammer -->
