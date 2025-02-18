@@ -32,12 +32,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
- * Test1.
+ * TestCase.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/10/07 umjammer initial version <br>
  */
-class Test1 {
+class TestCase {
 
     @Test
     void test1() throws Exception {

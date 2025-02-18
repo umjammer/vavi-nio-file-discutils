@@ -177,3 +177,4 @@ Again, start browsing the file system at floppy.Root.
    * https://github.com/Janix520/java-iso-tools
  * ~~registry~~
  * ~~🐛 vdi check sector length?~~ -> Util#SeekableByteChannel*
+ * git tree might be corrupted
