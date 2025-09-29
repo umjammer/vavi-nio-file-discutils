@@ -284,13 +284,13 @@ logger.log(Level.DEBUG, "P: " + pvi.getIdentity());
             UUID guid = disk.getPartitions().getDiskGuid();
 logger.log(Level.TRACE, "guid: " + guid);
             if (!guid.equals(EMPTY)) {
-                return "DG" + String.format("{%s}", guid);
+                return "DG" + "{%s}".formatted(guid);
             }
         }
 
         int sig = disk.getSignature();
         if (sig != 0) {
-            return "DS" + String.format("%8X", sig);
+            return "DS" + "%8X".formatted(sig);
         }
 
         return "DO" + ordinal;

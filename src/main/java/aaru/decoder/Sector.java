@@ -311,7 +311,7 @@ public class Sector {
         if (moreThan90)
             min = (byte) (min + 0x90);
 
-        sb.append(String.format("Position %2x:%2x:%2x (LBA %d)", min, sec, frame, lba)).append("\n");
+        sb.append("Position %2x:%2x:%2x (LBA %d)".formatted(min, sec, frame, lba)).append("\n");
 
         switch (buffer[15] & 0x03) {
         case 0:
@@ -406,9 +406,9 @@ public class Sector {
                 break;
             }
 
-            sb.append(String.format("File number: %d", buffer[16])).append("\n");
-            sb.append(String.format("Channel number: %d", buffer[17])).append("\n");
-            sb.append(String.format("Coding information number: %d", buffer[19])).append("\n");
+            sb.append("File number: %d".formatted(buffer[16])).append("\n");
+            sb.append("Channel number: %d".formatted(buffer[17])).append("\n");
+            sb.append("Coding information number: %d".formatted(buffer[19])).append("\n");
 
             if ((buffer[18] & 0x80) == 0x80)
                 sb.append("End of file.").append("\n");

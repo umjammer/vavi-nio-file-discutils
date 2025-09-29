@@ -78,7 +78,7 @@ class DataRun {
     }
 
     public String toString() {
-        return String.format("%-2d[+%d]", runOffset, runLength);
+        return "%-2d[+%d]".formatted(runOffset, runLength);
     }
 
     int write(byte[] buffer, int offset) {

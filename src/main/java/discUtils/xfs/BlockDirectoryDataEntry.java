@@ -122,6 +122,6 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
      *
      */
     public String toString() {
-        return String.format("%d : %s", inode, new String(name, 0, nameLength, StandardCharsets.US_ASCII));
+        return "%d : %s".formatted(inode, new String(name, 0, nameLength, StandardCharsets.US_ASCII));
     }
 }

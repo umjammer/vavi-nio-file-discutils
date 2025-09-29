@@ -117,7 +117,7 @@ public abstract class DiskImageBuilder {
      */
     public static DiskImageBuilder getBuilder(String type, String variant) {
         if (!getTypeMap().containsKey(type)) {
-            throw new IllegalArgumentException(String.format("Unknown disk type '%s'", type));
+            throw new IllegalArgumentException("Unknown disk type '%s'".formatted(type));
         }
 
         return getTypeMap().get(type).getImageBuilder(variant);

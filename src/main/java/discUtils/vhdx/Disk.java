@@ -140,7 +140,7 @@ public final class Disk extends VirtualDisk {
         List<Tuple<DiskImageFile, Ownership>> tempList = new ArrayList<>(files.size());
         for (int i = 0; i < files.size() - 1; ++i) {
             if (!files.get(i).needsParent()) {
-                throw new IllegalArgumentException(String.format("File at index %d does not have a parent disk", i));
+                throw new IllegalArgumentException("File at index %d does not have a parent disk".formatted(i));
             }
 
             if (!files.get(i).getParentUniqueId().equals(files.get(i + 1).getUniqueId())) {
@@ -499,7 +499,7 @@ public final class Disk extends VirtualDisk {
                 }
             }
             if (!found) {
-                throw new dotnet4j.io.IOException(String.format("Failed to find parent for disk '%s'", file.getFullPath()));
+                throw new dotnet4j.io.IOException("Failed to find parent for disk '%s'".formatted(file.getFullPath()));
             }
         }
     }

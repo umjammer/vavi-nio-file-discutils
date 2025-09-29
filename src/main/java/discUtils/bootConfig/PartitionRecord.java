@@ -103,7 +103,7 @@ public class PartitionRecord extends DeviceRecord {
 
             UUID diskGuid = ByteUtil.readLeUUID(getDiskIdentity(), 0);
             UUID partitionGuid = ByteUtil.readLeUUID(getPartitionIdentity(), 0);
-            return String.format("(disk:%s partition:%s)", diskGuid, partitionGuid);
+            return "(disk:%s partition:%s)".formatted(diskGuid, partitionGuid);
         }
 
         if (getType() == 8) {

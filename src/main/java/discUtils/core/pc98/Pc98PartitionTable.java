@@ -112,7 +112,7 @@ public class Pc98PartitionTable extends PartitionTable {
     SparseStream open(PC98PartitionEntry pe) {
         long s = partitions.get(pe).getFirstSector() * bytesPerSector;
         long e = partitions.get(pe).getLastSector() * bytesPerSector;
-logger.log(Level.DEBUG, String.format("%s: %08x, %08x", pe, s, e));
+logger.log(Level.DEBUG, "%s: %08x, %08x".formatted(pe, s, e));
         return new SubStream(diskData, Ownership.None, s, e - s);
     }
 }

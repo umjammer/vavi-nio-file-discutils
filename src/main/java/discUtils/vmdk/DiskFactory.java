@@ -92,7 +92,7 @@ public final class DiskFactory implements VirtualDiskFactory {
             case "dynamic" -> DiskCreateType.MonolithicSparse;
             case "vmfsfixed" -> DiskCreateType.Vmfs;
             case "vmfsdynamic" -> DiskCreateType.VmfsSparse;
-            default -> throw new IllegalArgumentException(String.format("Unknown VMDK disk variant '%s'", variant));
+            default -> throw new IllegalArgumentException("Unknown VMDK disk variant '%s'".formatted(variant));
         };
     }
 

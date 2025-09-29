@@ -57,7 +57,7 @@ public class VirtualDiskTest {
         assertEquals(512, readMbr.length);
         for (int i = 0; i < 512; i++) {
             if (readMbr[i] != (byte) i) {
-                fail(String.format("Mismatch on byte %d, expected %2x was %2x", i, (byte) i, readMbr[i]));
+                fail("Mismatch on byte %d, expected %2x was %2x".formatted(i, (byte) i, readMbr[i]));
             }
         }
     }

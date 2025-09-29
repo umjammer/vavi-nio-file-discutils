@@ -256,7 +256,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     @Override
     public String toString() {
-        return String.format("DiscDirectoryInfo [getFullName()=%s, getDirectories()=%s, getFiles()=%s]", getFullName(),
+        return "DiscDirectoryInfo [getFullName()=%s, getDirectories()=%s, getFiles()=%s]".formatted(getFullName(),
                 getDirectories(), getFiles());
     }
 }

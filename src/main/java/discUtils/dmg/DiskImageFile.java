@@ -85,7 +85,7 @@ logger.log(Level.DEBUG, "udifHeader.size(): " + udifHeader.size());
             buffer = new UdifBuffer(stream, resources, udifHeader.sectorCount);
         } else {
             // TODO fat32 dmg doesn't have udif header
-logger.log(Level.WARNING, String.format("udifHeader: %08x\n", udifHeader.signature));
+logger.log(Level.WARNING, "udifHeader: %08x\n".formatted(udifHeader.signature));
         }
     }
 

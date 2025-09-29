@@ -90,7 +90,7 @@ public class Crc16Context {
         byte[] finalBytes = ByteUtil.getLeBytes( final_);
 
         for (byte finalByte : finalBytes)
-            crc16Output.append(String.format("%02x", finalByte));
+            crc16Output.append("%02x".formatted(finalByte));
 
         return crc16Output.toString();
     }
@@ -294,7 +294,7 @@ public class Crc16Context {
         StringBuilder crc16Output = new StringBuilder();
 
         for ( byte h : hash[0])
-            crc16Output.append(String.format("%02x", h));
+            crc16Output.append("%02x".formatted(h));
 
         return crc16Output.toString();
     }

@@ -63,7 +63,7 @@ public class ReparsePoints {
         writer.println(indent + "REPARSE POINT INDEX");
         for (Tuple<discUtils.ntfs.ReparsePoints.Key, discUtils.ntfs.ReparsePoints.Data> entry : index.getEntries()) {
             writer.println(indent + "  REPARSE POINT INDEX ENTRY");
-            writer.println(indent + "            Tag: " + String.format("%02x", entry.getKey().tag));
+            writer.println(indent + "            Tag: " + "%02x".formatted(entry.getKey().tag));
             writer.println(indent + "  MFT Reference: " + entry.getKey().file);
         }
     }
@@ -93,7 +93,7 @@ public class ReparsePoints {
          * /utilities.WriteBytesLittleEndian((int)0, buffer, offset + 12);
          */
         public String toString() {
-            return String.format("%x:", tag) + file;
+            return "%x:".formatted(tag) + file;
         }
     }
 

@@ -28,10 +28,10 @@ import vavi.util.ByteUtil;
 public class UdfEntityIdentifier extends EntityIdentifier {
 
     public String toString() {
-        String major = String.format("%02x", suffix[1]);
-        String minor = String.format("%02x", suffix[0]);
+        String major = "%02x".formatted(suffix[1]);
+        String minor = "%02x".formatted(suffix[0]);
         OSClass osClass = OSClass.values()[suffix[2]];
         OSIdentifier osId = OSIdentifier.values()[ByteUtil.readBeShort(suffix, 2)];
-        return String.format("%s [UDF %s.%s : OS %s %s]", identifier, major, minor, osClass, osId);
+        return "%s [UDF %s.%s : OS %s %s]".formatted(identifier, major, minor, osClass, osId);
     }
 }

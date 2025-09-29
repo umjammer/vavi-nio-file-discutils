@@ -25,10 +25,10 @@ package discUtils.udf;
 public class DomainEntityIdentifier extends EntityIdentifier {
 
     @Override public String toString() {
-        String major = String.format("%02x", suffix[1]);
-        String minor = String.format("%02x", suffix[0]);
+        String major = "%02x".formatted(suffix[1]);
+        String minor = "%02x".formatted(suffix[0]);
         DomainFlags flags = DomainFlags.values()[suffix[2]];
-        return String.format("%s [UDF %s.%s : flags %s]", identifier, major, minor, flags);
+        return "%s [UDF %s.%s : flags %s]".formatted(identifier, major, minor, flags);
     }
 
     private enum DomainFlags {

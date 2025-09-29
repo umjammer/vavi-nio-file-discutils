@@ -295,7 +295,7 @@ public class ATBootSector implements BootSector {
 //logger.log(Level.DEBUG, "fatCount: " + getFatCount());
 //logger.log(Level.DEBUG, "bpbRootEntCnt: " + bpbRootEntCnt);
 //logger.log(Level.DEBUG, "bpbTotSec16: " + bpbTotSec16);
-logger.log(Level.DEBUG, String.format("media: %02x\n", media));
+logger.log(Level.DEBUG, "media: %02x\n".formatted(media));
 //logger.log(Level.DEBUG, "bpbFATSz16: " + bpbFATSz16);
 //logger.log(Level.DEBUG, "bpbSecPerTrk: " + bpbSecPerTrk);
 //logger.log(Level.DEBUG, "bpbNumHeads: " + bpbNumHeads);

@@ -71,7 +71,7 @@ public class Utilities {
         String childName = session.Path.ParseChildName(filePath);
         Object parentItems = session.InvokeProvider.Item.get(parentPath);
         if (parentItems.size() > 1) {
-            throw new IOException(String.format("powerShell path %s is ambiguous", parentPath));
+            throw new IOException("powerShell path %s is ambiguous".formatted(parentPath));
         } else if (parentItems.size() < 1) {
             throw new FileNotFoundException("No such directory");
         }
@@ -110,7 +110,7 @@ public class Utilities {
 
             throw new FileNotFoundException("Path is not a file " + filePath);
         } else if (items.size() > 1) {
-            throw new IOException(String.format("powerShell path %s is ambiguous", filePath));
+            throw new IOException("powerShell path %s is ambiguous".formatted(filePath));
         } else {
             throw new FileNotFoundException("No such file " + filePath);
         }
@@ -119,9 +119,9 @@ public class Utilities {
     public static String resolvePsPath(SessionState session, String filePath) {
         Object paths = session.Path.getResolvedPSPathFromPSPath(filePath);
         if (paths.size() > 1) {
-            throw new IOException(String.format("powerShell path %s is ambiguous", filePath));
+            throw new IOException("powerShell path %s is ambiguous".formatted(filePath));
         } else if (paths.size() < 1) {
-            throw new IOException(String.format("powerShell path %s not found", filePath));
+            throw new IOException("powerShell path %s not found".formatted(filePath));
         }
 
         return paths[0].Path;

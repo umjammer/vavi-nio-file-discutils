@@ -55,7 +55,7 @@ public class IntegerListElementValue extends ElementValue {
                 result.append(" ");
             }
 
-            result.append(String.format("%16x", values[i]));
+            result.append("%16x".formatted(values[i]));
         }
         return result.toString();
     }

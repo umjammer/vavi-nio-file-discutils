@@ -305,6 +305,6 @@ public class ChdHeader {
 
     @Override
     public String toString() {
-        return String.format("ChdHeader[version=%d, hunkbytes=%d, totalhunks=%d]", version, hunkbytes, totalhunks);
+        return "ChdHeader[version=%d, hunkbytes=%d, totalhunks=%d]".formatted(version, hunkbytes, totalhunks);
     }
 }

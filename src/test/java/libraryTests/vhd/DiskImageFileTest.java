@@ -99,6 +99,7 @@ public class DiskImageFileTest {
 
         try (DiskImageFile diffFile = new DiskImageFile(diffStream)) {
             // Testing the obsolete method - disable warning
+            @SuppressWarnings("deprecation")
             List<String> locations = diffFile.getParentLocations("E:" + FS + "FOO" + FS);
             assertEquals(2, locations.size());
             assertEquals("C:" + FS + "TEMP" + FS + "base.vhd", locations.get(0));

@@ -186,7 +186,7 @@ public class Directory extends File {
         i = 1;
         String candidate;
         do {
-            String suffix = String.format("~%d", i);
+            String suffix = "~%d".formatted(i);
             candidate = baseName.substring(0, Math.min(8 - suffix.length(), baseName.length())) + suffix +
                         (!ext.isEmpty() ? "." + ext : "");
             i++;

@@ -109,7 +109,7 @@ public class SampleDataTests {
             file.copyTo(ms);
             byte[] checksum = md5.digest(ms.toArray());
             return IntStream.range(0, checksum.length)
-                    .mapToObj(i -> String.format("%02x", checksum[i]))
+                    .mapToObj(i -> "%02x".formatted(checksum[i]))
                     .collect(Collectors.joining());
         }
     }

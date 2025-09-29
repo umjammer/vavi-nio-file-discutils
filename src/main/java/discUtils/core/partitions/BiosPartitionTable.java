@@ -571,7 +571,7 @@ public final class BiosPartitionTable extends PartitionTable {
         case LinuxLvm:
             return BiosPartitionTypes.LinuxLvm;
         default:
-            throw new IllegalArgumentException(String.format("Unrecognized partition type: '%s'", type));
+            throw new IllegalArgumentException("Unrecognized partition type: '%s'".formatted(type));
         }
     }
 
@@ -659,7 +659,7 @@ public final class BiosPartitionTable extends PartitionTable {
             idx++;
         }
         if (diskGeometry.getTotalSectorsLong() - startSector < numSectors) {
-            throw new dotnet4j.io.IOException(String.format("Unable to find free space of %s sectors", numSectors));
+            throw new dotnet4j.io.IOException("Unable to find free space of %s sectors".formatted(numSectors));
         }
 
         return startSector;

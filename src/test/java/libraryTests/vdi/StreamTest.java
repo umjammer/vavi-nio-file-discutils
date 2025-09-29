@@ -106,7 +106,7 @@ public class StreamTest {
             s.read(buffer, 0, buffer.length);
             for (int i = 0; i < content.length; ++i) {
                 if (buffer[i] != content[i]) {
-                    fail(String.format("Corrupt stream contents: %d, %02x, %02x", i, buffer[i], content[i]));
+                    fail("Corrupt stream contents: %d, %02x, %02x".formatted(i, buffer[i], content[i]));
                 }
             }
         }

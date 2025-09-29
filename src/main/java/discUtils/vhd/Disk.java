@@ -146,7 +146,7 @@ public final class Disk extends VirtualDisk {
         List<Tuple<DiskImageFile, Ownership>> tempList = new ArrayList<>(files.size());
         for (int i = 0; i < files.size() - 1; ++i) {
             if (!files.get(i).needsParent()) {
-                throw new IllegalArgumentException(String.format("File at index %d does not have a parent disk", i));
+                throw new IllegalArgumentException("File at index %d does not have a parent disk".formatted(i));
             }
 
             // Note: Can't do timestamp check, not a property on DiskImageFile.
@@ -542,7 +542,7 @@ logger.log(Level.DEBUG, "close newFile: " + newFile);
             }
 
             if (!found) {
-                throw new IOException(String.format("Failed to find parent for disk '%s'", file.getFullPath()));
+                throw new IOException("Failed to find parent for disk '%s'".formatted(file.getFullPath()));
             }
         }
     }

@@ -38,7 +38,7 @@ public class Pc98PartitionInfo extends PartitionInfo {
 
     // @see "https://github.com/aaru-dps/Aaru.Helpers/blob/4640bb88d3eb907d0f0617d5ee5159fbc13c5653/CHS.cs"
     public static int toLBA(int cyl, int head, int sector, int maxHead, int maxSector) {
-//logger.log(Level.DEBUG, String.format("heads: %d, secs: %d", maxHead, maxSector));
+//logger.log(Level.DEBUG, "heads: %d, secs: %d".formatted(maxHead, maxSector));
         return maxHead == 0 || maxSector == 0 ? (((cyl * 16)      + head) * 63)        + sector - 1
                                               : (((cyl * maxHead) + head) * maxSector) + sector - 1;
     }
@@ -50,7 +50,7 @@ public class Pc98PartitionInfo extends PartitionInfo {
 
     @Override
     public long getFirstSector() {
-//logger.log(Level.DEBUG, String.format("%08x, %08x", secs * heads * pe.startCylinder, toLBA(pe.startCylinder, pe.startHeader, pe.startSector + 1, heads, secs)));
+//logger.log(Level.DEBUG, "%08x, %08x".formatted(secs * heads * pe.startCylinder, toLBA(pe.startCylinder, pe.startHeader, pe.startSector + 1, heads, secs)));
         return toLBA(pe.startCylinder, pe.startHeader, pe.startSector + 1, heads, secs);
     }
 

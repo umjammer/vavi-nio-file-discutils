@@ -128,6 +128,7 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
      *
      * @deprecated
      */
+    @Deprecated
     public int getDirInode() {
         return dirInode;
     }

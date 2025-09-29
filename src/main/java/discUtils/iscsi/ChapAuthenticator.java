@@ -107,7 +107,7 @@ public class ChapAuthenticator extends Authenticator {
             byte[] hash = md5.digest(toHash);
             StringBuilder result = new StringBuilder("0x");
             for (byte b : hash) {
-                result.append(String.format("%02x", b));
+                result.append("%02x".formatted(b));
             }
             return result.toString();
         } catch (NoSuchAlgorithmException e) {

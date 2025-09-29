@@ -498,7 +498,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             if (checkpointBuffer.size() >= checkpointPeriod) {
                 // Roll over the on-disk trace
                 if (runGlobalTrace) {
-                    globalTrace.writeToFile(String.format("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log", numScheduledCheckpoints++));
+                    globalTrace.writeToFile("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log".formatted(numScheduledCheckpoints++));
                 }
 
                 // We only do a full checkpoint, if the activity didn't throw an
@@ -527,7 +527,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             globalTrace = new TracingStream(snapStream, Ownership.None);
             globalTrace.setCaptureStackTraces(globalTraceCaptureStackTraces);
             globalTrace.reset(runGlobalTrace);
-            globalTrace.writeToFile(String.format("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log", numScheduledCheckpoints++));
+            globalTrace.writeToFile("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log".formatted(numScheduledCheckpoints++));
             focusStream = globalTrace;
         }
 

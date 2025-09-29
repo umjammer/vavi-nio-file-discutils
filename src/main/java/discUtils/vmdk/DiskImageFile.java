@@ -655,9 +655,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 while (totalSize < capacity) {
                     String adornment;
                     if (type == DiskCreateType.TwoGbMaxExtentSparse) {
-                        adornment = String.format("s%3x", i);
+                        adornment = "s%3x".formatted(i);
                     } else {
-                        adornment = String.format("%6x", i);
+                        adornment = "%6x".formatted(i);
                     }
 
                     String fileName = adornFileName(file, adornment);
@@ -825,7 +825,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             case VmfsPassthroughRawDeviceMap -> ExtentType.VmfsRdm;
             case VmfsRaw, VmfsRawDeviceMap -> ExtentType.VmfsRaw;
             case VmfsSparse -> ExtentType.VmfsSparse;
-            default -> throw new IllegalArgumentException(String.format("Unable to convert %s", type));
+            default -> throw new IllegalArgumentException("Unable to convert %s".formatted(type));
         };
     }
 

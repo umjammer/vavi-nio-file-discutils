@@ -86,6 +86,6 @@ public class BcdObjectTest {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
-        assertEquals(String.format("{%s}", obj.getIdentity()), obj.getFriendlyName());
+        assertEquals("{%s}".formatted(obj.getIdentity()), obj.getFriendlyName());
     }
 }

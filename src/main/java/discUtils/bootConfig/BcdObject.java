@@ -192,7 +192,7 @@ public class BcdObject {
             return guidToName.get(id);
         }
 
-        return String.format("{%s}", id);
+        return "{%s}".formatted(id);
     }
 
     /**
@@ -327,7 +327,7 @@ public class BcdObject {
      * @return A string representation, with surrounding curly braces.
      */
     public String toString() {
-        return String.format("{%s}", id);
+        return "{%s}".formatted(id);
     }
 
     public static int makeApplicationType(ApplicationImageType imageType, ApplicationType appType) {

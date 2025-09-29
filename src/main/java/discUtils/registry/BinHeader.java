@@ -51,7 +51,7 @@ public final class BinHeader implements IByteArraySerializable {
     @Override public int readFrom(byte[] buffer, int offset) {
         int sig = ByteUtil.readLeInt(buffer, offset + 0);
         if (sig != Signature) {
-logger.log(Level.ERROR, String.format("%x", sig));
+logger.log(Level.ERROR, "%x".formatted(sig));
             throw new IOException("Invalid signature for registry bin");
         }
 

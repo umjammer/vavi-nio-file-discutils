@@ -87,7 +87,7 @@ public class Program extends ProgramBase {
                         }
 
                         if (getVerbose()) {
-                            System.err.println("  LUN: " + String.format("%016x", lun.getLun()));
+                            System.err.println("  LUN: " + "%016x".formatted(lun.getLun()));
                             System.err.println("  Device Type: " + lun.getDeviceType());
                             System.err.println("  Removeable: " + (lun.getRemovable() ? "Yes" : "No"));
                             System.err.println("  Vendor: " + lun.getVendorId());

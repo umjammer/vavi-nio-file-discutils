@@ -118,7 +118,7 @@ public class DescriptorFile {
     }
 
     public void setContentId(int value) {
-        setHeader(HeaderContentId, String.format("%8x", value), DescriptorFileEntryType.Plain);
+        setHeader(HeaderContentId, "%8x".formatted(value), DescriptorFileEntryType.Plain);
     }
 
     public DiskCreateType getCreateType() {
@@ -166,7 +166,7 @@ public class DescriptorFile {
     }
 
     public void setParentContentId(int value) {
-        setHeader(HeaderParentContentId, String.format("%8x", value), DescriptorFileEntryType.Plain);
+        setHeader(HeaderParentContentId, "%8x".formatted(value), DescriptorFileEntryType.Plain);
     }
 
     public String getParentFileNameHint() {
@@ -212,7 +212,7 @@ public class DescriptorFile {
             case "buslogic" -> DiskAdapterType.BusLogicScsi;
             case "lsilogic" -> DiskAdapterType.LsiLogicScsi;
             case "legacyESX" -> DiskAdapterType.LegacyEsx;
-            default -> throw new IllegalArgumentException(String.format("Unknown type: %s", value));
+            default -> throw new IllegalArgumentException("Unknown type: %s".formatted(value));
         };
     }
 
@@ -222,7 +222,7 @@ public class DescriptorFile {
             case BusLogicScsi -> "buslogic";
             case LsiLogicScsi -> "lsilogic";
             case LegacyEsx -> "legacyESX";
-            default -> throw new IllegalArgumentException(String.format("Unknown type: %s", value));
+            default -> throw new IllegalArgumentException("Unknown type: %s".formatted(value));
         };
     }
 
@@ -240,7 +240,7 @@ public class DescriptorFile {
             case "vmfsRawDeviceMap" -> DiskCreateType.VmfsRawDeviceMap;
             case "vmfsPassthroughRawDeviceMap" -> DiskCreateType.VmfsPassthroughRawDeviceMap;
             case "streamOptimized" -> DiskCreateType.StreamOptimized;
-            default -> throw new IllegalArgumentException(String.format("Unknown type: %s", value));
+            default -> throw new IllegalArgumentException("Unknown type: %s".formatted(value));
         };
     }
 
@@ -258,7 +258,7 @@ public class DescriptorFile {
             case VmfsRawDeviceMap -> "vmfsRawDeviceMap";
             case VmfsPassthroughRawDeviceMap -> "vmfsPassthroughRawDeviceMap";
             case StreamOptimized -> "streamOptimized";
-            default -> throw new IllegalArgumentException(String.format("Unknown type: %s", value));
+            default -> throw new IllegalArgumentException("Unknown type: %s".formatted(value));
         };
     }
 

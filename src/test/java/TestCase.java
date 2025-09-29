@@ -100,7 +100,7 @@ class TestCase {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putInt(0xcafebabe);
         byte[] b = buffer.array();
-        String hex = IntStream.range(0, b.length).mapToObj(i -> String.format("%02x", b[i])).collect(Collectors.joining());
+        String hex = IntStream.range(0, b.length).mapToObj(i -> "%02x".formatted(b[i])).collect(Collectors.joining());
         assertEquals("cafebabe", hex);
     }
 

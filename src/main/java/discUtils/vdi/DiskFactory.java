@@ -64,7 +64,7 @@ public final class DiskFactory implements VirtualDiskFactory {
         } else if (variant.equals("dynamic")) {
             return Disk.initializeDynamic(locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None), Ownership.Dispose, diskParameters.capacity);
         } else {
-            throw new IllegalArgumentException(String.format("Unknown VDI disk variant '%s'", variant));
+            throw new IllegalArgumentException("Unknown VDI disk variant '%s'".formatted(variant));
         }
     }
 

@@ -106,7 +106,7 @@ public final class ObjectIds {
         }
 
         @Override public String toString() {
-            return String.format("[Key-Id:%s]", id);
+            return "[Key-Id:%s]".formatted(id);
         }
     }
 }

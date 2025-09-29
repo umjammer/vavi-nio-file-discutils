@@ -75,11 +75,13 @@ public class TestChdr {
 
         Files.delete(Path.of(outputFileName));
         Stream vFileOut = new FileStream(outputFileName, FileMode.Open, FileAccess.ReadWrite);
+Debug.printf("out: %s", outputFileName);
 
         Chd chd = new Chd();
         Chd.ChdFile parent = null;
 
         Chd.ChdFile[] res = new Chd.ChdFile[1];
+Debug.printf("in: %s", chdFile);
         err = chd.chd_open_file(chdFile, FileAccess.Read, parent, res);
         Chd.ChdFile chdFile = res[0];
 Debug.printf("chdFile=%s, err=%s", chdFile, err);

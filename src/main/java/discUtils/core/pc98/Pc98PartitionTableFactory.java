@@ -44,7 +44,7 @@ public final class Pc98PartitionTableFactory implements PartitionTableFactory {
     @Override
     public boolean detectIsPartitioned(Stream stream) {
         if (stream.getLength() < Sizes.Sector * 2) {
-logger.log(Level.DEBUG, String.format("Not enough data for detection: %04x/%04x%n", stream.getLength(), Sizes.Sector));
+logger.log(Level.DEBUG, "Not enough data for detection: %04x/%04x%n".formatted(stream.getLength(), Sizes.Sector));
             return false;
         }
 
@@ -54,7 +54,7 @@ logger.log(Level.DEBUG, String.format("Not enough data for detection: %04x/%04x%
 //logger.log(Level.DEBUG, String.format(Level.FINE, "%n" + StringUtil.getDump(bootSector, 512)));
 
         if ((ByteUtil.readLeShort(bootSector, 510) & 0xffff) != 0xaa55) {
-logger.log(Level.DEBUG, String.format("No aa55 magic: %04x%n", (ByteUtil.readBeShort(bootSector, 510) & 0xffff)));
+logger.log(Level.DEBUG, "No aa55 magic: %04x%n".formatted((ByteUtil.readBeShort(bootSector, 510) & 0xffff)));
             return false;
         }
 

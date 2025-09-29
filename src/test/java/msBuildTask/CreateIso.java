@@ -159,7 +159,7 @@ public class CreateIso implements org.apache.maven.plugin.Mojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        log.info(String.format("Creating ISO file: '%s'", fileName));
+        log.info("Creating ISO file: '%s'".formatted(fileName));
         try {
             CDBuilder builder = new CDBuilder();
             builder.setUseJoliet(getUseJoliet());

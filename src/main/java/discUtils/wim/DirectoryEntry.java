@@ -150,6 +150,6 @@ public class DirectoryEntry {
             return streamEntry.length;
         }
 
-        throw new FileNotFoundException(String.format("No such alternate stream '%s' in file '%s'", streamName, fileName));
+        throw new FileNotFoundException("No such alternate stream '%s' in file '%s'".formatted(streamName, fileName));
     }
 }

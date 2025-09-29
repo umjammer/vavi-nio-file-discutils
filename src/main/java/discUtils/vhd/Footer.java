@@ -147,7 +147,7 @@ public class Footer {
     }
 
     public boolean isChecksumValid() {
-//logger.log(Level.DEBUG, String.format("%x, %x\n", Checksum, calculateChecksum()));
+//logger.log(Level.DEBUG, "%x, %x\n".formatted(Checksum, calculateChecksum()));
         return checksum == calculateChecksum();
     }
 

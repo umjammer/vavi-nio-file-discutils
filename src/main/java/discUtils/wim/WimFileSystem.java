@@ -324,7 +324,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     @Override public List<String> getFileSystemEntries(String path) {
         DirectoryEntry parentDirEntry = getEntry(path);
         if (parentDirEntry == null) {
-            throw new FileNotFoundException(String.format("The directory '%s' does not exist", path));
+            throw new FileNotFoundException("The directory '%s' does not exist".formatted(path));
         }
 
         List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.subdirOffset);
@@ -343,7 +343,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         DirectoryEntry parentDirEntry = getEntry(path);
         if (parentDirEntry == null) {
-            throw new FileNotFoundException(String.format("The directory '%s' does not exist", path));
+            throw new FileNotFoundException("The directory '%s' does not exist".formatted(path));
         }
 
         List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.subdirOffset);

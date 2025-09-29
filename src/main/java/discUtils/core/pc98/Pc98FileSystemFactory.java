@@ -83,6 +83,6 @@ logger.log(Level.DEBUG, e);
         }
 
 logger.log(Level.DEBUG, "bpb.fileSystem: " + bpb.fileSystem);
-        return bpb.fileSystem.contains("FAT"); // TODO validation
+        return true; // bpb.fileSystem.contains("FAT"); // TODO validation
     }
 }

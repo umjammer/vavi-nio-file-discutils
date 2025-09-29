@@ -202,31 +202,31 @@ public class Qcow2 {
             throw new IOException(e);
         }
 
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.magic = 0x%08x", header.magic));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.version = %d", header.version));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.backingFileOffset = %d", header.backingFileOffset));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.backingFileSize = %d", header.backingFileSize));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.clusterBits = %d", header.clusterBits));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.size = %d", header.size));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.cryptMethod = %d", header.cryptMethod));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l1Size = %d", header.l1Size));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l1TableOffset = %d", header.l1TableOffset));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.refCountTableOffset = %d", header.refCountTableOffset));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.magic = 0x%08x".formatted(header.magic));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.version = %d".formatted(header.version));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.backingFileOffset = %d".formatted(header.backingFileOffset));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.backingFileSize = %d".formatted(header.backingFileSize));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.clusterBits = %d".formatted(header.clusterBits));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.size = %d".formatted(header.size));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.cryptMethod = %d".formatted(header.cryptMethod));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.l1Size = %d".formatted(header.l1Size));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.l1TableOffset = %d".formatted(header.l1TableOffset));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.refCountTableOffset = %d".formatted(header.refCountTableOffset));
 
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.refCountTableClusters = %d", header.refCountTableClusters));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.refCountTableClusters = %d".formatted(header.refCountTableClusters));
 
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.snapshots = %d", header.snapshots));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.snapshotsOffset = %d", header.snapshotsOffset));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.snapshots = %d".formatted(header.snapshots));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.snapshotsOffset = %d".formatted(header.snapshotsOffset));
 
         if (header.version >= Constants.QCOW_VERSION3) {
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.features = %x", header.features));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.compatFeatures = %x", header.compatFeatures));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.autoClearFeatures = %x", header.autoClearFeatures));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.refCountOrder = %d", header.refCountOrder));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.headerLength = %d", header.headerLength));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.features = %x".formatted(header.features));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.compatFeatures = %x".formatted(header.compatFeatures));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.autoClearFeatures = %x".formatted(header.autoClearFeatures));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.refCountOrder = %d".formatted(header.refCountOrder));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.headerLength = %d".formatted(header.headerLength));
 
             if ((header.features & Constants.QCOW_FEATURE_MASK) != 0) {
-logger.log(Level.DEBUG, String.format("Unknown incompatible features %x enabled, not proceeding.", header.features & Constants.QCOW_FEATURE_MASK));
+logger.log(Level.DEBUG, "Unknown incompatible features %x enabled, not proceeding.".formatted(header.features & Constants.QCOW_FEATURE_MASK));
 
                 throw new IllegalArgumentException();
             }
@@ -259,11 +259,11 @@ logger.log(Level.DEBUG, String.format("Unknown incompatible features %x enabled,
         l2Bits = header.clusterBits - 3;
         l2Size = 1 << l2Bits;
 
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.clusterSize = %d", clusterSize));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.clusterSectors = %d", clusterSectors));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.qHdr.l1Size = %d", header.l1Size));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l2Size = %d", l2Size));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.sectors = %d", imageInfo.sectors));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.clusterSize = %d".formatted(clusterSize));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.clusterSectors = %d".formatted(clusterSectors));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.qHdr.l1Size = %d".formatted(header.l1Size));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.l2Size = %d".formatted(l2Size));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.sectors = %d".formatted(imageInfo.sectors));
 
         byte[] l1TableB = new byte[header.l1Size * 8];
         stream.seek(header.l1TableOffset, SeekOrigin.Begin);
@@ -298,10 +298,10 @@ logger.log(Level.DEBUG, String.format("QCOW plugin: Reading L1 table"));
         for (int i = 0; i < header.clusterBits; i++)
             sectorMask = (sectorMask << 1) + 1;
 
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l1Mask = %x", l1Mask));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l1Shift = %d", l1Shift));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.l2Mask = %x", l2Mask));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.sectorMask = %x", sectorMask));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.l1Mask = %x".formatted(l1Mask));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.l1Shift = %d".formatted(l1Shift));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.l2Mask = %x".formatted(l2Mask));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.sectorMask = %x".formatted(sectorMask));
 
         maxL2TableCache = Constants.MAX_CACHE_SIZE / (l2Size * 8);
         maxClusterCache = Constants.MAX_CACHE_SIZE / clusterSize;
@@ -345,7 +345,7 @@ logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.sectorMask = %x", secto
         long l1Off = (byteAddress & l1Mask) >> l1Shift;
 
         if (l1Off >= l1Table.length) {
-logger.log(Level.DEBUG, String.format("QCOW2 plugin: Trying to read past L1 table, position %d of a max %d", l1Off, l1Table.length));
+logger.log(Level.DEBUG, "QCOW2 plugin: Trying to read past L1 table, position %d of a max %d".formatted(l1Off, l1Table.length));
 
             throw new IllegalArgumentException();
         }
@@ -362,7 +362,7 @@ logger.log(Level.DEBUG, String.format("QCOW2 plugin: Trying to read past L1 tabl
             imageStream.seek(l1Table[(int) l1Off] & Constants.QCOW_FLAGS_MASK, SeekOrigin.Begin);
             byte[] l2TableB = new byte[l2Size * 8];
             imageStream.read(l2TableB, 0, l2Size * 8);
-logger.log(Level.DEBUG, String.format("QCOW plugin: Reading L2 table #%d", l1Off));
+logger.log(Level.DEBUG, "QCOW plugin: Reading L2 table #%d".formatted(l1Off));
             l2Table = ByteBuffer.wrap(l2TableB).order(ByteOrder.LITTLE_ENDIAN).asLongBuffer().array();
 
             if (l2TableCache.size() >= maxL2TableCache)
@@ -601,7 +601,7 @@ logger.log(Level.DEBUG, String.format("QCOW plugin: Reading L2 table #%d", l1Off
         long l1Off = (byteAddress & l1Mask) >> l1Shift;
 
         if (l1Off >= l1Table.length) {
-            errorMessage = String.format("Trying to write past L1 table, position %d of a max %d", l1Off, l1Table.length);
+            errorMessage = "Trying to write past L1 table, position %d of a max %d".formatted(l1Off, l1Table.length);
 
             return false;
         }
@@ -843,8 +843,8 @@ logger.log(Level.DEBUG, String.format("QCOW plugin: Reading L2 table #%d", l1Off
             throw new IOException(e);
         }
 
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.magic = 0x%08x", header.magic));
-logger.log(Level.DEBUG, String.format("QCOW plugin: qHdr.version = %d", header.version));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.magic = 0x%08x".formatted(header.magic));
+logger.log(Level.DEBUG, "QCOW plugin: qHdr.version = %d".formatted(header.version));
 
         return header.magic == Constants.QCOW_MAGIC && (header.version == Constants.QCOW_VERSION2 || header.version == Constants.QCOW_VERSION3);
     }
