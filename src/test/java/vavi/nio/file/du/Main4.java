@@ -52,6 +52,8 @@ public class Main4 {
     @Property
     int volumeNumber;
     @Property
+    String forceType;
+    @Property
     String mountPoint;
 
     FileSystem fs;
@@ -65,6 +67,7 @@ public class Main4 {
 
         Map<String, Object> env = new HashMap<>();
         env.put(CachedFileSystemDriver.ENV_IGNORE_APPLE_DOUBLE, true); // mandatory
+        if (forceType != null) env.put("forceType", forceType);
         env.put("volumeNumber", volumeNumber);
 
         fs = FileSystems.newFileSystem(uri, env);
@@ -98,7 +101,8 @@ public class Main4 {
     @Test
     @DisabledIfSystemProperty(named = "vavi.test", matches = "ide")
     void testX() throws Exception {
-        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
+        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.javafs.JavaFSFuseProvider");
+//        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
 
         try (Fuse fuse = Fuse.getFuse()) {
             fuse.mount(fs, mountPoint, options);
@@ -111,8 +115,8 @@ public class Main4 {
 
     /** */
     public static void main(String[] args) throws Exception {
-//        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.javafs.JavaFSFuseProvider");
-        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
+        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.javafs.JavaFSFuseProvider");
+//        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
 //        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.fusejna.FuseJnaFuseProvider");
 
         Main4 app = new Main4();
