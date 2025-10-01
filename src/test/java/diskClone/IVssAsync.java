@@ -22,11 +22,12 @@
 
 package diskClone;
 
+
 public interface IVssAsync {
+
     void cancel();
 
     void Wait(int millis);
 
     void queryStatus(int[] hrResult, int[] pReserved);
-
 }

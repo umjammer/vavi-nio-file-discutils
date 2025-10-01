@@ -21,7 +21,9 @@
 //
 
 package diskClone;
+
 import com.sun.jna.Pointer;
+
 
 public final class DiskStream extends UnbufferedNativeStream {
 
