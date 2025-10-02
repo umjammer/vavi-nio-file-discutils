@@ -28,9 +28,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class BufferTest {
+class BufferTest {
+
     @Test
-    public void sparseMemoryBufferClear() throws Exception {
+    void sparseMemoryBufferClear() throws Exception {
         SparseMemoryBuffer memoryBuffer = new SparseMemoryBuffer(10);
         byte[] buffer = new byte[20];
         memoryBuffer.write(0, buffer, 0, 20);

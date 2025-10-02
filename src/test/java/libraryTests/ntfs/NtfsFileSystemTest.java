@@ -54,12 +54,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class NtfsFileSystemTest {
+class NtfsFileSystemTest {
 
     private static final String FS = java.io.File.separator;
 
     @Test
-    public void aclInheritance() throws Exception {
+    void aclInheritance() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         RawSecurityDescriptor sd = new RawSecurityDescriptor("O:BAG:BAD:(A;OICINP;GA;;;BA)");
         ntfs.createDirectory("dir");
@@ -77,7 +77,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void reparsePoints_Empty() throws Exception {
+    void reparsePoints_Empty() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         ntfs.createDirectory("dir");
         ntfs.setReparsePoint("dir", new ReparsePoint(12345, new byte[0]));
@@ -88,7 +88,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void reparsePoints_NonEmpty() throws Exception {
+    void reparsePoints_NonEmpty() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         ntfs.createDirectory("dir");
         ntfs.setReparsePoint("dir",
@@ -116,7 +116,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void format_SmallDisk() throws Exception {
+    void format_SmallDisk() throws Exception {
         long size = 8 * 1024 * 1024;
         SparseMemoryStream partStream = new SparseMemoryStream();
 //        VirtualDisk disk = vhd.Disk.initializeDynamic(partStream, Ownership.Dispose, size);
@@ -127,7 +127,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void format_LargeDisk() throws Exception {
+    void format_LargeDisk() throws Exception {
         long size = 1024L * 1024 * 1024L * 1024;
         // 1 TB
         SparseMemoryStream partStream = new SparseMemoryStream();
@@ -138,7 +138,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void clusterInfo() throws Exception {
+    void clusterInfo() throws Exception {
         // 'Big' files have clusters
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
 
@@ -158,7 +158,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void extentInfo() throws Exception {
+    void extentInfo() throws Exception {
         try (SparseMemoryStream ms = new SparseMemoryStream()) {
             Geometry diskGeometry = Geometry.fromCapacity(30 * 1024 * 1024);
             NtfsFileSystem ntfs = NtfsFileSystem.format(ms, "", diskGeometry, 0, diskGeometry.getTotalSectorsLong());
@@ -196,7 +196,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void manyAttributes() throws Exception {
+    void manyAttributes() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         try (Stream s = ntfs.openFile("file", FileMode.Create, FileAccess.ReadWrite)) {
             s.writeByte((byte) 32);
@@ -221,7 +221,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void shortNames() throws Exception {
+    void shortNames() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         // Check we can find a short name in the same directory
         try (Stream s = ntfs.openFile("ALongFileName.txt", FileMode.CreateNew)) {
@@ -248,7 +248,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void hardLinkCount() throws Exception {
+    void hardLinkCount() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         try (Stream s = ntfs.openFile("ALongFileName.txt", FileMode.CreateNew)) {
         }
@@ -264,7 +264,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void hasHardLink() throws Exception {
+    void hasHardLink() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         try (Stream s = ntfs.openFile("ALongFileName.txt", FileMode.CreateNew)) {
         }
@@ -279,7 +279,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void moveLongName() throws Exception {
+    void moveLongName() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         try (Stream s = ntfs.openFile("ALongFileName.txt", FileMode.CreateNew)) {
         }
@@ -295,13 +295,13 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void openRawStream() throws Exception {
+    void openRawStream() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         assertNull(ntfs.openRawStream("$Extend" + FS + "$ObjId", AttributeType.Data, null, FileAccess.Read));
     }
 
     @Test
-    public void getAlternateDataStreams() throws Exception {
+    void getAlternateDataStreams() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         ntfs.openFile("AFILE.TXT", FileMode.Create).close();
         assertEquals(0, ntfs.getAlternateDataStreams("AFILE.TXT").size());
@@ -311,7 +311,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void deleteAlternateDataStreams() throws Exception {
+    void deleteAlternateDataStreams() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         ntfs.openFile("AFILE.TXT", FileMode.Create).close();
         ntfs.openFile("AFILE.TXT:ALTSTREAM", FileMode.Create).close();
@@ -322,7 +322,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void deleteShortNameDir() throws Exception {
+    void deleteShortNameDir() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         ntfs.createDirectory(FS + "TestLongName1" + FS + "TestLongName2");
         ntfs.setShortName(FS + "TestLongName1" + FS + "TestLongName2", "TESTLO~1");
@@ -333,7 +333,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void getFileLength() throws Exception {
+    void getFileLength() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         ntfs.openFile("AFILE.TXT", FileMode.Create).close();
         assertEquals(0, ntfs.getFileLength("AFILE.TXT"));
@@ -358,7 +358,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void fragmented() throws Exception {
+    void fragmented() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         ntfs.createDirectory("DIR");
         byte[] buffer = new byte[4096];
@@ -404,7 +404,7 @@ public class NtfsFileSystemTest {
     }
 
     @Test
-    public void sparse() throws Exception {
+    void sparse() throws Exception {
         int fileSize = 1 * 1024 * 1024;
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         byte[] data = new byte[fileSize];

@@ -36,9 +36,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3MountResultTest {
+class Nfs3MountResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3MountResult result = new Nfs3MountResult();
         result.setAuthFlavours(Arrays.asList(RpcAuthFlavour.Des, RpcAuthFlavour.Null));
         Nfs3FileHandle handle = new Nfs3FileHandle();

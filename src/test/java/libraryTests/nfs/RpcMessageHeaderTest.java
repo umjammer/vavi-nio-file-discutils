@@ -31,9 +31,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class RpcMessageHeaderTest {
+class RpcMessageHeaderTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         RpcMessageHeader header = RpcMessageHeader.accepted(1);
         RpcMessageHeader clone;
 

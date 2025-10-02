@@ -34,9 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class BlockCacheTest {
+class BlockCacheTest {
+
     @Test
-    public void dispose() throws Exception {
+    void dispose() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose), Ownership.Dispose);
         cacheStream.close();
@@ -54,7 +55,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void largeRead() throws Exception {
+    void largeRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
@@ -74,7 +75,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void readThrough() throws Exception {
+    void readThrough() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
@@ -94,7 +95,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void cachedRead() throws Exception {
+    void cachedRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
@@ -121,7 +122,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void unalignedRead() throws Exception {
+    void unalignedRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
@@ -141,7 +142,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void unalignedCachedRead() throws Exception {
+    void unalignedCachedRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
@@ -168,7 +169,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void overread() throws Exception {
+    void overread() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
@@ -189,7 +190,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void cachedOverread() throws Exception {
+    void cachedOverread() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
@@ -218,7 +219,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void cacheBlockRecycle() throws Exception {
+    void cacheBlockRecycle() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
@@ -247,7 +248,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void write() throws Exception {
+    void write() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, true);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
@@ -274,7 +275,7 @@ public class BlockCacheTest {
     }
 
     @Test
-    public void failWrite() throws Exception {
+    void failWrite() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);

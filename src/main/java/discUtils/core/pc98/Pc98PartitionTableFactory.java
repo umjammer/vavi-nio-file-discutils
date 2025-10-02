@@ -77,7 +77,7 @@ logger.log(Level.DEBUG, "strings FAT is found, this partition might be for AT");
             try {
                 Serdes.Util.deserialize(baos, pe);
                 if (!pe.isValid()) {
-logger.log(Level.DEBUG, "pe is invalid: " + pe);
+logger.log(Level.TRACE, "pe is invalid: " + pe);
                     continue;
                 }
             } catch (IOException e) {

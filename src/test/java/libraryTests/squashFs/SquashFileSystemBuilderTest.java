@@ -43,7 +43,7 @@ public final class SquashFileSystemBuilderTest {
     private static final String FS = File.separator;
 
     @Test
-    public void singleFile() throws Exception {
+    void singleFile() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
         builder.addFile("file", new MemoryStream(new byte[] { 1, 2, 3, 4 }));
@@ -59,7 +59,7 @@ public final class SquashFileSystemBuilderTest {
     }
 
     @Test
-    public void createDirs() throws Exception {
+    void createDirs() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
         builder.addFile(FS + "adir" + FS + "anotherdir" + FS + "file",
@@ -72,7 +72,7 @@ public final class SquashFileSystemBuilderTest {
     }
 
     @Test
-    public void defaults() throws Exception {
+    void defaults() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
         builder.addFile("file", new MemoryStream(new byte[] { 1, 2, 3, 4 }));
@@ -109,7 +109,7 @@ public final class SquashFileSystemBuilderTest {
     }
 
     @Test
-    public void fragmentData() throws Exception {
+    void fragmentData() throws Exception {
         MemoryStream fsImage = new MemoryStream();
 
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
@@ -131,7 +131,7 @@ public final class SquashFileSystemBuilderTest {
     }
 
     @Test
-    public void blockData() throws Exception {
+    void blockData() throws Exception {
         byte[] testData = new byte[(512 * 1024) + 21];
         for (int i = 0; i < testData.length; ++i) {
             testData[i] = (byte) (i % 33);

@@ -31,9 +31,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class PortMap2PortTest {
+class PortMap2PortTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         PortMap2Port port = new PortMap2Port();
         port.setPort(2);
 

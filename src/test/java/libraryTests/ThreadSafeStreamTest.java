@@ -42,15 +42,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ThreadSafeStreamTest {
+class ThreadSafeStreamTest {
+
     @Test
-    public void openView() throws Exception {
+    void openView() throws Exception {
         ThreadSafeStream tss = new ThreadSafeStream(SparseStream.fromStream(Stream.Null, Ownership.None));
         SparseStream view = tss.openView();
     }
 
     @Test
-    public void viewIO() throws Exception {
+    void viewIO() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream();
         memStream.setLength(1024);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
@@ -70,7 +71,7 @@ public class ThreadSafeStreamTest {
     }
 
     @Test
-    public void changeLengthFails() throws Exception {
+    void changeLengthFails() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream();
         memStream.setLength(2);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
@@ -83,7 +84,7 @@ public class ThreadSafeStreamTest {
     }
 
     @Test
-    public void extents() throws Exception {
+    void extents() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.ReadWrite);
         memStream.setLength(1024);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
@@ -101,7 +102,7 @@ public class ThreadSafeStreamTest {
     }
 
     @Test
-    public void disposeView() throws Exception {
+    void disposeView() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.ReadWrite);
         memStream.setLength(1024);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
@@ -113,7 +114,7 @@ public class ThreadSafeStreamTest {
     }
 
     @Test
-    public void dispose_StopsView() throws Exception {
+    void dispose_StopsView() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.ReadWrite);
         memStream.setLength(1024);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
@@ -127,7 +128,7 @@ public class ThreadSafeStreamTest {
     }
 
     @Test
-    public void seek() throws Exception {
+    void seek() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.ReadWrite);
         memStream.setLength(1024);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
@@ -140,7 +141,7 @@ public class ThreadSafeStreamTest {
     }
 
     @Test
-    public void canWrite() throws Exception {
+    void canWrite() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.ReadWrite);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
         assertTrue(tss.canWrite());
@@ -150,7 +151,7 @@ public class ThreadSafeStreamTest {
     }
 
     @Test
-    public void canRead() throws Exception {
+    void canRead() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.ReadWrite);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
         assertTrue(tss.canRead());

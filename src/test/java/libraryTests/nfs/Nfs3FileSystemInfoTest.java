@@ -33,9 +33,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3FileSystemInfoTest {
+class Nfs3FileSystemInfoTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3FileSystemInfo attributes = new Nfs3FileSystemInfo();
         attributes.setDirectoryPreferredBytes(1);
         attributes.setFileSystemProperties(Nfs3FileSystemProperties.HardLinks);

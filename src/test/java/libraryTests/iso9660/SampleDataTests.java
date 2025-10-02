@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class SampleDataTests {
+class SampleDataTests {
     @Test
-    public void appleTestZip() throws Exception {
+    void appleTestZip() throws Exception {
         File fs = new File(URI.create(getClass().getResource("apple-test.zip").toString()));
         try (Stream iso = ZipUtilities.readFileFromZip(fs, null);
                 CDReader cr = new CDReader(iso, false)) {

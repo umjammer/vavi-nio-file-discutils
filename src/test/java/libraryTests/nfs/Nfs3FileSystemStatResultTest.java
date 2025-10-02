@@ -38,9 +38,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3FileSystemStatResultTest {
+class Nfs3FileSystemStatResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3FileSystemStatResult result = new Nfs3FileSystemStatResult();
         result.setFileSystemStat(new Nfs3FileSystemStat());
         result.getFileSystemStat().setAvailableFreeFileSlotCount(1);

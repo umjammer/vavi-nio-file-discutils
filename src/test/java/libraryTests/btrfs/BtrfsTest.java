@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class BtrfsTest {
+class BtrfsTest {
 
     @Test
-    public void ignoreInvalidLabelData() throws Exception {
+    void ignoreInvalidLabelData() throws Exception {
         try (Stream ms = new MemoryStream()) {
             ms.position(0x20000);
             //set fs length
@@ -36,7 +36,7 @@ public class BtrfsTest {
     }
 
     @Test
-    public void emptyStreamIsNoValidBtrfs() throws Exception {
+    void emptyStreamIsNoValidBtrfs() throws Exception {
         try (Stream ms = new MemoryStream()) {
             IOException ex = assertThrows(IOException.class, () -> new BtrfsFileSystem(ms));
             assertEquals("No Superblock detected", ex.getMessage());

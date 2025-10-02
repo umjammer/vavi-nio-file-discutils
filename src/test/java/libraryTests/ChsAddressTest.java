@@ -27,10 +27,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ChsAddressTest {
+class ChsAddressTest {
 
     @Test
-    public void create() throws Exception {
+    void create() throws Exception {
         ChsAddress g = new ChsAddress(100, 16, 63);
         assertEquals(100, g.getCylinder());
         assertEquals(16, g.getHead());
@@ -38,12 +38,12 @@ public class ChsAddressTest {
     }
 
     @Test
-    public void chksAddressEquals() throws Exception {
+    void chksAddressEquals() throws Exception {
         assertEquals(new ChsAddress(333, 22, 11), new ChsAddress(333, 22, 11));
     }
 
     @Test
-    public void testToString() throws Exception {
+    void testToString() throws Exception {
         assertEquals("(333/22/11)", (new ChsAddress(333, 22, 11)).toString());
     }
 }

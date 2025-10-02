@@ -36,12 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BcdObjectTest {
+class BcdObjectTest {
 
     private static final String FS = java.io.File.separator;
 
     @Test
-    public void addElement() {
+    void addElement() {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
@@ -53,7 +53,7 @@ public class BcdObjectTest {
     }
 
     @Test
-    public void addElement_WrongType() {
+    void addElement_WrongType() {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
@@ -63,7 +63,7 @@ public class BcdObjectTest {
     }
 
     @Test
-    public void removeElement() throws Exception {
+    void removeElement() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
@@ -74,7 +74,7 @@ public class BcdObjectTest {
     }
 
     @Test
-    public void removeElement_NonExistent() throws Exception {
+    void removeElement_NonExistent() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
@@ -82,7 +82,7 @@ public class BcdObjectTest {
     }
 
     @Test
-    public void friendlyName() throws Exception {
+    void friendlyName() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class BZip2DecoderStreamTest {
+class BZip2DecoderStreamTest {
     private final byte[] ValidData = {
         0x42, 0x5A, 0x68, 0x39, 0x31, 0x41, 0x59, 0x26, 0x53, 0x59, (byte) 0xF7, 0x3C, 0x46, 0x3E, 0x00, 0x00, 0x02, 0x13,
         (byte) 0x80, 0x40, 0x00, 0x04, 0x00, 0x22, (byte) 0xE1, 0x1C, 0x00, 0x20, 0x00, 0x31, 0x00, (byte) 0xD3, 0x4D, 0x04,
@@ -57,7 +57,7 @@ public class BZip2DecoderStreamTest {
     };
 
     @Test
-    public void testValidStream() throws Exception {
+    void testValidStream() throws Exception {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(ValidData), Ownership.Dispose);
         byte[] buffer = new byte[1024];
         int numRead = decoder.read(buffer, 0, 1024);
@@ -69,21 +69,21 @@ public class BZip2DecoderStreamTest {
     }
 
     @Test
-    public void testInvalidBlockCrcStream() throws Exception {
+    void testInvalidBlockCrcStream() throws Exception {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(InvalidBlockCrcData), Ownership.Dispose);
         byte[] buffer = new byte[1024];
         assertThrows(IOException.class, () -> decoder.read(buffer, 0, 1024));
     }
 
     @Test
-    public void testCombinedCrcStream() throws Exception {
+    void testCombinedCrcStream() throws Exception {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(InvalidCombinedCrcData), Ownership.Dispose);
         byte[] buffer = new byte[1024];
         assertThrows(IOException.class, () -> decoder.read(buffer, 0, 1024));
     }
 
     @Test
-    public void testCombinedCrcStream_ExactLengthRead() throws Exception {
+    void testCombinedCrcStream_ExactLengthRead() throws Exception {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(InvalidCombinedCrcData), Ownership.Dispose);
         byte[] buffer = new byte[21];
         assertThrows(IOException.class, () -> decoder.read(buffer, 0, 21));

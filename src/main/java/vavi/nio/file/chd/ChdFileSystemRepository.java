@@ -40,10 +40,6 @@ public final class ChdFileSystemRepository extends FileSystemRepositoryBase {
         super("chd", new ChdFileSystemFactoryProvider());
     }
 
-    /**
-     * @param uri "chd://host/", sub url (after "vfs:") parts will be replaced by properties.
-     *            if you don't use alias, the url must include username, password, host, port.
-     */
     @Nonnull
     @Override
     public FileSystemDriver createDriver(URI uri, Map<String, ?> env) throws IOException {
@@ -58,7 +54,7 @@ public final class ChdFileSystemRepository extends FileSystemRepositoryBase {
         }
 
         Path path = Path.of(file);
-Debug.print(path);
+logger.log(Level.DEBUG, "path: " + path);
         UmdIsoReader manager = new UmdIsoReader(path.toString());
 
         ChdFileStore fileStore = new ChdFileStore(manager, factoryProvider.getAttributesFactory());

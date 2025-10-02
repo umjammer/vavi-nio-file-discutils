@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 
-public class SampleDataTests {
+class SampleDataTests {
 
     private static final String FS = File.separator;
 
     @Test
-    public void btrfsVhdxZip() throws Exception {
+    void btrfsVhdxZip() throws Exception {
         File fs = new File(URI.create(getClass().getResource("btrfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);

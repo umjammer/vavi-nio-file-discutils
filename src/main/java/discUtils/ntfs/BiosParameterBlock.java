@@ -270,7 +270,7 @@ class BiosParameterBlock {
         }
         byte val = 0;
         while (size != 1) {
-            size = (size >>> 1) & 0x7FFFFFFF;
+            size = (size >>> 1) & 0x7fff_ffff;
             val++;
         }
         return (byte) -val;

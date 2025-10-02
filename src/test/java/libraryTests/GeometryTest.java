@@ -29,9 +29,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class GeometryTest {
+class GeometryTest {
+
     @Test
-    public void create() throws Exception {
+    void create() throws Exception {
         Geometry g = new Geometry(100, 16, 63);
         assertEquals(100, g.getCylinders());
         assertEquals(16, g.getHeadsPerCylinder());
@@ -39,7 +40,7 @@ public class GeometryTest {
     }
 
     @Test
-    public void lBARoundTrip() throws Exception {
+    void lBARoundTrip() throws Exception {
         Geometry g = new Geometry(100, 16, 63);
         final int TestCylinder = 54;
         final int TestHead = 15;
@@ -52,19 +53,19 @@ public class GeometryTest {
     }
 
     @Test
-    public void totalSectors() throws Exception {
+    void totalSectors() throws Exception {
         Geometry g = new Geometry(333, 22, 11);
         assertEquals(333 * 22 * 11, g.getTotalSectorsLong());
     }
 
     @Test
-    public void capacity() throws Exception {
+    void capacity() throws Exception {
         Geometry g = new Geometry(333, 22, 11);
         assertEquals(333 * 22 * 11 * 512, g.getCapacity());
     }
 
     @Test
-    public void fromCapacity() throws Exception {
+    void fromCapacity() throws Exception {
         // Check the capacity calculated is no greater than requested, and off by no more than 10%
         final long ThreeTwentyMB = 1024 * 1024 * 320;
         Geometry g = Geometry.fromCapacity(ThreeTwentyMB);
@@ -77,12 +78,12 @@ public class GeometryTest {
     }
 
     @Test
-    public void geometryEquals() throws Exception {
+    void geometryEquals() throws Exception {
         assertEquals(Geometry.fromCapacity(1024 * 1024 * 32), Geometry.fromCapacity(1024 * 1024 * 32));
     }
 
     @Test
-    public void testToString() throws Exception {
+    void testToString() throws Exception {
         assertEquals("(333/22/11)", (new Geometry(333, 22, 11)).toString());
     }
 }

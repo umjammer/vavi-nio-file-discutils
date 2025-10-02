@@ -42,9 +42,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3FileSystemInfoResultTest {
+class Nfs3FileSystemInfoResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3FileSystemInfoResult result = new Nfs3FileSystemInfoResult();
         Nfs3FileSystemInfo info = new Nfs3FileSystemInfo();
         info.setDirectoryPreferredBytes(1);

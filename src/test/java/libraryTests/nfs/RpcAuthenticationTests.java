@@ -31,9 +31,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class RpcAuthenticationTests {
+class RpcAuthenticationTests {
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         RpcAuthentication authentication = new RpcAuthentication();
         RpcAuthentication clone;
         try (MemoryStream stream = new MemoryStream()) {

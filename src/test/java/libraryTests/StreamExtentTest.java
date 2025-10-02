@@ -34,9 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class StreamExtentTest {
+class StreamExtentTest {
+
     @Test
-    public void testIntersect1() throws Exception {
+    void testIntersect1() throws Exception {
         StreamExtent[] s1 = new StreamExtent[] {
             new StreamExtent(0, 4)
         };
@@ -48,7 +49,7 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testIntersect2() throws Exception {
+    void testIntersect2() throws Exception {
         StreamExtent[] s1 = new StreamExtent[] {
             new StreamExtent(0, 4)
         };
@@ -62,7 +63,7 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testIntersect3() throws Exception {
+    void testIntersect3() throws Exception {
         StreamExtent[] s1 = new StreamExtent[] {
             new StreamExtent(0, 4), new StreamExtent(10, 10)
         };
@@ -76,7 +77,7 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testIntersect4() throws Exception {
+    void testIntersect4() throws Exception {
         StreamExtent[] s1 = new StreamExtent[] {
             new StreamExtent(0, 4)
         };
@@ -91,7 +92,7 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testIntersect5() throws Exception {
+    void testIntersect5() throws Exception {
         StreamExtent[] s1 = new StreamExtent[] {
             new StreamExtent(0, 10)
         };
@@ -105,7 +106,7 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testUnion1() throws Exception {
+    void testUnion1() throws Exception {
         StreamExtent[] s1 = new StreamExtent[] {
             new StreamExtent(0, 4)
         };
@@ -119,7 +120,7 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testUnion2() throws Exception {
+    void testUnion2() throws Exception {
         StreamExtent[] s1 = new StreamExtent[] {
             new StreamExtent(0, 4)
         };
@@ -133,7 +134,7 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testUnion3() throws Exception {
+    void testUnion3() throws Exception {
         StreamExtent[] s1 = new StreamExtent[] {
             new StreamExtent(0, 4)
         };
@@ -147,7 +148,7 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testUnion4() throws Exception {
+    void testUnion4() throws Exception {
         StreamExtent[] s1 = new StreamExtent[] {
             new StreamExtent(0, 4), new StreamExtent(4, 4)
         };
@@ -158,13 +159,13 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testUnion5() throws Exception {
+    void testUnion5() throws Exception {
         StreamExtent[] r = new StreamExtent[] {};
         compare(r, StreamExtent.union());
     }
 
     @Test
-    public void testBlockCount() throws Exception {
+    void testBlockCount() throws Exception {
         StreamExtent[] s = new StreamExtent[] {
             new StreamExtent(0, 8), new StreamExtent(11, 4)
         };
@@ -180,7 +181,7 @@ public class StreamExtentTest {
     }
 
     @Test
-    public void testBlocks() throws Exception {
+    void testBlocks() throws Exception {
         StreamExtent[] s = new StreamExtent[] {
             new StreamExtent(0, 8), new StreamExtent(11, 4)
         };

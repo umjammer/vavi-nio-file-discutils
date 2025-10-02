@@ -40,9 +40,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3ReadDirResultTest {
+class Nfs3ReadDirResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3ReadDirResult result = new Nfs3ReadDirResult();
         result.setStatus(Nfs3Status.Ok);
         result.setEof(false);

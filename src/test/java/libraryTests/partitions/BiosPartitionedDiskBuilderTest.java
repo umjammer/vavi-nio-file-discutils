@@ -35,9 +35,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class BiosPartitionedDiskBuilderTest {
+class BiosPartitionedDiskBuilderTest {
+
     @Test
-    public void basic() throws Exception {
+    void basic() throws Exception {
         long capacity = 10 * 1024 * 1024;
         Geometry geometry = Geometry.fromCapacity(capacity);
         BiosPartitionedDiskBuilder builder = new BiosPartitionedDiskBuilder(capacity, geometry);

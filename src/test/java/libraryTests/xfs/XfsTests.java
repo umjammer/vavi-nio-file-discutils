@@ -14,9 +14,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class XfsTests {
+class XfsTests {
     @Test
-    public void canReadSymlink() throws Exception {
+    void canReadSymlink() throws Exception {
         Context context = new Context();
         context.setSuperBlock(new SuperBlock());
         XfsFileSystemOptions options = new XfsFileSystemOptions();

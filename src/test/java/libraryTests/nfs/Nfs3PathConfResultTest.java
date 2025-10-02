@@ -37,9 +37,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3PathConfResultTest {
+class Nfs3PathConfResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3PathConfResult authentication = new Nfs3PathConfResult();
         authentication.setStatus(Nfs3Status.Ok);
         authentication.setCaseInsensitive(true);

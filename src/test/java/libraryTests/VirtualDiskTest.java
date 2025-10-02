@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class VirtualDiskTest {
+class VirtualDiskTest {
 
     @Test
-    public void testSignature() throws Exception {
+    void testSignature() throws Exception {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         discUtils.core.raw.Disk rawDisk = new discUtils.core.raw.Disk(ms, Ownership.Dispose);
@@ -44,7 +44,7 @@ public class VirtualDiskTest {
     }
 
     @Test
-    public void testMbr() throws Exception {
+    void testMbr() throws Exception {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         byte[] newMbr = new byte[512];
@@ -63,7 +63,7 @@ public class VirtualDiskTest {
     }
 
     @Test
-    public void testMbr_Null() throws Exception {
+    void testMbr_Null() throws Exception {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         discUtils.core.raw.Disk rawDisk = new discUtils.core.raw.Disk(ms, Ownership.Dispose);
@@ -71,7 +71,7 @@ public class VirtualDiskTest {
     }
 
     @Test
-    public void testMbr_WrongSize() throws Exception {
+    void testMbr_WrongSize() throws Exception {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         discUtils.core.raw.Disk rawDisk = new discUtils.core.raw.Disk(ms, Ownership.Dispose);

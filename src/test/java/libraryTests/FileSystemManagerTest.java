@@ -29,8 +29,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class FileSystemManagerTest {
+
     @Test
-    public void detect() {
+    void detect() {
         MemoryStream shortStream = new MemoryStream(new byte[5]);
         assertEquals(0, FileSystemManager.detectFileSystems(shortStream).size());
         MemoryStream longStream = new MemoryStream(new byte[100000]);

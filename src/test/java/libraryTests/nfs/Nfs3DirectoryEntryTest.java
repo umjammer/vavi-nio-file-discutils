@@ -38,9 +38,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3DirectoryEntryTest {
+class Nfs3DirectoryEntryTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3DirectoryEntry entry = new Nfs3DirectoryEntry();
         entry.setCookie(1);
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();

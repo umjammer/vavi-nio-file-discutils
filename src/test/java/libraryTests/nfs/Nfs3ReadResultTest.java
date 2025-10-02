@@ -39,9 +39,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3ReadResultTest {
+class Nfs3ReadResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3ReadResult result = new Nfs3ReadResult();
         result.setCount(1);
         result.setData(new byte[] {0x02, 0x03});

@@ -33,9 +33,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3ModifyResultTest {
+class Nfs3ModifyResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3ModifyResult result = new Nfs3ModifyResult();
         result.setCacheConsistency(new Nfs3WeakCacheConsistency());
         result.setStatus(Nfs3Status.Ok);

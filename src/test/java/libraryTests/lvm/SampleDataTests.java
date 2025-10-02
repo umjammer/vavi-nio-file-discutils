@@ -19,10 +19,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class SampleDataTests {
+class SampleDataTests {
 
     @Test
-    public void lvm2VhdxZip() throws Exception {
+    void lvm2VhdxZip() throws Exception {
 //        SetupHelper.setupComplete();
         File fs = new File(URI.create(getClass().getResource("lvm2.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);

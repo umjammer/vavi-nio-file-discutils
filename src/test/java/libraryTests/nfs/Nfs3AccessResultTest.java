@@ -39,9 +39,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3AccessResultTest {
+class Nfs3AccessResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3AccessResult result = new Nfs3AccessResult();
         result.setAccess(EnumSet.of(Nfs3AccessPermissions.Execute));
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();

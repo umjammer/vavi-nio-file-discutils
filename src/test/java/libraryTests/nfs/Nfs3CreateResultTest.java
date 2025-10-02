@@ -34,9 +34,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3CreateResultTest {
+class Nfs3CreateResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3CreateResult result = new Nfs3CreateResult();
         result.setStatus(Nfs3Status.Ok);
         Nfs3FileHandle handle = new Nfs3FileHandle();

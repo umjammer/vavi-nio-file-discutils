@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class ExtFileSystemTest {
+class ExtFileSystemTest {
 
     private static final String FS = File.separator;
 
     @Test
-    public void loadFileSystem() throws Exception {
+    void loadFileSystem() throws Exception {
         try (Stream data = Helpers.loadDataFile(getClass(), "data.ext4.dat.gz");
                 ExtFileSystem fs = new ExtFileSystem(data, new FileSystemParameters())) {
             List<DiscFileSystemInfo> fsis = fs.getRoot().getFileSystemInfos();

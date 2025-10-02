@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class PlistTests {
+class PlistTests {
 
     @Test
-    public void parse() throws Exception {
+    void parse() throws Exception {
         try (Stream stream = new JavaIOStream(getClass().getResourceAsStream("/plist.xml"), null)) {
             Map<String, Object> plist = Plist.parse(stream);
             assertNotNull(plist);

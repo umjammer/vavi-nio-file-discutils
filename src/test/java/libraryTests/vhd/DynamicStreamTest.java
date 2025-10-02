@@ -39,10 +39,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class DynamicStreamTest {
+class DynamicStreamTest {
 
     @Test
-    public void attributes() throws Exception {
+    void attributes() throws Exception {
         MemoryStream stream = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(stream, Ownership.Dispose, 16 * 1024L * 1024 * 1024)) {
             Stream s = disk.getContent();
@@ -53,7 +53,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void readWriteSmall() throws Exception {
+    void readWriteSmall() throws Exception {
         MemoryStream stream = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(stream, Ownership.None, 16 * 1024L * 1024 * 1024)) {
             byte[] content = new byte[100];
@@ -93,7 +93,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void readWriteLarge() throws Exception {
+    void readWriteLarge() throws Exception {
         MemoryStream stream = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(stream, Ownership.Dispose, 16 * 1024L * 1024 * 1024)) {
             byte[] content = new byte[3 * 1024 * 1024];
@@ -115,7 +115,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void disposeTest() throws Exception {
+    void disposeTest() throws Exception {
         Stream contentStream;
         MemoryStream stream = new MemoryStream();
 
@@ -126,7 +126,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void readNotPresent() throws Exception {
+    void readNotPresent() throws Exception {
         MemoryStream stream = new MemoryStream();
 
         try (Disk disk = Disk.initializeDynamic(stream, Ownership.Dispose, 16 * 1024L * 1024 * 1024)) {
@@ -142,7 +142,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void extents() throws Exception {
+    void extents() throws Exception {
         MemoryStream stream = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(stream, Ownership.Dispose, 16 * 1024L * 1024 * 1024)) {
             disk.getContent().position(20 * 512);

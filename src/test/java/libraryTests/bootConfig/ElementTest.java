@@ -34,12 +34,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ElementTest {
+class ElementTest {
 
     private static final String FS = java.io.File.separator;
 
     @Test
-    public void friendlyName() throws Exception {
+    void friendlyName() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);

@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class DiscFileSystemDirectoryTest {
+class DiscFileSystemDirectoryTest {
 
     private static final String FS = File.separator;
 

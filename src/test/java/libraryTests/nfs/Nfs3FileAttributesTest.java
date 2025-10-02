@@ -37,9 +37,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3FileAttributesTest {
+class Nfs3FileAttributesTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
         attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant().toEpochMilli());

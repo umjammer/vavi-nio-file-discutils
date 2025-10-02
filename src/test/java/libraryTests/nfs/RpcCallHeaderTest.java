@@ -33,9 +33,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class RpcCallHeaderTest {
+class RpcCallHeaderTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         RpcCallHeader header = new RpcCallHeader();
         header.setCredentials(new RpcAuthentication());
         header.setProc(NfsProc3.Commit.ordinal());

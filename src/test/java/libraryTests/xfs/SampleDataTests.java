@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class SampleDataTests {
+class SampleDataTests {
 
     private static final String FS = File.separator;
 
     @Test
-    public void xfsVhdxZip() throws Exception {
+    void xfsVhdxZip() throws Exception {
         File fs = new File(URI.create(getClass().getResource("xfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
@@ -59,7 +59,7 @@ public class SampleDataTests {
     }
 
     @Test
-    public void xfs5VhdxZip() throws Exception {
+    void xfs5VhdxZip() throws Exception {
         File fs = new File(URI.create(getClass().getResource("xfs5.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);

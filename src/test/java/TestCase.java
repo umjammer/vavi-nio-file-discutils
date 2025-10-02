@@ -150,7 +150,7 @@ class TestCase {
     }
 
     @Test
-    public void test8() {
+    void test8() {
         // formatter:off
         String[][] aa = {
             { "a1", "a2", "a3", "a4" },
@@ -164,7 +164,7 @@ class TestCase {
     }
 
     @Test
-    public void test9() {
+    void test9() {
         byte b = (byte) 0x80;
         char c = (char) (b & 0xff);
         assertEquals((char) 0x80, c);

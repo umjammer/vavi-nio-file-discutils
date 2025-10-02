@@ -31,9 +31,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3FileHandleTest {
+class Nfs3FileHandleTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3FileHandle attributes = new Nfs3FileHandle();
         attributes.setValue(new byte[] { 0x01 });
         Nfs3FileHandle clone;

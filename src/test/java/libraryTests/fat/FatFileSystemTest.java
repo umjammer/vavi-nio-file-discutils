@@ -56,18 +56,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class FatFileSystemTest {
+class FatFileSystemTest {
 
     private static final String FS = File.separator;
 
     @Test
-    public void formatFloppy() throws Exception {
+    void formatFloppy() throws Exception {
         MemoryStream ms = new MemoryStream();
         FatFileSystem fs = FatFileSystem.formatFloppy(ms, FloppyDiskType.HighDensity, "KBFLOPPY   ");
     }
 
     @Test
-    public void cyrillic() throws Exception {
+    void cyrillic() throws Exception {
 //        SetupHelper.RegisterAssembly(FatFileSystem.class.getTypeInfo().Assembly);
 
         String lowerDE = "\u0434";
@@ -106,7 +106,7 @@ public class FatFileSystemTest {
     }
 
     @Test
-    public void defaultCodepage() throws Exception {
+    void defaultCodepage() throws Exception {
         String graphicChar = "\u255D";
 
         MemoryStream ms = new MemoryStream();
@@ -124,7 +124,7 @@ public class FatFileSystemTest {
     }
 
     @Test
-    public void formatPartition() throws Exception {
+    void formatPartition() throws Exception {
         MemoryStream ms = new MemoryStream();
 
         Geometry g = Geometry.fromCapacity(1024 * 1024 * 32);
@@ -137,7 +137,7 @@ public class FatFileSystemTest {
     }
 
     @Test
-    public void createDirectory() throws Exception {
+    void createDirectory() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
 
         fs.createDirectory("UnItTeSt");
@@ -151,13 +151,13 @@ public class FatFileSystemTest {
     }
 
     @Test
-    public void canWrite() throws Exception {
+    void canWrite() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
         assertTrue(fs.canWrite());
     }
 
     @Test
-    public void label() throws Exception {
+    void label() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
         assertEquals("FLOPPY_IMG ", fs.getVolumeLabel());
 
@@ -166,28 +166,28 @@ public class FatFileSystemTest {
     }
 
     @Test
-    public void fileInfo() throws Exception {
+    void fileInfo() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
         DiscFileInfo fi = fs.getFileInfo("SOMEDIR" + FS + "SOMEFILE.TXT");
         assertNotNull(fi);
     }
 
     @Test
-    public void directoryInfo() throws Exception {
+    void directoryInfo() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
         DiscDirectoryInfo fi = fs.getDirectoryInfo("SOMEDIR");
         assertNotNull(fi);
     }
 
     @Test
-    public void fileSystemInfo() throws Exception {
+    void fileSystemInfo() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
         DiscFileSystemInfo fi = fs.getFileSystemInfo("SOMEDIR" + FS + "SOMEFILE");
         assertNotNull(fi);
     }
 
     @Test
-    public void root() throws Exception {
+    void root() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
         assertNotNull(fs.getRoot());
         assertTrue(fs.getRoot().exists());
@@ -196,7 +196,7 @@ public class FatFileSystemTest {
     }
 
     @Test
-    public void openFileAsDir() throws Exception {
+    void openFileAsDir() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
 
         try (Stream s = fs.openFile("FOO.TXT", FileMode.Create, FileAccess.ReadWrite);
@@ -209,7 +209,7 @@ public class FatFileSystemTest {
     }
 
     @Test
-    public void honoursReadOnly() throws Exception {
+    void honoursReadOnly() throws Exception {
         SparseMemoryStream diskStream = new SparseMemoryStream();
         FatFileSystem fs = FatFileSystem.formatFloppy(diskStream, FloppyDiskType.HighDensity, "FLOPPY_IMG ");
 
@@ -236,7 +236,7 @@ public class FatFileSystemTest {
     }
 
     @Test
-    public void invalidImageThrowsException() throws Exception {
+    void invalidImageThrowsException() throws Exception {
         SparseMemoryStream stream = new SparseMemoryStream();
         byte[] buffer = new byte[1024 * 1024];
         stream.write(buffer, 0, 1024 * 1024);

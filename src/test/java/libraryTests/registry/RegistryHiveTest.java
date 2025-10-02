@@ -41,7 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class RegistryHiveTest {
+class RegistryHiveTest {
+
     @Test
     @DisplayName("Issue #14")
     public void create() throws Exception {
@@ -57,7 +58,7 @@ public class RegistryHiveTest {
     }
 
     @Test
-    public void create_Null() throws Exception {
+    void create_Null() throws Exception {
         assertThrows(NullPointerException.class, () -> RegistryHive.create((Stream) null));
     }
 

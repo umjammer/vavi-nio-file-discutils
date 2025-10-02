@@ -33,9 +33,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3ExportTest {
+class Nfs3ExportTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3Export export = new Nfs3Export();
         export.setDirPath("test");
         export.setGroups(Arrays.asList("Group1", "Group2"));
