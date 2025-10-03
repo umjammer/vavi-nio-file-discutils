@@ -57,8 +57,8 @@ class Pc98PartitionTest {
     @BeforeEach
     void before() throws IOException {
         if (localPropertiesExists()) {
-        PropsEntity.Util.bind(this);
-    }
+            PropsEntity.Util.bind(this);
+        }
     }
 
     @Test
@@ -84,6 +84,8 @@ Debug.println("fs: " + fs);
     @Test
     @DisplayName("via spi")
     void test2() throws Exception {
+//        System.setProperty(Pc98FileSystemFactory.VALIDATION_KEY, "libraryTests.pc98.TestValidator#validate");
+
         String file = nhd;
         URI uri = DuFileSystemProvider.createURI(file);
         Map<String, Object> env = new HashMap<>();
