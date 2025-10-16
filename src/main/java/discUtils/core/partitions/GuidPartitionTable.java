@@ -337,6 +337,7 @@ public final class GuidPartitionTable extends PartitionTable {
         this.diskGeometry = diskGeometry;
         disk.position(diskGeometry.getBytesPerSector());
         byte[] sector = StreamUtilities.readExact(disk, diskGeometry.getBytesPerSector());
+//logger.log(Level.TRACE, disk.position() + "\n" + StringUtil.getDump(sector));
         primaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
         if (!primaryHeader.readFrom(sector, 0) || !readEntries(primaryHeader)) {
             disk.position(disk.getLength() - diskGeometry.getBytesPerSector());

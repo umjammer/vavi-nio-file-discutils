@@ -54,19 +54,19 @@ logger.log(Level.DEBUG, "Not enough data for detection: %04x/%04x%n".formatted(s
 //logger.log(Level.DEBUG, String.format(Level.FINE, "%n" + StringUtil.getDump(bootSector, 512)));
 
         if ((ByteUtil.readLeShort(bootSector, 510) & 0xffff) != 0xaa55) {
-logger.log(Level.DEBUG, "No aa55 magic: %04x%n".formatted((ByteUtil.readBeShort(bootSector, 510) & 0xffff)));
+logger.log(Level.TRACE, "No aa55 magic: %04x%n".formatted((ByteUtil.readBeShort(bootSector, 510) & 0xffff)));
             return false;
         }
 
         if (Arrays.stream(iplSignatures).noneMatch(s ->
             new String(bootSector, 4, s.length(), StandardCharsets.US_ASCII).equals(s)
         )) {
-logger.log(Level.DEBUG, "no matching signature is found: " + new String(bootSector, 4, 4, StandardCharsets.US_ASCII));
+logger.log(Level.TRACE, "no matching signature is found: " + new String(bootSector, 4, 4, StandardCharsets.US_ASCII));
             return false;
         }
 
         if (new String(bootSector, 0x36, 3, StandardCharsets.US_ASCII).equals("FAT")) {
-logger.log(Level.DEBUG, "strings FAT is found, this partition might be for AT");
+logger.log(Level.TRACE, "strings FAT is found, this partition might be for AT");
             return false;
         }
 
@@ -115,7 +115,7 @@ logger.log(Level.DEBUG, "[" + count + "]: " + pe);
         }
         for (PartitionTable table: tables) {
             if (table instanceof discUtils.core.partitions.BiosPartitionTable) {
-logger.log(Level.DEBUG, "ad-hoc remove partition, conflict w/ pc98 partition table: " + table);
+logger.log(Level.INFO, "ad-hoc remove partition, conflict w/ pc98 partition table: " + table);
                 tables.remove(table);
             }
         }

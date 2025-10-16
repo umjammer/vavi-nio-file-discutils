@@ -25,6 +25,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import vavi.net.fuse.Base;
 import vavi.net.fuse.Fuse;
+import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
@@ -51,6 +52,7 @@ public class Main4 {
     String discImage;
     @Property
     int volumeNumber;
+    // set "EMU" when discImage is dealt by vavi-nio-file-emu
     @Property
     String forceType;
     @Property
@@ -61,13 +63,16 @@ public class Main4 {
 
     @BeforeEach
     public void before() throws Exception {
-        PropsEntity.Util.bind(this);
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
 
         URI uri = DuFileSystemProvider.createURI(discImage);
+Debug.println(uri);
 
         Map<String, Object> env = new HashMap<>();
         env.put(CachedFileSystemDriver.ENV_IGNORE_APPLE_DOUBLE, true); // mandatory
-        if (forceType != null) env.put("forceType", forceType);
+        if (forceType != null && !forceType.isEmpty()) env.put("forceType", forceType);
         env.put("volumeNumber", volumeNumber);
 
         fs = FileSystems.newFileSystem(uri, env);

@@ -84,6 +84,7 @@ Debug.println("fs: " + fs);
     @Test
     @DisplayName("via spi")
     void test2() throws Exception {
+        // TODO discUtils.core.pc98.Pc98PartitionTableFactory#adhoc ???
 //        System.setProperty(Pc98FileSystemFactory.VALIDATION_KEY, "libraryTests.pc98.TestValidator#validate");
 
         String file = nhd;

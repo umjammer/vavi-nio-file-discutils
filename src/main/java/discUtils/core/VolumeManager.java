@@ -286,6 +286,8 @@ logger.log(Level.TRACE, "guid: " + guid);
             if (!guid.equals(EMPTY)) {
                 return "DG" + "{%s}".formatted(guid);
             }
+} else {
+ logger.log(Level.TRACE, "not partitioned: " + disk);
         }
 
         int sig = disk.getSignature();

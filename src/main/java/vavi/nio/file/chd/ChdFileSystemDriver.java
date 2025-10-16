@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import bsh.commands.dir;
 import com.github.fge.filesystem.driver.ExtendedFileSystemDriver;
 import com.github.fge.filesystem.provider.FileSystemFactoryProvider;
 import jpcsp.filesystems.umdiso.UmdIsoReader;
