@@ -98,7 +98,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
 
         try {
-            disk = Qcow2.open(locator.getFullPath(path), false);
+            disk = Qcow2.open(locator.getFullPath(path), true);
 
             fileStream = locator.open(path, FileMode.Open, access, share);
             ownership = Ownership.Dispose;
@@ -140,9 +140,9 @@ e.printStackTrace(System.err);
      */
     @Override public Geometry getGeometry() {
         return new Geometry(
-                -1,
-                -1,
-                -1
+                0,
+                0,
+                0
         );
     }
 

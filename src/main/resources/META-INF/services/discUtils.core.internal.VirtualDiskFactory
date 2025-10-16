@@ -7,3 +7,4 @@ discUtils.vhdx.DiskFactory
 discUtils.vdi.DiskFactory
 discUtils.xva.DiskFactory
 discUtils.emu.DiskFactory
+discUtils.qcow2.DiskFactory

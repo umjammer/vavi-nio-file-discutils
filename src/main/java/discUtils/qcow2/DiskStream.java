@@ -7,6 +7,8 @@
 package discUtils.qcow2;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -15,9 +17,10 @@ import com.github.qcow2.Qcow2.Image;
 import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
 import discUtils.streams.util.Ownership;
-import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+
+import static java.lang.System.getLogger;
 
 
 /**
@@ -27,6 +30,8 @@ import dotnet4j.io.Stream;
  * @version 0.00 2025/10/01 umjammer initial version <br>
  */
 public class DiskStream extends SparseStream {
+
+    private static final Logger logger = getLogger(DiskStream.class.getName());
 
     private boolean atEof;
 
@@ -40,13 +45,14 @@ public class DiskStream extends SparseStream {
 
     private boolean writeNotified;
 
-    private long offset;
+    private long position;
 
     public DiskStream(Stream fileStream, Ownership ownsStream, Image disk) {
         this.fileStream = fileStream;
         this.disk = disk;
 
         this.ownsStream = ownsStream;
+        this.position = 0;
     }
 
     @Override public boolean canRead() {
@@ -84,14 +90,14 @@ public class DiskStream extends SparseStream {
 
     @Override public long position() {
         checkDisposed();
-//logger.log(Level.DEBUG, "GETPOS: %08x".formatted((fileStream.position() - offset)));
-        return fileStream.position() - offset;
+logger.log(Level.TRACE, "get position: %08x".formatted(position));
+        return position;
     }
 
     @Override public void position(long value) {
         checkDisposed();
-//logger.log(Level.DEBUG, "SETPOS: %08x".formatted(value));
-        fileStream.position(value + offset);
+logger.log(Level.TRACE, "set position: %08x".formatted(value));
+        this.position = value;
         atEof = false;
     }
 
@@ -104,18 +110,25 @@ public class DiskStream extends SparseStream {
     @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 //new Exception().printStackTrace(System.err);
-//logger.log(Level.DEBUG, "READ: %08x, %d, %d".formatted(fileStream.position(), offset, count));
-        if (atEof || fileStream.position() > disk.getSize()) {
+logger.log(Level.TRACE, "READ: %08x, %d, %d".formatted(position, offset, count));
+        if (atEof || position > disk.getSize()) {
             atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
         }
 
-        if (fileStream.position() == disk.getSize()) {
+        if (position == disk.getSize()) {
             atEof = true;
             return 0;
         }
 
-        StreamUtilities.readExact(fileStream, buffer, offset, count);
+        try {
+            byte[] b = new byte[count];
+            disk.readAt(b, position);
+            System.arraycopy(b, 0, buffer, offset, count);
+            position += count;
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
+        }
 
         return count;
     }
@@ -123,8 +136,8 @@ public class DiskStream extends SparseStream {
     @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
         long effectiveOffset = offset;
-        if (origin == SeekOrigin.Current) {
-            effectiveOffset += fileStream.position();
+        if (origin == dotnet4j.io.SeekOrigin.Current) {
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
             effectiveOffset += disk.getSize();
         }
@@ -134,8 +147,8 @@ public class DiskStream extends SparseStream {
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-        fileStream.position(offset + effectiveOffset);
-        return fileStream.position() - offset;
+        position = offset + effectiveOffset;
+        return position - offset;
     }
 
     @Override public void setLength(long value) {
@@ -157,7 +170,7 @@ public class DiskStream extends SparseStream {
             throw new IndexOutOfBoundsException("Attempt to write negative number of bytes (count)");
         }
 
-        if (atEof || fileStream.position() + count > disk.getSize()) {
+        if (atEof || position + count > disk.getSize()) {
             atEof = true;
             throw new dotnet4j.io.IOException("Attempt to write beyond end of file");
         }
