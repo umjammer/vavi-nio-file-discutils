@@ -23,7 +23,7 @@ import vavix.io.partition.PC98PartitionEntry;
  */
 public class Pc98PartitionInfo extends PartitionInfo {
 
-    private PC98PartitionEntry pe;
+    private final PC98PartitionEntry pe;
 
     public Pc98PartitionInfo(PC98PartitionEntry pe, Pc98PartitionTable table, Geometry geometry) {
         this.pe = pe;
@@ -32,10 +32,11 @@ public class Pc98PartitionInfo extends PartitionInfo {
         this.secs = geometry.getSectorsPerTrack();
     }
 
-    private Pc98PartitionTable table;
+    private final Pc98PartitionTable table;
 
-    private int heads, secs;
+    private final int heads, secs;
 
+    // TODO move to PC98PartitionEntry?
     // @see "https://github.com/aaru-dps/Aaru.Helpers/blob/4640bb88d3eb907d0f0617d5ee5159fbc13c5653/CHS.cs"
     public static int toLBA(int cyl, int head, int sector, int maxHead, int maxSector) {
 //logger.log(Level.DEBUG, "heads: %d, secs: %d".formatted(maxHead, maxSector));

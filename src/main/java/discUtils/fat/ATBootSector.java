@@ -289,18 +289,18 @@ public class ATBootSector implements BootSector {
             bpbBkBootSec = ByteUtil.readLeShort(bootSector, 50);
             readBS(64);
         }
-//logger.log(Level.DEBUG, "bpbBytesPerSec: " + bpbBytesPerSec);
-//logger.log(Level.DEBUG, "sectorsPerCluster: " + getSectorsPerCluster());
-//logger.log(Level.DEBUG, "bpbRsvdSecCnt: " + bpbRsvdSecCnt);
-//logger.log(Level.DEBUG, "fatCount: " + getFatCount());
-//logger.log(Level.DEBUG, "bpbRootEntCnt: " + bpbRootEntCnt);
-//logger.log(Level.DEBUG, "bpbTotSec16: " + bpbTotSec16);
-logger.log(Level.DEBUG, "media: %02x\n".formatted(media));
-//logger.log(Level.DEBUG, "bpbFATSz16: " + bpbFATSz16);
-//logger.log(Level.DEBUG, "bpbSecPerTrk: " + bpbSecPerTrk);
-//logger.log(Level.DEBUG, "bpbNumHeads: " + bpbNumHeads);
-//logger.log(Level.DEBUG, "bpbHiddSec: " + bpbHiddSec);
-//logger.log(Level.DEBUG, "bpbTotSec32: " + bpbTotSec32);
+//logger.log(Level.TRACE, "bpbBytesPerSec: " + bpbBytesPerSec);
+//logger.log(Level.TRACE, "sectorsPerCluster: " + getSectorsPerCluster());
+//logger.log(Level.TRACE, "bpbRsvdSecCnt: " + bpbRsvdSecCnt);
+//logger.log(Level.TRACE, "fatCount: " + getFatCount());
+//logger.log(Level.TRACE, "bpbRootEntCnt: " + bpbRootEntCnt);
+//logger.log(Level.TRACE, "bpbTotSec16: " + bpbTotSec16);
+logger.log(Level.TRACE, "media: %02x\n".formatted(media));
+//logger.log(Level.TRACE, "bpbFATSz16: " + bpbFATSz16);
+//logger.log(Level.TRACE, "bpbSecPerTrk: " + bpbSecPerTrk);
+//logger.log(Level.TRACE, "bpbNumHeads: " + bpbNumHeads);
+//logger.log(Level.TRACE, "bpbHiddSec: " + bpbHiddSec);
+//logger.log(Level.TRACE, "bpbTotSec32: " + bpbTotSec32);
     }
 
     private void readBS(int offset) {

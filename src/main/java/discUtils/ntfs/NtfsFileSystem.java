@@ -140,7 +140,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         // Get volume information (includes version number)
         File volumeInfoFile = getFile(MasterFileTable.VolumeIndex);
         volumeInfo = volumeInfoFile.getStream(AttributeType.VolumeInformation, null).getContent(VolumeInformation.class);
-logger.log(Level.DEBUG, volumeInfo);
+logger.log(Level.TRACE, volumeInfo);
 
         // Initialize access to the other well-known metadata files
         context.setClusterBitmap(new ClusterBitmap(getFile(MasterFileTable.BitmapIndex)));
