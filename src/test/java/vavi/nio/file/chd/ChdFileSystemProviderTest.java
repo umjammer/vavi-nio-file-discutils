@@ -22,6 +22,7 @@ import vavi.util.properties.annotation.PropsEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -84,6 +85,7 @@ Debug.print("uri: " + uri);
         FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
 
         Path root = fs.getRootDirectories().iterator().next();
+        if (!Files.exists(Path.of("tmp"))) Files.createDirectory(Path.of("tmp"));
         Path out = Path.of("tmp", "test2.download");
         Files.copy(root.resolve("FILE3.txt"), out, StandardCopyOption.REPLACE_EXISTING);
         assertEquals(6, Files.size(out));
