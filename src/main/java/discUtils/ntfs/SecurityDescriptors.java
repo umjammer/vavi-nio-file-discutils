@@ -215,7 +215,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         public long sdsOffset;
 
         @Override public String toString() {
-            return String.format("[Data-Hash:%x,Id:%d,SdsOffset:%d,SdsLength:%d]", hash, id, sdsOffset, sdsLength);
+            return "[Data-Hash:%x,Id:%d,SdsOffset:%d,SdsLength:%d]".formatted(hash, id, sdsOffset, sdsLength);
         }
     }
 
@@ -241,7 +241,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         }
 
         @Override public String toString() {
-            return String.format("[Key-Hash:%x,Id:%d]", hash, id);
+            return "[Key-Hash:%x,Id:%d]".formatted(hash, id);
         }
     }
 
@@ -293,7 +293,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         }
 
         @Override public String toString() {
-            return String.format("[Key-Id:%d]", id);
+            return "[Key-Id:%d]".formatted(id);
         }
     }
 

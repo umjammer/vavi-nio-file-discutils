@@ -34,9 +34,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class RpcAcceptedReplyHeaderTest {
+class RpcAcceptedReplyHeaderTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         RpcAcceptedReplyHeader header = new RpcAcceptedReplyHeader();
         header.AcceptStatus = RpcAcceptStatus.ProgramVersionMismatch;
         RpcMismatchInfo info = new RpcMismatchInfo();

@@ -40,9 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class StoreTest {
+class StoreTest {
+
     @Test
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         int i = 0;
@@ -53,7 +54,7 @@ public class StoreTest {
     }
 
     @Test
-    public void createApplication() throws Exception {
+    void createApplication() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createApplication(ApplicationImageType.WindowsBoot, ApplicationType.BootManager);
@@ -64,7 +65,7 @@ public class StoreTest {
     }
 
     @Test
-    public void createDevice() throws Exception {
+    void createDevice() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createDevice();
@@ -75,7 +76,7 @@ public class StoreTest {
     }
 
     @Test
-    public void createInherit() throws Exception {
+    void createInherit() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.ApplicationObjects);
@@ -88,7 +89,7 @@ public class StoreTest {
     }
 
     @Test
-    public void removeObject() throws Exception {
+    void removeObject() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
@@ -96,7 +97,7 @@ public class StoreTest {
     }
 
     @Test
-    public void removeObject_NonExistent() throws Exception {
+    void removeObject_NonExistent() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         s.removeObject(UUID.randomUUID());

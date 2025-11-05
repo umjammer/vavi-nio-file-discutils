@@ -151,7 +151,7 @@ public final class BiosPartitionTable extends PartitionTable {
         byte[] bootSector = StreamUtilities.readExact(disk, Sizes.Sector);
 
         // Check for the 'bootable sector' marker
-        if ((bootSector[510] & 0xff) != 0x55 || (bootSector[511] & 0xff) != 0xAA) {
+        if ((bootSector[510] & 0xff) != 0x55 || (bootSector[511] & 0xff) != 0xaa) {
             return false;
         }
 
@@ -159,7 +159,7 @@ public final class BiosPartitionTable extends PartitionTable {
         for (BiosPartitionRecord record : readPrimaryRecords(bootSector)) {
             // If the partition extends beyond the end of the disk, this is
             // probably an invalid partition table
-            if (record.getLBALength() != 0xFFFF_FFFFL &&
+            if (record.getLBALength() != 0xffff_ffffL &&
                 (record.getLBAStart() + record.getLBALength()) * Sizes.Sector > disk.getLength()) {
                 return false;
             }
@@ -169,8 +169,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
                 // If the partition intersects another partition, this is
                 // probably an invalid partition table
-                for (@SuppressWarnings("unused")
-                StreamExtent overlap : StreamExtent.intersect(knownPartitions, thisPartitionExtents)) {
+                for (@SuppressWarnings("unused") StreamExtent overlap : StreamExtent.intersect(knownPartitions, thisPartitionExtents)) {
                     return false;
                 }
 
@@ -571,7 +570,7 @@ public final class BiosPartitionTable extends PartitionTable {
         case LinuxLvm:
             return BiosPartitionTypes.LinuxLvm;
         default:
-            throw new IllegalArgumentException(String.format("Unrecognized partition type: '%s'", type));
+            throw new IllegalArgumentException("Unrecognized partition type: '%s'".formatted(type));
         }
     }
 
@@ -659,7 +658,7 @@ public final class BiosPartitionTable extends PartitionTable {
             idx++;
         }
         if (diskGeometry.getTotalSectorsLong() - startSector < numSectors) {
-            throw new dotnet4j.io.IOException(String.format("Unable to find free space of %s sectors", numSectors));
+            throw new dotnet4j.io.IOException("Unable to find free space of %s sectors".formatted(numSectors));
         }
 
         return startSector;

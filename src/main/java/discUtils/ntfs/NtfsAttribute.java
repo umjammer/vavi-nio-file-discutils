@@ -225,7 +225,7 @@ class NtfsAttribute implements IDiagnosticTraceable {
                     byte[] buffer = new byte[32];
                     int numBytes = s.read(buffer, 0, buffer.length);
                     for (int i = 0; i < numBytes; ++i) {
-                        hex.append(String.format(" %02x", buffer[i]));
+                        hex.append(" %02x".formatted(buffer[i]));
                     }
                     writer.println(indent + "    Data: " + hex + (numBytes < s.getLength() ? "..." : ""));
                 }

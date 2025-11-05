@@ -25,7 +25,7 @@ import vavi.util.Debug;
  * @version 0.00 2022-12-04 nsano initial version <br>
  * @see "https://github.com/msuhanov/regf/blob/master/Windows%20registry%20file%20format%20specification.md"
  */
-public class Test1 {
+public class TestCase {
 
     @Test
     @DisplayName("windows10")
@@ -37,7 +37,7 @@ Debug.println(hive);
         walk(root);
     }
 
-    void walk(RegistryKey key) {
+    static void walk(RegistryKey key) {
 System.err.println(key.getName() + ": " + key);
         for (RegistryKey child : key.getSubKeys()) {
             walk(child);

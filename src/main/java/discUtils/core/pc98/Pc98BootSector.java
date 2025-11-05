@@ -25,7 +25,7 @@ import vavix.io.fat.PC98BiosParameterBlock;
  */
 public class Pc98BootSector implements BootSector {
 
-    private PC98BiosParameterBlock bpb;
+    private final PC98BiosParameterBlock bpb;
 
     public Pc98BootSector(Stream stream) {
         try {
@@ -34,9 +34,9 @@ public class Pc98BootSector implements BootSector {
 
             this.bpb = new PC98BiosParameterBlock();
             Serdes.Util.deserialize(bais, bpb);
-//System.err.println("■ bootRecord ----\n" + bpb);
+//logger.log(Level.TRACE, "■ bootRecord ----\n" + bpb);
             bpb.compute();
-//System.err.println("■ bootRecord ----\n" + bpb);
+//logger.log(Level.TRACE, "■ bootRecord ----\n" + bpb);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }

@@ -82,7 +82,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      */
     @Override public String getIdentity() {
         if (!guid.equals(EMPTY)) {
-            return "VLG" + String.format("{%s}", guid);
+            return "VLG" + "{%s}".formatted(guid);
         }
 
         return "VLP:" + physicalVol.getIdentity();

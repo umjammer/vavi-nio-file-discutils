@@ -35,9 +35,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class RpcReplyHeaderTest {
+class RpcReplyHeaderTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         RpcReplyHeader header = new RpcReplyHeader();
         RpcAcceptedReplyHeader accepted = new RpcAcceptedReplyHeader();
         accepted.AcceptStatus = RpcAcceptStatus.Success;

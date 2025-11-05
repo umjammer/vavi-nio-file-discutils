@@ -153,12 +153,12 @@ public class NfsFileSystem extends DiscFileSystem {
 
             Nfs3FileHandle sourceFileHandle = client.lookup(sourceParent, sourceFileName);
             if (sourceFileHandle == null) {
-                throw new FileNotFoundException(String.format("The file '%s' does not exist", sourceFile));
+                throw new FileNotFoundException("The file '%s' does not exist".formatted(sourceFile));
             }
 
             Nfs3FileAttributes sourceAttrs = client.getAttributes(sourceFileHandle);
             if ((sourceAttrs.type.ordinal() & Nfs3FileType.Directory.ordinal()) != 0) {
-                throw new FileNotFoundException(String.format("The path '%s' is not a file", sourceFile));
+                throw new FileNotFoundException("The path '%s' is not a file".formatted(sourceFile));
             }
 
             Nfs3FileHandle destFileHandle = client.lookup(destParent, destFileName);
@@ -395,12 +395,12 @@ public class NfsFileSystem extends DiscFileSystem {
 
             Nfs3FileHandle fileHandle = client.lookup(sourceParent, sourceName);
             if (fileHandle == null) {
-                throw new FileNotFoundException(String.format("The directory '%s' does not exist", sourceDirectoryName));
+                throw new FileNotFoundException("The directory '%s' does not exist".formatted(sourceDirectoryName));
             }
 
             Nfs3FileAttributes sourceAttrs = client.getAttributes(fileHandle);
             if ((sourceAttrs.type.ordinal() & Nfs3FileType.Directory.ordinal()) == 0) {
-                throw new FileNotFoundException(String.format("The path '%s' is not a directory", sourceDirectoryName));
+                throw new FileNotFoundException("The path '%s' is not a directory".formatted(sourceDirectoryName));
             }
 
             client.rename(sourceParent, sourceName, destParent, destName);
@@ -427,17 +427,17 @@ public class NfsFileSystem extends DiscFileSystem {
 
             Nfs3FileHandle sourceFileHandle = client.lookup(sourceParent, sourceFileName);
             if (sourceFileHandle == null) {
-                throw new FileNotFoundException(String.format("The file '%s' does not exist", sourceName));
+                throw new FileNotFoundException("The file '%s' does not exist".formatted(sourceName));
             }
 
             Nfs3FileAttributes sourceAttrs = client.getAttributes(sourceFileHandle);
             if ((sourceAttrs.type.ordinal() & Nfs3FileType.Directory.ordinal()) != 0) {
-                throw new FileNotFoundException(String.format("The path '%s' is not a file", sourceName));
+                throw new FileNotFoundException("The path '%s' is not a file".formatted(sourceName));
             }
 
             Nfs3FileHandle destFileHandle = client.lookup(destParent, destFileName);
             if (destFileHandle != null && !overwrite) {
-                throw new dotnet4j.io.IOException(String.format("The destination file '%s' already exists", destinationName));
+                throw new dotnet4j.io.IOException("The destination file '%s' already exists".formatted(destinationName));
             }
 
             client.rename(sourceParent, sourceFileName, destParent, destFileName);

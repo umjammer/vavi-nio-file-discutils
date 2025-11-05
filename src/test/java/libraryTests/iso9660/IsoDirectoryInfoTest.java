@@ -39,12 +39,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IsoDirectoryInfoTest {
+class IsoDirectoryInfoTest {
 
     private static final String FS = File.separator;
 
     @Test
-    public void exists() throws Exception {
+    void exists() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("SOMEDIR" + FS + "CHILDDIR" + FS + "FILE.TXT", new byte[0]);
         CDReader fs = new CDReader(builder.build(), false);
@@ -57,7 +57,7 @@ public class IsoDirectoryInfoTest {
     }
 
     @Test
-    public void fullName() throws Exception {
+    void fullName() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertEquals(FS, fs.getRoot().getFullName());
@@ -66,7 +66,7 @@ public class IsoDirectoryInfoTest {
     }
 
     @Test
-    public void simpleSearch() throws Exception {
+    void simpleSearch() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("SOMEDIR" + FS + "CHILDDIR" + FS + "GCHILDIR" + FS + "FILE.TXT", new byte[0]);
         CDReader fs = new CDReader(builder.build(), false);
@@ -75,7 +75,7 @@ public class IsoDirectoryInfoTest {
     }
 
     @Test
-    public void extension() throws Exception {
+    void extension() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertEquals("dir", fs.getDirectoryInfo("fred.dir").getExtension());
@@ -83,7 +83,7 @@ public class IsoDirectoryInfoTest {
     }
 
     @Test
-    public void getDirectories() throws Exception {
+    void getDirectories() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addDirectory("SOMEDIR" + FS + "CHILD" + FS + "GCHILD");
         builder.addDirectory("A.DIR");
@@ -104,7 +104,7 @@ public class IsoDirectoryInfoTest {
     }
 
     @Test
-    public void getFiles() throws Exception {
+    void getFiles() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addDirectory("SOMEDIR" + FS + "CHILD" + FS + "GCHILD");
         builder.addDirectory("AAA.DIR");
@@ -121,7 +121,7 @@ public class IsoDirectoryInfoTest {
     }
 
     @Test
-    public void getFileSystemInfos() throws Exception {
+    void getFileSystemInfos() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addDirectory("SOMEDIR" + FS + "CHILD" + FS + "GCHILD");
         builder.addDirectory("AAA.EXT");
@@ -136,7 +136,7 @@ public class IsoDirectoryInfoTest {
     }
 
     @Test
-    public void parent() throws Exception {
+    void parent() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addDirectory("SOMEDIR");
         CDReader fs = new CDReader(builder.build(), false);
@@ -144,14 +144,14 @@ public class IsoDirectoryInfoTest {
     }
 
     @Test
-    public void parent_Root() throws Exception {
+    void parent_Root() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertNull(fs.getRoot().getParent());
     }
 
     @Test
-    public void rootBehaviour() throws Exception {
+    void rootBehaviour() throws Exception {
         // Start time rounded down to whole seconds
         Instant start_ = Instant.now();
 //        start = LocalDateTime.of(start.getYear, start.Month, start.Day, start.Hour, start.Minute, start.Second);
@@ -169,7 +169,7 @@ public class IsoDirectoryInfoTest {
     }
 
     @Test
-    public void attributes() throws Exception {
+    void attributes() throws Exception {
         // Start time rounded down to whole seconds
         Instant start_ = Instant.now();
 //        start = LocalDateTime.of(start.Year, start.Month, start.Day, start.Hour, start.Minute, start.Second);

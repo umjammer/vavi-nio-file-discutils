@@ -422,7 +422,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                         reportError("Invalid MFT record at index %s", index);
                         StringBuilder sb = new StringBuilder();
                         for (byte recordDatum : recordData) {
-                            sb.append(String.format(" %2x}", recordDatum));
+                            sb.append(" %2x}".formatted(recordDatum));
                         }
 
                         reportInfo("MFT record binary data for index %s:%s", index, sb.toString());

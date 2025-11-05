@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 
-public class SampleDataTests {
+class SampleDataTests {
 
     private static final String FS = File.separator;
 
     @Test
-    public void btrfsVhdxZip() throws Exception {
+    void btrfsVhdxZip() throws Exception {
         File fs = new File(URI.create(getClass().getResource("btrfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
@@ -109,7 +109,7 @@ public class SampleDataTests {
             file.copyTo(ms);
             byte[] checksum = md5.digest(ms.toArray());
             return IntStream.range(0, checksum.length)
-                    .mapToObj(i -> String.format("%02x", checksum[i]))
+                    .mapToObj(i -> "%02x".formatted(checksum[i]))
                     .collect(Collectors.joining());
         }
     }

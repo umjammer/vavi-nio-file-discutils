@@ -106,7 +106,7 @@ public class AllocationGroup {
         inodeBtreeInfo.loadBtree(context, offset);
         if (superblock.getSbVersion() < 5 && inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtMagic ||
             superblock.getSbVersion() >= 5 && inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtCrcMagic) {
-logger.log(Level.DEBUG, String.format("%d, %x\n", superblock.getSbVersion(), inodeBtreeInfo.getRootInodeBtree().getMagic()));
+logger.log(Level.DEBUG, "%d, %x\n".formatted(superblock.getSbVersion(), inodeBtreeInfo.getRootInodeBtree().getMagic()));
             throw new IOException("Invalid IBT magic - probably not an xfs file system");
         }
 

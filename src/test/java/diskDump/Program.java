@@ -190,11 +190,11 @@ String[] inFiles = new String[] {inFile};
             for (PhysicalVolumeInfo vol : volMgr.getPhysicalVolumes()) {
                 System.err.println("  " + vol.getIdentity());
                 System.err.println("    Type: " + vol.getVolumeType());
-                System.err.println("    BIOS Type: " + String.format("%2X", vol.getBiosType()) + " [" +
+                System.err.println("    BIOS Type: " + "%2X".formatted(vol.getBiosType()) + " [" +
                                    BiosPartitionTypes.toString(vol.getBiosType()) + "]");
                 System.err.println("    Size: " + vol.getLength());
                 System.err.println("    Disk Id: " + vol.getDiskIdentity());
-                System.err.println("    Disk Sig: " + String.format("%8X", vol.getDiskSignature()));
+                System.err.println("    Disk Sig: " + "%8X".formatted(vol.getDiskSignature()));
                 System.err.println("    Partition: " + vol.getPartitionIdentity());
                 System.err.println("    Disk Geometry: " + vol.getPhysicalGeometry());
                 System.err.println("    BIOS Geometry: " + vol.getBiosGeometry());
@@ -211,7 +211,7 @@ String[] inFiles = new String[] {inFile};
             System.err.println();
             for (LogicalVolumeInfo vol : volMgr.getLogicalVolumes()) {
                 System.err.println("  " + vol.getIdentity());
-                System.err.println("    BIOS Type: " + String.format("%2X", vol.getBiosType()) + " [" +
+                System.err.println("    BIOS Type: " + "%2X".formatted(vol.getBiosType()) + " [" +
                                    BiosPartitionTypes.toString(vol.getBiosType()) + "]");
                 System.err.println("    Status: " + vol.getStatus());
                 System.err.println("    Size: " + vol.getLength());

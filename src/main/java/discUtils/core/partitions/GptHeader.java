@@ -22,6 +22,8 @@
 
 package discUtils.core.partitions;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -30,8 +32,12 @@ import discUtils.core.internal.Crc32LittleEndian;
 import discUtils.streams.util.EndianUtilities;
 import vavi.util.ByteUtil;
 
+import static java.lang.System.getLogger;
+
 
 public class GptHeader {
+
+    private static final Logger logger = getLogger(GptHeader.class.getName());
 
     public static final String GptSignature = "EFI PART";
 
@@ -65,7 +71,7 @@ public class GptHeader {
 
     public GptHeader(int sectorSize) {
         signature = GptSignature;
-        version = 0x00010000;
+        version = 0x0001_0000;
         headerSize = 92;
         buffer = new byte[sectorSize];
     }
@@ -107,6 +113,7 @@ public class GptHeader {
         this.buffer = new byte[headerSize];
         System.arraycopy(buffer, offset, this.buffer, 0, headerSize);
         // Reject obviously invalid data
+logger.log(Level.TRACE, "signature: " + signature);
         if (!signature.equals(GptSignature) || headerSize == 0) {
             return false;
         }

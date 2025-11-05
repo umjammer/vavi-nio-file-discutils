@@ -29,6 +29,6 @@ public class ImplementationEntityIdentifier extends EntityIdentifier {
     public String toString() {
         OSClass osClass = OSClass.values()[suffix[0]];
         OSIdentifier osId = OSIdentifier.values()[ByteUtil.readBeShort(suffix, 0)];
-        return String.format("%s [OS %s %s]", identifier, osClass, osId);
+        return "%s [OS %s %s]".formatted(identifier, osClass, osId);
     }
 }

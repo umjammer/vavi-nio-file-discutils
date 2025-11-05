@@ -163,7 +163,7 @@ public class ConcatStream extends SparseStream {
         long[] lastStreamOffset = new long[1];
         int lastStream = getStream(getLength(), lastStreamOffset);
         if (value < lastStreamOffset[0]) {
-            throw new dotnet4j.io.IOException(String.format("Unable to reduce stream length to less than %d", lastStreamOffset));
+            throw new dotnet4j.io.IOException("Unable to reduce stream length to less than %d".formatted(lastStreamOffset));
         }
 
         streams.get(lastStream).setLength(value - lastStreamOffset[0]);

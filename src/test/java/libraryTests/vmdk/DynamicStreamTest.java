@@ -40,9 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class DynamicStreamTest {
+class DynamicStreamTest {
+
     @Test
-    public void attributes() throws Exception {
+    void attributes() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse)) {
             Stream s = disk.getContent();
@@ -53,7 +54,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void readWriteSmall() throws Exception {
+    void readWriteSmall() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.TwoGbMaxExtentSparse)) {
             byte[] content = new byte[100];
@@ -92,7 +93,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void readWriteLarge() throws Exception {
+    void readWriteLarge() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.TwoGbMaxExtentSparse)) {
             byte[] content = new byte[3 * 1024 * 1024];
@@ -117,7 +118,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void disposeTest() throws Exception {
+    void disposeTest() throws Exception {
         Stream contentStream;
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.TwoGbMaxExtentSparse)) {
@@ -131,7 +132,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void disposeTestMonolithicSparse() throws Exception {
+    void disposeTestMonolithicSparse() throws Exception {
         Stream contentStream;
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse)) {
@@ -145,7 +146,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void readNotPresent() throws Exception {
+    void readNotPresent() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.TwoGbMaxExtentSparse)) {
             byte[] buffer = new byte[100];
@@ -160,7 +161,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void attributesVmfs() throws Exception {
+    void attributesVmfs() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.VmfsSparse)) {
             Stream s = disk.getContent();
@@ -171,7 +172,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void readWriteSmallVmfs() throws Exception {
+    void readWriteSmallVmfs() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.VmfsSparse)) {
             byte[] content = new byte[100];
@@ -210,7 +211,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void readWriteLargeVmfs() throws Exception {
+    void readWriteLargeVmfs() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.VmfsSparse)) {
             byte[] content = new byte[3 * 1024 * 1024];
@@ -235,7 +236,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void disposeTestVmfs() throws Exception {
+    void disposeTestVmfs() throws Exception {
         Stream contentStream;
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.VmfsSparse)) {
@@ -249,7 +250,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void readNotPresentVmfs() throws Exception {
+    void readNotPresentVmfs() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.VmfsSparse)) {
             byte[] buffer = new byte[100];
@@ -265,7 +266,7 @@ public class DynamicStreamTest {
     }
 
     @Test
-    public void extents() throws Exception {
+    void extents() throws Exception {
         // Fragile - this is the grain size in bytes of the VMDK file, so dependant on algorithm that
         // determines grain size for new VMDKs...
         final int unit = 128 * 512;

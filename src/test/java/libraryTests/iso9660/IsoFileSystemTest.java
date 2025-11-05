@@ -39,19 +39,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class IsoFileSystemTest {
+class IsoFileSystemTest {
 
     private static final String FS = File.separator;
 
     @Test
-    public void canWrite() throws Exception {
+    void canWrite() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertFalse(fs.canWrite());
     }
 
     @Test
-    public void fileInfo() throws Exception {
+    void fileInfo() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         DiscFileInfo fi = fs.getFileInfo("SOMEDIR" + FS + "SOMEFILE.TXT");
@@ -59,7 +59,7 @@ public class IsoFileSystemTest {
     }
 
     @Test
-    public void directoryInfo() throws Exception {
+    void directoryInfo() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         DiscDirectoryInfo fi = fs.getDirectoryInfo("SOMEDIR");
@@ -67,7 +67,7 @@ public class IsoFileSystemTest {
     }
 
     @Test
-    public void fileSystemInfo() throws Exception {
+    void fileSystemInfo() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         DiscFileSystemInfo fi = fs.getFileSystemInfo("SOMEDIR" + FS + "SOMEFILE");
@@ -75,7 +75,7 @@ public class IsoFileSystemTest {
     }
 
     @Test
-    public void root() throws Exception {
+    void root() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertNotNull(fs.getRoot());
@@ -85,7 +85,7 @@ public class IsoFileSystemTest {
     }
 
     @Test
-    public void largeDirectory() throws Exception {
+    void largeDirectory() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.setUseJoliet(true);
         for (int i = 0; i < 3000; ++i) {
@@ -96,7 +96,7 @@ public class IsoFileSystemTest {
     }
 
     @Test
-    public void hideVersions() throws Exception {
+    void hideVersions() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.setUseJoliet( true);
         builder.addFile("FILE.TXT;1", new byte[] {});

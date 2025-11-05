@@ -121,7 +121,7 @@ public final class DuFileSystemDriver extends ExtendedFileSystemDriver<DiscFileS
     @Override
     protected void removeEntry(DiscFileSystemInfo entry, Path path) throws IOException {
         // TODO: unknown what happens when a move operation is performed
-        // and the target already exists
+        //  and the target already exists
         fileSystem.deleteFile(toDuPathString(path));
     }
 

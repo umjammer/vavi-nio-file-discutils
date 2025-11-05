@@ -49,7 +49,7 @@ public abstract class PartitionTable {
 
     protected static final UUID EMPTY = new UUID(0L, 0L);
 
-    private static ServiceLoader<PartitionTableFactory> factories;
+    private static final ServiceLoader<PartitionTableFactory> factories;
 
     /**
      * Gets the number of User partitions on the disk.
@@ -92,6 +92,7 @@ public abstract class PartitionTable {
      */
     public static boolean isPartitioned(Stream content) {
         for (PartitionTableFactory partTableFactory : factories) {
+logger.log(Level.TRACE, "partition check: " + partTableFactory);
             if (partTableFactory.detectIsPartitioned(content)) {
                 return true;
             }
@@ -119,14 +120,15 @@ public abstract class PartitionTable {
     public static List<PartitionTable> getPartitionTables(VirtualDisk disk) {
         List<PartitionTable> tables = new ArrayList<>();
         for (PartitionTableFactory factory : factories) {
+logger.log(Level.TRACE, "detecting partition table: " + factory);
             PartitionTable table = factory.detectPartitionTable(disk);
             if (table != null) {
-logger.log(Level.DEBUG, factory + ", " + table);
+logger.log(Level.TRACE, factory + ", " + table);
                 tables.add(table);
             }
-            factory.adhoc(tables); // TODO
+            factory.adhoc(tables); // TODO for pc98 partition
         }
-logger.log(Level.DEBUG, tables);
+logger.log(Level.TRACE, tables);
         return tables;
     }
 

@@ -652,7 +652,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             if (entry.isDirectory()) {
                 return getDirectoryEntry((TDirectory) convertDirEntryToFile(entry), pathEntries, pathOffset + 1);
             }
-            throw new dotnet4j.io.IOException(String.format("%s is a file, not a directory", pathEntries[pathOffset]));
+            throw new dotnet4j.io.IOException("%s is a file, not a directory".formatted(pathEntries[pathOffset]));
         }
 
         return null;
@@ -661,7 +661,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     private void doSearch(List<String> results, String path, Pattern regex, boolean subFolders, boolean dirs, boolean files) {
         TDirectory parentDir = getDirectory(path);
         if (parentDir == null) {
-            throw new dotnet4j.io.FileNotFoundException(String.format("The directory '%s' was not found", path));
+            throw new dotnet4j.io.FileNotFoundException("The directory '%s' was not found".formatted(path));
         }
 
         String resultPrefixPath = path;

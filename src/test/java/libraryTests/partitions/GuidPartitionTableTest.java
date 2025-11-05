@@ -34,9 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class GuidPartitionTableTest {
+class GuidPartitionTableTest {
+
     @Test
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 3 * 1024 * 1024)) {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
@@ -45,7 +46,7 @@ public class GuidPartitionTableTest {
     }
 
     @Test
-    public void createSmallWholeDisk() throws Exception {
+    void createSmallWholeDisk() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 3 * 1024 * 1024)) {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
@@ -57,7 +58,7 @@ public class GuidPartitionTableTest {
     }
 
     @Test
-    public void createMediumWholeDisk() throws Exception {
+    void createMediumWholeDisk() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 2 * 1024L * 1024 * 1024)) {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
@@ -73,7 +74,7 @@ public class GuidPartitionTableTest {
     }
 
     @Test
-    public void createLargeWholeDisk() throws Exception {
+    void createLargeWholeDisk() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 200 * 1024L * 1024 * 1024)) {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
@@ -89,7 +90,7 @@ public class GuidPartitionTableTest {
     }
 
     @Test
-    public void createAlignedWholeDisk() throws Exception {
+    void createAlignedWholeDisk() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 200 * 1024L * 1024 * 1024)) {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
@@ -106,7 +107,7 @@ public class GuidPartitionTableTest {
     }
 
     @Test
-    public void createBySize() throws Exception {
+    void createBySize() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 3 * 1024 * 1024)) {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
@@ -118,7 +119,7 @@ public class GuidPartitionTableTest {
     }
 
     @Test
-    public void createBySizeInGap() throws Exception {
+    void createBySizeInGap() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 300 * 1024 * 1024)) {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
@@ -134,7 +135,7 @@ public class GuidPartitionTableTest {
     }
 
     @Test
-    public void createBySizeInGapAligned() throws Exception {
+    void createBySizeInGapAligned() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 300 * 1024 * 1024)) {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
@@ -151,7 +152,7 @@ public class GuidPartitionTableTest {
     }
 
     @Test
-    public void delete() throws Exception {
+    void delete() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 10 * 1024 * 1024)) {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);

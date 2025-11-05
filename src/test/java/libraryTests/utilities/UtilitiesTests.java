@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class UtilitiesTests {
+class UtilitiesTests {
 
     private static final String FS = File.separator;
 
     @Test
-    public void canResolveRelativePath() throws Exception {
+    void canResolveRelativePath() throws Exception {
         checkResolvePath(FS + "etc" + FS + "rc.d", "init.d", FS + "etc" + FS + "init.d");
         checkResolvePath(FS + "etc" + FS + "rc.d" + FS, "init.d", FS + "etc" + FS + "rc.d" + FS + "init.d");
         // For example: (\TEMP\Foo.txt, ..\..\Bar.txt) gives (\Bar.txt).

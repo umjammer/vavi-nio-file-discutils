@@ -22,12 +22,19 @@
 
 package discUtils.fat;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
 
+import static java.lang.System.getLogger;
+
 
 public class FileAllocationTable {
+
+    private static final Logger logger = getLogger(FileAllocationTable.class.getName());
 
     private final FatBuffer buffer;
 
@@ -42,7 +49,7 @@ public class FileAllocationTable {
         this.firstFatSector = firstFatSector;
         this.numFats = numFats;
 
-//logger.log(Level.DEBUG, String.format(Level.FINE, "%d, %016x", firstFatSector, (firstFatSector + fatSize * activeFat) * Sizes.Sector));
+logger.log(Level.TRACE, "%d, %016x".formatted(firstFatSector, (firstFatSector + fatSize * activeFat) * Sizes.Sector));
         this.stream.position((firstFatSector + (long) fatSize * activeFat) * Sizes.Sector);
         buffer = new FatBuffer(type, StreamUtilities.readExact(this.stream, fatSize * Sizes.Sector));
     }

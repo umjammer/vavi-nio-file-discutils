@@ -32,9 +32,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class BuiltStreamTest {
+class BuiltStreamTest {
+
     @Test
-    public void buildStreamLengthIsRespected() throws Exception {
+    void buildStreamLengthIsRespected() throws Exception {
         int length = 1024;
         BuilderSparseStreamExtent extent = new BuilderSparseStreamExtent(0, new ZeroStream(2 * length));
         try (BuiltStream stream = new BuiltStream(length, Collections.singletonList(extent))) {

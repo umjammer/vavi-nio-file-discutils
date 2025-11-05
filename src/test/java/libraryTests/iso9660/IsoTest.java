@@ -31,7 +31,7 @@ import vavi.util.properties.annotation.PropsEntity;
  */
 @EnabledIf("localPropertiesExists")
 @PropsEntity(url = "file://${user.dir}/local.properties")
-public class IsoTest {
+class IsoTest {
     static boolean localPropertiesExists() {
         return Files.exists(Paths.get("local.properties"));
     }

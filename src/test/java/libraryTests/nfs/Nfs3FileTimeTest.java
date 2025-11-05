@@ -31,9 +31,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3FileTimeTest {
+class Nfs3FileTimeTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3FileTime time = new Nfs3FileTime(1, 2);
         Nfs3FileTime clone;
         try (MemoryStream stream = new MemoryStream()) {

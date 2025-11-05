@@ -43,12 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class DiskTest {
+class DiskTest {
 
     private static final String FS = java.io.File.separator;
 
     @Test
-    public void initializeFixed() throws Exception {
+    void initializeFixed() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeFixed(ms, Ownership.None, 8 * 1024 * 1024)) {
             assertNotNull(disk);
@@ -61,7 +61,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeFixedOwnStream() throws Exception {
+    void initializeFixedOwnStream() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeFixed(ms, Ownership.Dispose, 8 * 1024 * 1024)) {
         }
@@ -69,7 +69,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeDynamic() throws Exception {
+    void initializeDynamic() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.None, 16 * 1024L * 1024 * 1024)) {
             assertNotNull(disk);
@@ -84,7 +84,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeDifferencing() throws Exception {
+    void initializeDifferencing() throws Exception {
         MemoryStream baseStream = new MemoryStream();
         MemoryStream diffStream = new MemoryStream();
         DiskImageFile baseFile = DiskImageFile.initializeDynamic(baseStream, Ownership.Dispose, 16 * 1024L * 1024 * 1024);
@@ -107,7 +107,7 @@ public class DiskTest {
     }
 
     @Test
-    public void constructorDynamic() throws Exception {
+    void constructorDynamic() throws Exception {
         Geometry geometry;
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.None, 16 * 1024L * 1024 * 1024)) {
@@ -124,7 +124,7 @@ public class DiskTest {
     }
 
     @Test
-    public void constructorFromFiles() throws Exception {
+    void constructorFromFiles() throws Exception {
         MemoryStream baseStream = new MemoryStream();
         DiskImageFile baseFile = DiskImageFile.initializeDynamic(baseStream, Ownership.Dispose, 16 * 1024L * 1024 * 1024);
         MemoryStream childStream = new MemoryStream();
@@ -147,7 +147,7 @@ public class DiskTest {
     }
 
     @Test
-    public void undisposedChangedDynamic() throws Exception {
+    void undisposedChangedDynamic() throws Exception {
         byte[] firstSector = new byte[512];
         byte[] lastSector = new byte[512];
         MemoryStream ms = new MemoryStream();

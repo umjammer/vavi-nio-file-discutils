@@ -38,9 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class VirtualMachineBuilderTest {
+class VirtualMachineBuilderTest {
+
     @Test
-    public void testEmpty() throws Exception {
+    void testEmpty() throws Exception {
         MemoryStream xvaStream = new MemoryStream();
         VirtualMachineBuilder vmb = new VirtualMachineBuilder();
         vmb.addDisk("Foo", new MemoryStream(), Ownership.Dispose);
@@ -54,7 +55,7 @@ public class VirtualMachineBuilderTest {
     }
 
     @Test
-    public void testNotEmpty() throws Exception {
+    void testNotEmpty() throws Exception {
         MemoryStream xvaStream = new MemoryStream();
         VirtualMachineBuilder vmb = new VirtualMachineBuilder();
         MemoryStream ms = new MemoryStream();

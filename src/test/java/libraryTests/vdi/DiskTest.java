@@ -34,10 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class DiskTest {
+class DiskTest {
 
     @Test
-    public void initializeFixed() throws Exception {
+    void initializeFixed() throws Exception {
         MemoryStream ms = new MemoryStream();
 
         try (Disk disk = Disk.initializeFixed(ms, Ownership.None, 8 * 1024 * 1024)) {
@@ -53,7 +53,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeFixedOwnStream() throws Exception {
+    void initializeFixedOwnStream() throws Exception {
         MemoryStream ms = new MemoryStream();
 
         try (Disk disk = Disk.initializeFixed(ms, Ownership.Dispose, 8 * 1024 * 1024)) {
@@ -62,7 +62,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeDynamic() throws Exception {
+    void initializeDynamic() throws Exception {
         MemoryStream ms = new MemoryStream();
 
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.None, 16 * 1024L * 1024 * 1024)) {
@@ -82,7 +82,7 @@ public class DiskTest {
     }
 
     @Test
-    public void constructorDynamic() throws Exception {
+    void constructorDynamic() throws Exception {
         Geometry geometry;
         MemoryStream ms = new MemoryStream();
 

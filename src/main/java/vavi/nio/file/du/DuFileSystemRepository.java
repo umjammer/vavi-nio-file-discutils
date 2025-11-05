@@ -86,6 +86,8 @@ logger.log(Level.DEBUG, "manager: " + manager);
         manager.addDisk(disk);
         LogicalVolumeInfo lvi = manager.getLogicalVolumes().get(volumeNumber);
 logger.log(Level.DEBUG, "lvi: " + lvi + " / " + manager.getLogicalVolumes().size());
+        if (FileSystemManager.detectFileSystems(lvi).isEmpty())
+            throw new IllegalArgumentException("no filesystems found in " + file);
         FileSystemInfo fsi = FileSystemManager.detectFileSystems(lvi).get(0);
 logger.log(Level.DEBUG, "fsi: " + fsi + " / " + FileSystemManager.detectFileSystems(lvi).size());
         DiscFileSystem fs = fsi.open(lvi, new FileSystemParameters());

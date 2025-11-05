@@ -45,7 +45,7 @@ public class Win32Wrapper {
 
     public static diskClone.NativeMethods.DiskGeometry getDiskGeometry(Pointer handle) {
         diskClone.NativeMethods.DiskGeometry diskGeometry = new diskClone.NativeMethods.DiskGeometry();
-        int[] bytesRet = new int[] {Marshal.SizeOf(diskGeometry)}
+        int[] bytesRet = new int[] {Marshal.SizeOf(diskGeometry)};
         bytesRet[0] = NativeMethods.INSTANCE.deviceIoControl(handle,
                                                              EIOControlCode.DiskGetDriveGeometry,
                                                              null,
@@ -63,7 +63,7 @@ public class Win32Wrapper {
 
     public static diskClone.NativeMethods.NtfsVolumeData getNtfsVolumeData(Pointer volumeHandle) {
         diskClone.NativeMethods.NtfsVolumeData volumeData = new diskClone.NativeMethods.NtfsVolumeData();
-        int[] bytesRet = new int[] {Marshal.SizeOf(volumeData)}
+        int[] bytesRet = new int[] {Marshal.SizeOf(volumeData)};
         bytesRet[0] = NativeMethods.DeviceIoControl(volumeHandle,
                                                              EIOControlCode.FsctlGetNtfsVolumeData,
                                                              null,

@@ -109,9 +109,9 @@ public class Key implements IByteArraySerializable {
     @Override public String toString() {
         try {
             ReservedObjectId.valueOf((int) getObjectId());
-            return String.format("%d|%s|%d", objectId, itemType, offset);
+            return "%d|%s|%d".formatted(objectId, itemType, offset);
         } catch (Exception e) {
-            return String.format("%d|%s|%d", objectId, itemType, offset);
+            return "%d|%s|%d".formatted(objectId, itemType, offset);
         }
     }
 }

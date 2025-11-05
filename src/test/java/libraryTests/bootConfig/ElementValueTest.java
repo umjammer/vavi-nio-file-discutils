@@ -45,12 +45,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-public class ElementValueTest {
+class ElementValueTest {
 
     private static final String FS = java.io.File.separator;
 
     @Test
-    public void stringValue() throws Exception {
+    void stringValue() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
@@ -60,7 +60,7 @@ public class ElementValueTest {
     }
 
     @Test
-    public void booleanValue() throws Exception {
+    void booleanValue() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
@@ -70,7 +70,7 @@ public class ElementValueTest {
     }
 
     @Test
-    public void deviceValue_Gpt() throws Exception {
+    void deviceValue_Gpt() throws Exception {
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(80 * 1024 * 1024);
         GuidPartitionTable gpt = GuidPartitionTable.initialize(ms, Geometry.fromCapacity(ms.getLength()));
@@ -87,7 +87,7 @@ public class ElementValueTest {
     }
 
     @Test
-    public void deviceValue_Mbr() throws Exception {
+    void deviceValue_Mbr() throws Exception {
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(80 * 1024 * 1024);
         BiosPartitionTable pt = BiosPartitionTable.initialize(ms, Geometry.fromCapacity(ms.getLength()));
@@ -104,7 +104,7 @@ public class ElementValueTest {
     }
 
     @Test
-    public void deviceValue_BootDevice() throws Exception {
+    void deviceValue_BootDevice() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
@@ -115,18 +115,18 @@ public class ElementValueTest {
     }
 
     @Test
-    public void guidValue() throws Exception {
+    void guidValue() throws Exception {
         UUID testGuid = UUID.randomUUID();
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
         Element el = obj.addElement(WellKnownElement.BootMgrDefaultObject, ElementValue.forGuid(testGuid));
         el = obj.getElement(WellKnownElement.BootMgrDefaultObject);
-        assertEquals(String.format("{%s}", testGuid), el.getValue().toString());
+        assertEquals("{%s}".formatted(testGuid), el.getValue().toString());
     }
 
     @Test
-    public void guidListValue() throws Exception {
+    void guidListValue() throws Exception {
         UUID testGuid1 = UUID.randomUUID();
         UUID testGuid2 = UUID.randomUUID();
         RegistryHive hive = RegistryHive.create(new MemoryStream());
@@ -137,11 +137,11 @@ public class ElementValueTest {
                                         testGuid1, testGuid2
                                     }));
         el = obj.getElement(WellKnownElement.BootMgrDisplayOrder);
-        assertEquals(String.format("{%s}", testGuid1) + "," + String.format("{%s}", testGuid2), el.getValue().toString());
+        assertEquals("{%s}".formatted(testGuid1) + "," + "{%s}".formatted(testGuid2), el.getValue().toString());
     }
 
     @Test
-    public void integerValue() throws Exception {
+    void integerValue() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
@@ -151,7 +151,7 @@ public class ElementValueTest {
     }
 
     @Test
-    public void integerListValue() throws Exception {
+    void integerListValue() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);

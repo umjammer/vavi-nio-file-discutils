@@ -56,7 +56,7 @@ public final class DiskFactory implements VirtualDiskFactory {
             builder.setDiskType(DiskType.Dynamic);
             break;
         default:
-            throw new IllegalArgumentException(String.format("Unknown VHD disk variant '%s'", variant));
+            throw new IllegalArgumentException("Unknown VHD disk variant '%s'".formatted(variant));
         }
         return builder;
     }
@@ -71,7 +71,7 @@ public final class DiskFactory implements VirtualDiskFactory {
                     Disk.initializeFixed(locator, path, diskParameters.getCapacity(), diskParameters.getGeometry());
             case "dynamic" ->
                     Disk.initializeDynamic(locator, path, diskParameters.getCapacity(), FileParameters.DefaultDynamicBlockSize);
-            default -> throw new IllegalArgumentException(String.format("Unknown VHD disk variant '%s'", variant));
+            default -> throw new IllegalArgumentException("Unknown VHD disk variant '%s'".formatted(variant));
         };
     }
 

@@ -31,9 +31,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class RpcMismatchInfoTest {
+class RpcMismatchInfoTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         RpcMismatchInfo info = new RpcMismatchInfo();
         info.high = 1;
         info.low = 2;

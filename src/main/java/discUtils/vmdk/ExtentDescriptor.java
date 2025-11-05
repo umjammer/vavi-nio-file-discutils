@@ -92,7 +92,7 @@ public class ExtentDescriptor {
     public static ExtentDescriptor parse(String descriptor) {
         List<String> elems = splitQuotedString(descriptor);
         if (elems.size() < 4) {
-            throw new dotnet4j.io.IOException(String.format("Invalid extent descriptor: %s", descriptor));
+            throw new dotnet4j.io.IOException("Invalid extent descriptor: %s".formatted(descriptor));
         }
 
         ExtentDescriptor result = new ExtentDescriptor();

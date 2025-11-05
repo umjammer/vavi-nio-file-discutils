@@ -35,9 +35,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3ExportResultTest {
+class Nfs3ExportResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3ExportResult result = new Nfs3ExportResult();
         Nfs3Export export = new Nfs3Export();
         export.setDirPath("export");

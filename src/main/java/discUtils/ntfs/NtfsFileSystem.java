@@ -140,7 +140,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         // Get volume information (includes version number)
         File volumeInfoFile = getFile(MasterFileTable.VolumeIndex);
         volumeInfo = volumeInfoFile.getStream(AttributeType.VolumeInformation, null).getContent(VolumeInformation.class);
-logger.log(Level.DEBUG, volumeInfo);
+logger.log(Level.TRACE, volumeInfo);
 
         // Initialize access to the other well-known metadata files
         context.setClusterBitmap(new ClusterBitmap(getFile(MasterFileTable.BitmapIndex)));
@@ -467,7 +467,7 @@ logger.log(Level.DEBUG, volumeInfo);
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry parentDirEntry = getDirectoryEntry(path);
             if (parentDirEntry == null) {
-                throw new FileNotFoundException(String.format("The directory '%s' does not exist", path));
+                throw new FileNotFoundException("The directory '%s' does not exist".formatted(path));
             }
 
             Directory parentDir = getDirectory(parentDirEntry.getReference());
@@ -491,7 +491,7 @@ logger.log(Level.DEBUG, volumeInfo);
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
             DirectoryEntry parentDirEntry = getDirectoryEntry(path);
             if (parentDirEntry == null) {
-                throw new FileNotFoundException(String.format("The directory '%s' does not exist", path));
+                throw new FileNotFoundException("The directory '%s' does not exist".formatted(path));
             }
 
             Directory parentDir = getDirectory(parentDirEntry.getReference());
@@ -860,7 +860,7 @@ logger.log(Level.DEBUG, volumeInfo);
         File file = getFile(dirEntry.getReference());
         NtfsStream stream = file.getStream(AttributeType.Data, attributeName[0]);
         if (stream == null) {
-            throw new FileNotFoundException(String.format("File does not contain '%s' data attribute", attributeName[0]));
+            throw new FileNotFoundException("File does not contain '%s' data attribute".formatted(attributeName[0]));
         }
 
         return stream.getClusters();
@@ -892,7 +892,7 @@ logger.log(Level.DEBUG, volumeInfo);
         File file = getFile(dirEntry.getReference());
         NtfsStream stream = file.getStream(AttributeType.Data, attributeName[0]);
         if (stream == null) {
-            throw new FileNotFoundException(String.format("File does not contain '%s' data attribute", attributeName[0]));
+            throw new FileNotFoundException("File does not contain '%s' data attribute".formatted(attributeName[0]));
         }
 
         return stream.getAbsoluteExtents();
@@ -1845,12 +1845,12 @@ logger.log(Level.DEBUG, volumeInfo);
     private void doSearch(List<String> results, String path, Pattern regex, boolean subFolders, boolean dirs, boolean files) {
         DirectoryEntry parentDirEntry = getDirectoryEntry(path);
         if (parentDirEntry == null) {
-            throw new FileNotFoundException(String.format("The directory '%s' was not found", path));
+            throw new FileNotFoundException("The directory '%s' was not found".formatted(path));
         }
 
         Directory parentDir = getDirectory(parentDirEntry.getReference());
         if (parentDir == null) {
-            throw new FileNotFoundException(String.format("The directory '%s' was not found", path));
+            throw new FileNotFoundException("The directory '%s' was not found".formatted(path));
         }
 
         for (DirectoryEntry de : parentDir.getAllEntries(true)) {
@@ -1881,7 +1881,7 @@ logger.log(Level.DEBUG, volumeInfo);
             if (entry.getDetails().getFileAttributes().contains(FileAttributes.Directory)) {
                 return getDirectoryEntry(getDirectory(entry.getReference()), pathEntries, pathOffset + 1);
             }
-            throw new dotnet4j.io.IOException(String.format("%s is a file, not a directory", pathEntries[pathOffset]));
+            throw new dotnet4j.io.IOException("%s is a file, not a directory".formatted(pathEntries[pathOffset]));
         }
         return null;
     }
@@ -2000,7 +2000,7 @@ logger.log(Level.DEBUG, volumeInfo);
             String typeName = fileNameElements[2];
             AttributeDefinitionRecord typeDefn = context.getAttributeDefinitions().lookup(typeName);
             if (typeDefn == null) {
-                throw new FileNotFoundException(String.format("No such attribute type '%s'", typeName));
+                throw new FileNotFoundException("No such attribute type '%s'".formatted(typeName));
             }
 
             attributeType[0] = typeDefn.type;

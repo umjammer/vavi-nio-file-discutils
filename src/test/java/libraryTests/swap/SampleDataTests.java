@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 
-public class SampleDataTests {
+class SampleDataTests {
     @Test
-    public void swapVhdxGzip() throws Exception {
+    void swapVhdxGzip() throws Exception {
         File fs = new File(URI.create(getClass().getResource("swap.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);

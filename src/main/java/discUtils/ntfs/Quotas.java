@@ -113,7 +113,7 @@ public final class Quotas {
         }
 
         @Override public String toString() {
-            return String.format("[Sid:%s]", sid);
+            return "[Sid:%s]".formatted(sid);
         }
     }
 

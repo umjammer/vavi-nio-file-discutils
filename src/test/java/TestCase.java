@@ -100,7 +100,7 @@ class TestCase {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putInt(0xcafebabe);
         byte[] b = buffer.array();
-        String hex = IntStream.range(0, b.length).mapToObj(i -> String.format("%02x", b[i])).collect(Collectors.joining());
+        String hex = IntStream.range(0, b.length).mapToObj(i -> "%02x".formatted(b[i])).collect(Collectors.joining());
         assertEquals("cafebabe", hex);
     }
 
@@ -150,7 +150,7 @@ class TestCase {
     }
 
     @Test
-    public void test8() {
+    void test8() {
         // formatter:off
         String[][] aa = {
             { "a1", "a2", "a3", "a4" },
@@ -164,7 +164,7 @@ class TestCase {
     }
 
     @Test
-    public void test9() {
+    void test9() {
         byte b = (byte) 0x80;
         char c = (char) (b & 0xff);
         assertEquals((char) 0x80, c);

@@ -86,7 +86,7 @@ String[] inFiles = new String[] {inFile};
             System.err.println("      Identity: " + physVol.getIdentity());
             System.err.println("          Type: " + physVol.getVolumeType());
             System.err.println("       Disk Id: " + physVol.getDiskIdentity());
-            System.err.println("      Disk Sig: " + String.format("%8x", physVol.getDiskSignature()));
+            System.err.println("      Disk Sig: " + "%8x".formatted(physVol.getDiskSignature()));
             System.err.println("       Part Id: " + physVol.getPartitionIdentity());
             System.err.println("        Length: " + physVol.getLength() + " bytes");
             System.err.println(" Disk Geometry: " + physVol.getPhysicalGeometry());

@@ -35,9 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BiosPartitionTableTest {
+class BiosPartitionTableTest {
+
     @Test
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         long capacity = 3 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(capacity);
@@ -47,7 +48,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void createWholeDisk() throws Exception {
+    void createWholeDisk() throws Exception {
         long capacity = 3 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(capacity);
@@ -70,7 +71,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void createWholeDiskAligned() throws Exception {
+    void createWholeDiskAligned() throws Exception {
         long capacity = 3 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(capacity);
@@ -85,7 +86,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void createBySize() throws Exception {
+    void createBySize() throws Exception {
         long capacity = 3 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(capacity);
@@ -100,7 +101,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void createBySizeInGap() throws Exception {
+    void createBySizeInGap() throws Exception {
         SparseMemoryStream ms = new SparseMemoryStream();
         Geometry geom = new Geometry(15, 30, 63);
         ms.setLength(geom.getCapacity());
@@ -111,7 +112,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void createBySizeInGapAligned() throws Exception {
+    void createBySizeInGapAligned() throws Exception {
         SparseMemoryStream ms = new SparseMemoryStream();
         Geometry geom = new Geometry(15, 30, 63);
         ms.setLength(geom.getCapacity());
@@ -125,7 +126,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void createByCylinder() throws Exception {
+    void createByCylinder() throws Exception {
         SparseMemoryStream ms = new SparseMemoryStream();
         Geometry geom = new Geometry(15, 30, 63);
         ms.setLength(geom.getCapacity());
@@ -139,7 +140,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void delete() throws Exception {
+    void delete() throws Exception {
         long capacity = 10 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(capacity);
@@ -157,7 +158,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void setActive() throws Exception {
+    void setActive() throws Exception {
         long capacity = 10 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(capacity);
@@ -173,7 +174,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void largeDisk() throws Exception {
+    void largeDisk() throws Exception {
         long capacity = 300 * 1024L * 1024L * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(capacity);
@@ -192,7 +193,7 @@ public class BiosPartitionTableTest {
     }
 
     @Test
-    public void veryLargePartition() throws Exception {
+    void veryLargePartition() throws Exception {
         long capacity = 1300 * 1024L * 1024L * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
         ms.setLength(capacity);

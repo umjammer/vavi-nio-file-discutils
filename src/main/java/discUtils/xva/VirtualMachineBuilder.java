@@ -165,13 +165,13 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                             Stream chunkHashStream;
                             MessageDigest hashAlgDotnet = MessageDigest.getInstance("SHA-1");
                             chunkHashStream = new HashStreamDotnet(chunkStream, Ownership.Dispose, hashAlgDotnet);
-                            tarBuilder.addFile(String.format("Ref:%s/%8d", diskIds[0][diskIdx], i), chunkHashStream);
+                            tarBuilder.addFile("Ref:%s/%8d".formatted(diskIds[0][diskIdx], i), chunkHashStream);
                             byte[] hash;
                             hashAlgDotnet.update(new byte[0], 0, 0);
                             hash = hashAlgDotnet.digest();
                             String hashString = BitSet.valueOf(hash).toString().replace("-", "").toLowerCase();
                             byte[] hashStringAscii = hashString.getBytes(StandardCharsets.US_ASCII);
-                            tarBuilder.addFile(String.format("Ref:%s/%8d.checksum", diskIds[0][diskIdx], i), hashStringAscii);
+                            tarBuilder.addFile("Ref:%s/%8d.checksum".formatted(diskIds[0][diskIdx], i), hashStringAscii);
                             lastChunkAdded = i;
                         }
                     }
@@ -184,13 +184,13 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                     Stream chunkHashStream;
                     MessageDigest hashAlgDotnet = MessageDigest.getInstance("SHA-1");
                     chunkHashStream = new HashStreamDotnet(chunkStream, Ownership.Dispose, hashAlgDotnet);
-                    tarBuilder.addFile(String.format("Ref:%s/%8d", diskIds[0][diskIdx], lastActualChunk), chunkHashStream);
+                    tarBuilder.addFile("Ref:%s/%8d".formatted(diskIds[0][diskIdx], lastActualChunk), chunkHashStream);
                     byte[] hash;
                     hashAlgDotnet.update(new byte[0], 0, 0);
                     hash = hashAlgDotnet.digest();
                     String hashString = BitSet.valueOf(hash).toString().replace("-", "").toLowerCase();
                     byte[] hashStringAscii = hashString.getBytes(StandardCharsets.US_ASCII);
-                    tarBuilder.addFile(String.format("Ref:%s/%8d.checksum", diskIds[0][diskIdx], lastActualChunk),
+                    tarBuilder.addFile("Ref:%s/%8d.checksum".formatted(diskIds[0][diskIdx], lastActualChunk),
                                        hashStringAscii);
                 }
 

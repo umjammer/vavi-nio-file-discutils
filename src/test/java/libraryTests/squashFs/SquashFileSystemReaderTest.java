@@ -32,8 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public final class SquashFileSystemReaderTest {
+
     @Test
-    public void detect() {
+    void detect() {
         MemoryStream ms = new MemoryStream(new byte[1000]);
         assertFalse(SquashFileSystemReader.detect(ms));
         ms = new MemoryStream(new byte[10]);

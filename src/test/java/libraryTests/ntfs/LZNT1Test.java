@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @Disabled("not implemented yet")
-public class LZNT1Test {
+class LZNT1Test {
 
     private byte[] uncompressedData;
 
@@ -64,7 +64,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void compress() throws Exception {
+    void compress() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         int[] compressedLength = new int[] {
             16 * 4096
@@ -82,7 +82,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void compressMidSourceBuffer() throws Exception {
+    void compressMidSourceBuffer() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         byte[] inData = new byte[128 * 1024];
         System.arraycopy(uncompressedData, 0, inData, 32 * 1024, 64 * 1024);
@@ -101,7 +101,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void compressMidDestBuffer() throws Exception {
+    void compressMidDestBuffer() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         // Double-check, make sure native code round-trips
         byte[] nativeCompressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 4096);
@@ -119,7 +119,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void compress1KBlockSize() throws Exception {
+    void compress1KBlockSize() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         int[] compressedLength = new int[] {
             16 * 4096
@@ -143,7 +143,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void compress1KBlock() throws Exception {
+    void compress1KBlock() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         byte[] uncompressed1K = new byte[1024];
         System.arraycopy(uncompressedData, 0, uncompressed1K, 0, 1024);
@@ -161,7 +161,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void compressAllZeros() throws Exception {
+    void compressAllZeros() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         byte[] compressed = new byte[64 * 1024];
         int[] numCompressed = new int[] {
@@ -172,7 +172,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void compressIncompressible() throws Exception {
+    void compressIncompressible() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         Random rng = new Random(6324);
         byte[] uncompressed = new byte[64 * 1024];
@@ -186,7 +186,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void decompress() throws Exception {
+    void decompress() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         byte[] compressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 4096);
         // Double-check, make sure native code round-trips
@@ -198,7 +198,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void decompressMidSourceBuffer() throws Exception {
+    void decompressMidSourceBuffer() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         byte[] compressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 4096);
         byte[] inData = new byte[128 * 1024];
@@ -212,7 +212,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void decompressMidDestBuffer() throws Exception {
+    void decompressMidDestBuffer() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         byte[] compressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 4096);
         // Double-check, make sure native code round-trips
@@ -226,7 +226,7 @@ public class LZNT1Test {
     }
 
     @Test
-    public void decompress1KBlockSize() throws Exception {
+    void decompress1KBlockSize() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         byte[] compressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 1024);
         assertArrayEquals(uncompressedData, nativeDecompress(compressed, 0, compressed.length));

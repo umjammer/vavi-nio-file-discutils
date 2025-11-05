@@ -12,27 +12,28 @@ all formats are mounted by fuse also!
 
 ### Status
 
-| fs       | list           | upload | download  | copy | move | rm | mkdir | cache | watch | create | comment                                                                                                                               |
-|----------|----------------|--------|-----------|------|------|----|-------|-------|-------|--------|---------------------------------------------------------------------------------------------------------------------------------------|
-| UDF      |                |        |           |      |      |    |       | -     |       |        |                                                                                                                                       |
-| FAT      | ✅ (RAW)        |      |           |      |      |    |       | -     |       |        |                                                                                                                                       |         |
-| NTFS     | ✅ (VDI)        |      | ✅ (VDI)   |      |      |    |       | -     |       |        |                                                                                                                                       |
-| HSF+     | ✅ (DMG)        |      |           |      |      |    |       | -     |       |        | 🚫 (ISO) same error on original                                                                                                       |
-| EXT      | 🚧 (VDI)       |      |           |      |      |    |       | -     |       |        |                                                                                                                                       |
-| XFS      |                |        |           |      |      |    |       | -     |       |        |                                                                                                                                       |
-| ISO      | 🚧             |        |           |      |      |    |       | -     |       | ✅      |                                                                                                                                       |
-| VHD      | ✅ (fat16)      |        | ✅ (fat16) |      |      |    |       | -     |       |        | ~~🐛 subdir w/ fuse~~                                                                                                                 |
-| VDI      | ✅ (ntfs,fat16) |        | ✅ (ntfs,fat16) |      |      |    |      | -     |       |        | ~~🐛 copy bytes slip out of place? w/ fuse~~                                                                                          |
-| XVA      |                |        |           |      |      |    |       | -     |       |        |                                                                                                                                       |
-| VMDK     |                |        |           |      |      |    |       | -     |       |        |                                                                                                                                       |
-| DMG      | ✅              |        |           |      |      |    |       |       |       |        |                                                                                                                                       |
-| Registry | ✅              |        |           |      |      |    |       | -     | -     | -      | Windows 10's registry                                                                                                                 |
-| ├ BCD    | ✅              |        |           |      |      |    |       | -     | -     | -      | Windows XP's bcd                                                                                                                      |
-| iSCSI    | 🚫             |        |           |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)                                                                                |
-| NFS      | 🚫             |        |           |      |      |    |       |       |       | -      | server [nfs4j](https://github.com/dcache/nfs4j)                                                                                       |
-| ODS      | 🚫             |        |           |      |      |    |       |       |       | -      | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)                                                                       |
-| EMU      | ✅ (nhd)        |        |           |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
-| CHD      |                |        |           |      |      |    |       |      |       | -      | [jpcsp](https://github.com/jpcsp/jpcsp)                                                                                |
+| fs       | list           | upload | download       | copy | move | rm | mkdir | cache | watch | create | comment                                                                                                                               |
+|----------|----------------|--------|----------------|------|------|----|-------|-------|-------|--------|---------------------------------------------------------------------------------------------------------------------------------------|
+| UDF      |                |        |                |      |      |    |       | -     |       |        |                                                                                                                                       |
+| FAT      | ✅ (RAW)        |        |                |      |      |    |       | -     |       |        |                                                                                                                                       |         |
+| NTFS     | ✅ (VDI)        |        | ✅ (VDI)        |      |      |    |       | -     |       |        |                                                                                                                                       |
+| HSF+     | ✅ (DMG)        |        |                |      |      |    |       | -     |       |        | 🚫 (ISO) same error on original                                                                                                       |
+| EXT      | 🚧 (VDI)       |        |                |      |      |    |       | -     |       |        |                                                                                                                                       |
+| XFS      |                |        |                |      |      |    |       | -     |       |        |                                                                                                                                       |
+| ISO      | 🚧             |        |                |      |      |    |       | -     |       | ✅      |                                                                                                                                       |
+| VHD      | ✅ (fat16)      |        | ✅ (fat16)      |      |      |    |       | -     |       |        | ~~🐛 subdir w/ fuse~~                                                                                                                 |
+| VDI      | ✅ (ntfs,fat16) |        | ✅ (ntfs,fat16) |      |      |    |       | -     |       |        | ~~🐛 copy bytes slip out of place? w/ fuse~~                                                                                          |
+| XVA      |                |        |                |      |      |    |       | -     |       |        |                                                                                                                                       |
+| VMDK     |                |        |                |      |      |    |       | -     |       |        |                                                                                                                                       |
+| DMG      | ✅              |        |                |      |      |    |       |       |       |        |                                                                                                                                       |
+| Registry | ✅              |        |                |      |      |    |       | -     | -     | -      | Windows 10's registry                                                                                                                 |
+| ├ BCD    | ✅              |        |                |      |      |    |       | -     | -     | -      | Windows XP's bcd                                                                                                                      |
+| iSCSI    | 🚫             |        |                |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)                                                                                |
+| NFS      | 🚫             |        |                |      |      |    |       |       |       | -      | server [nfs4j](https://github.com/dcache/nfs4j)                                                                                       |
+| ODS      | 🚫             |        |                |      |      |    |       |       |       | -      | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)                                                                       |
+| EMU      | ✅ (nhd)        |        |                |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
+| CHD      | ✅ (iso)        | -      | ✅ (iso)        | -    | -    | -  | -     | -     | -     | -      | [jpcsp(libchdr)](https://github.com/jpcsp/jpcsp)                                                                                      |
+| QCOW2    | ✅ (gpt/ntfs)   | -      |  (gpt)         | -    | -    | -  | -     | -     | -     | -      | [vavi-nio-file-qcow2](https://github.com/umjammer/vavi-nio-file-qcow2)                                                                |
 
 ### Project Description
 
@@ -156,6 +157,16 @@ Again, start browsing the file system at floppy.Root.
  * https://github.com/twiglet/cs2j
  * https://github.com/feyris-tan/dotnetIo4j [(vavi patched)](https://github.com/umjammer/dotnet4j)
  * bcd ... https://thestarman.pcministry.com/asm/mbr/BCD.htm
+ * raw (dd) ... https://github.com/Zapotek/raw2vmdk
+ * https://github.com/rasto/lcmc
+ * chd
+     * https://mamedev.emulab.it/haze/2012/02/16/chd-v5/
+     * https://github.com/rtissera/libchdr
+     * [jpcsc](https://github.com/jpcsp/jpcsp) has already java chd code! 🎯
+ * qcow
+     * [vavi-nio-file-qcow](https://github.com/umjammer/vavi-nio-file-qcow) ... libqcow via jna doesn't work well
+     * [vavi-nio-file-qcow2](https://github.com/umjammer/vavi-nio-file-qcow2) 🎯 ... backing files are not supported
+     * [vavi-nio-file-qcow2go](https://github.com/umjammer/vavi-nio-file-qcow2go) ... read api?
 
 ## TODO
 
@@ -166,15 +177,14 @@ Again, start browsing the file system at floppy.Root.
    * test on windows 
  * ~~pc98 partition~~ (done)
  * d88 floppy disk
- * qcow2 (wip, see [aaru](https://github.com/aaru-dps/Aaru))
- * chd (wip, see aaru)
+ * ~~qcow2 (wip~~, ~~see [aaru](https://github.com/aaru-dps/Aaru)~~)
+ * ~~chd (wip~~, ~~see aaru~~ libchdr in jpcsc)
    * qlgenerator (wip, see vavi.apps.qlgenerator package)
-   * https://mamedev.emulab.it/haze/2012/02/16/chd-v5/
-   * https://github.com/rtissera/libchdr
-   * [pscx2](https://github.com/PCSX2/pcsx2) has already chd code! 
+   * spi doesn't use discutil library. chd spi should be independent of this project
  * iso9660
    * `CommonVolumeDescriptor` as `user:attributes` 
    * https://github.com/Janix520/java-iso-tools
+   * https://github.com/jpcsp/jpcsp/tree/master/src/jpcsp/filesystems/umdiso/iso9660
  * ~~registry~~
  * ~~🐛 vdi check sector length?~~ -> Util#SeekableByteChannel*
- * git tree might be corrupted
+ * ~~git tree might be corrupted~~

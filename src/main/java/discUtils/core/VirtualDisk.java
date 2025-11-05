@@ -359,7 +359,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
         URI uri = pathToUri(path);
         VirtualDisk result;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
-            throw new dotnet4j.io.FileNotFoundException(String.format("Unable to parse path '%s'", path));
+            throw new dotnet4j.io.FileNotFoundException("Unable to parse path '%s'".formatted(path));
         }
 
         VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
@@ -425,7 +425,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 logger.log(Level.TRACE, uri);
         VirtualDisk result = null;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
-            throw new dotnet4j.io.FileNotFoundException(String.format("Unable to parse path '%s'", path));
+            throw new dotnet4j.io.FileNotFoundException("Unable to parse path '%s'".formatted(path));
         }
 
         VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());

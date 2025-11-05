@@ -116,7 +116,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      */
     @Override public String getIdentity() {
         if (volumeType == PhysicalVolumeType.GptPartition) {
-            return "VPG" + String.format("{%s}", getPartitionIdentity());
+            return "VPG" + "{%s}".formatted(getPartitionIdentity());
         }
         String partId = switch (volumeType) {
             case EntireDisk -> "PD";

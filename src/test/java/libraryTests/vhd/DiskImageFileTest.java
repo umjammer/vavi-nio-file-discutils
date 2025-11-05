@@ -41,12 +41,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class DiskImageFileTest {
+class DiskImageFileTest {
 
     private static final String FS = File.separator;
 
     @Test
-    public void initializeDifferencing() throws Exception {
+    void initializeDifferencing() throws Exception {
         MemoryStream baseStream = new MemoryStream();
         MemoryStream diffStream = new MemoryStream();
 
@@ -74,7 +74,7 @@ public class DiskImageFileTest {
     }
 
     @Test
-    public void getParentLocations() throws Exception {
+    void getParentLocations() throws Exception {
         MemoryStream baseStream = new MemoryStream();
         MemoryStream diffStream = new MemoryStream();
 
@@ -99,6 +99,7 @@ public class DiskImageFileTest {
 
         try (DiskImageFile diffFile = new DiskImageFile(diffStream)) {
             // Testing the obsolete method - disable warning
+            @SuppressWarnings("deprecation")
             List<String> locations = diffFile.getParentLocations("E:" + FS + "FOO" + FS);
             assertEquals(2, locations.size());
             assertEquals("C:" + FS + "TEMP" + FS + "base.vhd", locations.get(0));
@@ -115,7 +116,7 @@ public class DiskImageFileTest {
     }
 
     @Test
-    public void footerMissing() throws Exception {
+    void footerMissing() throws Exception {
         //
         // Simulates a partial failure extending the file, that the file footer is corrupt - should read start of the file instead.
         //

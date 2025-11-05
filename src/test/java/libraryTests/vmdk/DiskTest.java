@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class DiskTest {
+class DiskTest {
 
     private static final String FS = File.separator;
 
@@ -50,7 +50,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeFixed() throws Exception {
+    void initializeFixed() throws Exception {
         try (Disk disk = Disk.initialize(new InMemoryFileSystem(), "a.vmdk", 8 * 1024 * 1024, DiskCreateType.MonolithicFlat)) {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 7.9 * 1024 * 1024 &&
@@ -64,7 +64,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeFixedIDE() throws Exception {
+    void initializeFixedIDE() throws Exception {
         try (Disk disk = Disk.initialize(new InMemoryFileSystem(),
                                          "a.vmdk",
                                          8 * 1024 * 1024,
@@ -82,7 +82,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeDynamic() throws Exception {
+    void initializeDynamic() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse)) {
             assertNotNull(disk);
@@ -104,7 +104,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeDifferencing() throws Exception {
+    void initializeDifferencing() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         DiskImageFile baseFile = DiskImageFile
                 .initialize(fs, FS + "base" + FS + "base.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse);
@@ -126,7 +126,7 @@ public class DiskTest {
     }
 
     @Test
-    public void initializeDifferencingRelPath() throws Exception {
+    void initializeDifferencingRelPath() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         DiskImageFile baseFile = DiskImageFile
                 .initialize(fs, FS + "dir" + FS + "subdir" + FS + "base.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse);
@@ -143,7 +143,7 @@ public class DiskTest {
     }
 
     @Test
-    public void readOnlyHosted() throws Exception {
+    void readOnlyHosted() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse)) {
         }

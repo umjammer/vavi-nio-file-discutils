@@ -58,7 +58,7 @@ public final class ReparsePointRecord implements IByteArraySerializable, IDiagno
         writer.println(linePrefix + "                Tag: " + Integer.toHexString(tag));
         StringBuilder hex = new StringBuilder();
         for (int i = 0; i < Math.min(content.length, 32); ++i) {
-            hex.append(String.format(" %02x", content[i]));
+            hex.append(" %02x".formatted(content[i]));
         }
         writer.println(linePrefix + "               Data:" + hex + (content.length > 32 ? "..." : ""));
     }

@@ -115,6 +115,6 @@ public class Extent implements IByteArraySerializable {
      *
      */
     @Override public String toString() {
-        return String.format("[%d,%d,%d,%s]", startOffset, startBlock, blockCount, flag);
+        return "[%d,%d,%d,%s]".formatted(startOffset, startBlock, blockCount, flag);
     }
 }

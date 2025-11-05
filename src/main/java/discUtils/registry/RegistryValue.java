@@ -225,9 +225,9 @@ public final class RegistryValue {
             byte[] data = getData();
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < Math.min(data.length, 8); ++i) {
-                result.append(String.format("%2x ", (int) data[i]));
+                result.append("%2x ".formatted((int) data[i]));
             }
-            return result + String.format(" (%d bytes)", data.length);
+            return result + " (%d bytes)".formatted(data.length);
         }
     }
 }

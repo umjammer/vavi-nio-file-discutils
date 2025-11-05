@@ -42,9 +42,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3WriteResultTest {
+class Nfs3WriteResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3WriteResult result = new Nfs3WriteResult();
         Nfs3WeakCacheConsistencyAttr before = new Nfs3WeakCacheConsistencyAttr();
         before.setChangeTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))

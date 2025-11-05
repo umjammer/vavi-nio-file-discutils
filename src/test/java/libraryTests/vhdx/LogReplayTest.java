@@ -37,9 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class LogReplayTest {
+class LogReplayTest {
+
     @Test
-    public void replayLog() throws Exception {
+    void replayLog() throws Exception {
         File fs = new File(URI.create(getClass().getResource("vhdx-log-replay.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);

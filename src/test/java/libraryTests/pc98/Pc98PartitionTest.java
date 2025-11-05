@@ -23,13 +23,15 @@ import discUtils.core.VirtualDisk;
 import discUtils.core.VolumeManager;
 import discUtils.fat.FatFileSystem;
 import dotnet4j.io.FileAccess;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 import vavi.nio.file.du.DuFileSystemProvider;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,21 +45,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @EnabledIf("localPropertiesExists")
 @PropsEntity(url = "file://${user.dir}/local.properties")
-public class Pc98PartitionTest {
+class Pc98PartitionTest {
+
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
 
     @Property
     String nhd;
 
     @BeforeEach
     void before() throws IOException {
-        PropsEntity.Util.bind(this);
-    }
-
-    static boolean localPropertiesExists() {
-        return Files.exists(Paths.get("local.properties"));
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
     }
 
     @Test
+    @DisplayName("api")
     void test1() throws Exception {
 Debug.println("file: " + nhd);
 
@@ -77,12 +82,17 @@ Debug.println("fs: " + fs);
     }
 
     @Test
+    @DisplayName("via spi")
     void test2() throws Exception {
+        // TODO discUtils.core.pc98.Pc98PartitionTableFactory#adhoc ???
+//        System.setProperty(Pc98FileSystemFactory.VALIDATION_KEY, "libraryTests.pc98.TestValidator#validate");
+
         String file = nhd;
         URI uri = DuFileSystemProvider.createURI(file);
         Map<String, Object> env = new HashMap<>();
         env.put("forceType", "EMU"); // works w/o this env value
         FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
         Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+        fs.close();
     }
 }

@@ -28,24 +28,28 @@ import discUtils.registry.RegistryHive;
 import discUtils.registry.RegistryKey;
 import discUtils.registry.RegistryValueType;
 import dotnet4j.io.MemoryStream;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class RegistryKeyTest {
+
+class RegistryKeyTest {
 
     private static final String FS = java.io.File.separator;
 
     private RegistryHive hive;
 
-    public RegistryKeyTest() {
+    @BeforeEach
+    void setup() {
         hive = RegistryHive.create(new MemoryStream());
     }
 
     @Test
-    public void setDefaultValue() throws Exception {
+    void setDefaultValue() throws Exception {
         hive.getRoot().setValue("", "A default value");
         assertEquals("A default value", hive.getRoot().getValue(""));
         hive.getRoot().setValue(null, "Foobar");
@@ -55,7 +59,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void valueNameCaseSensitivity() throws Exception {
+    void valueNameCaseSensitivity() throws Exception {
         hive.getRoot().setValue("nAmE", "value");
         assertEquals("value", hive.getRoot().getValue("NaMe"));
         hive.getRoot().setValue("moreThanFourCharName", "foo");
@@ -67,7 +71,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void setLargeValue() throws Exception {
+    void setLargeValue() throws Exception {
         byte[] buffer = new byte[64 * 1024];
         buffer[5232] = (byte) 0xAD;
         hive.getRoot().setValue("bigvalue", buffer);
@@ -77,7 +81,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void setStringValue() throws Exception {
+    void setStringValue() throws Exception {
         hive.getRoot().setValue("value", "string");
         assertEquals(RegistryValueType.String, hive.getRoot().getValueType("value"));
         assertEquals("string", hive.getRoot().getValue("value"));
@@ -87,14 +91,14 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void setIntegerValue() throws Exception {
+    void setIntegerValue() throws Exception {
         hive.getRoot().setValue("value", 0x7342BEEF);
         assertEquals(RegistryValueType.Dword, hive.getRoot().getValueType("value"));
         assertEquals(0x7342BEEF, (int) hive.getRoot().getValue("value"));
     }
 
     @Test
-    public void setByteArrayValue() throws Exception {
+    void setByteArrayValue() throws Exception {
         hive.getRoot().setValue("value", new byte[] {1, 2, 3, 4});
         assertEquals(RegistryValueType.Binary, hive.getRoot().getValueType("value"));
         byte[] readVal = (byte[]) hive.getRoot().getValue("value");
@@ -103,7 +107,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void setStringArrayValue() throws Exception {
+    void setStringArrayValue() throws Exception {
         hive.getRoot().setValue("value", new String[] {"A", "B", "C"});
         assertEquals(RegistryValueType.MultiString, hive.getRoot().getValueType("value"));
         String[] readVal = (String[]) hive.getRoot().getValue("value");
@@ -112,7 +116,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void setEnvStringValue() throws Exception {
+    void setEnvStringValue() throws Exception {
         hive.getRoot().setValue("value", "string", RegistryValueType.ExpandString);
         assertEquals(RegistryValueType.ExpandString, hive.getRoot().getValueType("value"));
         assertEquals("string", hive.getRoot().getValue("value"));
@@ -125,7 +129,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void deleteValue() throws Exception {
+    void deleteValue() throws Exception {
         hive.getRoot().setValue("aValue", "value");
         hive.getRoot().setValue("nAmE", "value");
         hive.getRoot().setValue("otherValue", "value");
@@ -135,7 +139,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void deleteOnlyValue() throws Exception {
+    void deleteOnlyValue() throws Exception {
         hive.getRoot().setValue("nAmE", "value");
         assertEquals(1, hive.getRoot().getValueCount());
         hive.getRoot().deleteValue("NaMe");
@@ -143,7 +147,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void deleteDefaultValue() throws Exception {
+    void deleteDefaultValue() throws Exception {
         hive.getRoot().setValue("", "value");
         assertEquals(1, hive.getRoot().getValueCount());
         hive.getRoot().deleteValue(null);
@@ -151,7 +155,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void enumerateValues() throws Exception {
+    void enumerateValues() throws Exception {
         hive.getRoot().setValue("C", "");
         hive.getRoot().setValue("A", "");
         hive.getRoot().setValue("B", "");
@@ -163,7 +167,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void createKey() throws Exception {
+    void createKey() throws Exception {
         RegistryKey newKey = hive.getRoot().createSubKey("Child" + FS + "Grandchild");
         assertNotNull(newKey);
         assertEquals(1, hive.getRoot().getSubKeyCount());
@@ -171,7 +175,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void createExistingKey() throws Exception {
+    void createExistingKey() throws Exception {
         RegistryKey newKey = hive.getRoot().createSubKey("Child");
         assertNotNull(newKey);
         assertEquals(1, hive.getRoot().getSubKeyCount());
@@ -181,7 +185,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void deleteKey() throws Exception {
+    void deleteKey() throws Exception {
         RegistryKey newKey = hive.getRoot().createSubKey("Child");
         hive.getRoot().openSubKey("Child").setValue("value", "a value");
         assertEquals(1, hive.getRoot().getSubKeyCount());
@@ -190,13 +194,13 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void deleteNonEmptyKey() throws Exception {
+    void deleteNonEmptyKey() throws Exception {
         RegistryKey newKey = hive.getRoot().createSubKey("Child" + FS + "Grandchild");
         assertThrows(UnsupportedOperationException.class, () -> hive.getRoot().deleteSubKey("Child"));
     }
 
     @Test
-    public void deleteKeyTree() throws Exception {
+    void deleteKeyTree() throws Exception {
         RegistryKey newKey = hive.getRoot().createSubKey("Child" + FS + "Grandchild");
         assertEquals(1, hive.getRoot().getSubKeyCount());
         hive.getRoot().deleteSubKeyTree("cHiLd");
@@ -204,7 +208,7 @@ public class RegistryKeyTest {
     }
 
     @Test
-    public void enumerateSubKeys() throws Exception {
+    void enumerateSubKeys() throws Exception {
         hive.getRoot().createSubKey("C");
         hive.getRoot().createSubKey("A");
         hive.getRoot().createSubKey("B");

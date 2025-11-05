@@ -43,9 +43,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3ReadDirPlusResultTest {
+class Nfs3ReadDirPlusResultTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3ReadDirPlusResult result = new Nfs3ReadDirPlusResult();
         result.setCookieVerifier(1);
         Nfs3FileAttributes dirAttrs = new Nfs3FileAttributes();

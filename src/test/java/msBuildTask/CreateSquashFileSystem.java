@@ -82,7 +82,7 @@ public class CreateSquashFileSystem implements  org.apache.maven.plugin.Mojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        log.info(String.format("Creating SquashFS file: '%s'", fileName));
+        log.info("Creating SquashFS file: '%s'".formatted(fileName));
         try {
             SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
             for (String sourceFile : sourceFiles) {

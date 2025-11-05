@@ -63,7 +63,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
     public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "DISK GROUP (" + record.name + ")");
         writer.println(linePrefix + "  Name: " + record.name);
-        writer.println(linePrefix + "  flags: 0x" + String.format("%4x", record.flags & 0xFFF0));
+        writer.println(linePrefix + "  flags: 0x" + "%4x".formatted(record.flags & 0xFFF0));
         writer.println(linePrefix + "  Database Id: " + record.id);
         writer.println(linePrefix + "  Guid: " + record.groupGuidString);
         writer.println();
@@ -71,7 +71,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         for (DiskRecord disk : database.getDisks()) {
             writer.println(linePrefix + "    DISK (" + disk.name + ")");
             writer.println(linePrefix + "      Name: " + disk.name);
-            writer.println(linePrefix + "      flags: 0x" + String.format("%4x", disk.flags & 0xFFF0));
+            writer.println(linePrefix + "      flags: 0x" + "%4x".formatted(disk.flags & 0xFFF0));
             writer.println(linePrefix + "      Database Id: " + disk.id);
             writer.println(linePrefix + "      Guid: " + disk.diskGuidString);
             if (disks.containsKey(UUID.fromString(disk.diskGuidString))) {
@@ -85,9 +85,9 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         for (VolumeRecord vol : database.getVolumes()) {
             writer.println(linePrefix + "    VOLUME (" + vol.name + ")");
             writer.println(linePrefix + "      Name: " + vol.name);
-            writer.println(linePrefix + "      BIOS Type: " + String.format("%2x", vol.biosType) + " [" +
+            writer.println(linePrefix + "      BIOS Type: " + "%2x".formatted(vol.biosType) + " [" +
                            BiosPartitionTypes.toString(vol.biosType) + "]");
-            writer.println(linePrefix + "      flags: 0x" + String.format("%4x", vol.flags & 0xFFF0));
+            writer.println(linePrefix + "      flags: 0x" + "%4x".formatted(vol.flags & 0xFFF0));
             writer.println(linePrefix + "      Database Id: " + vol.id);
             writer.println(linePrefix + "      Guid: " + vol.volumeGuid);
             writer.println(linePrefix + "      State: " + vol.activeString);
@@ -98,7 +98,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
             for (ComponentRecord cmpnt : database.getVolumeComponents(vol.id)) {
                 writer.println(linePrefix + "        COMPONENT (" + cmpnt.name + ")");
                 writer.println(linePrefix + "          Name: " + cmpnt.name);
-                writer.println(linePrefix + "          flags: 0x" + String.format("%4x", cmpnt.flags & 0xFFF0));
+                writer.println(linePrefix + "          flags: 0x" + "%4x".formatted(cmpnt.flags & 0xFFF0));
                 writer.println(linePrefix + "          Database Id: " + cmpnt.id);
                 writer.println(linePrefix + "          State: " + cmpnt.statusString);
                 writer.println(linePrefix + "          Mode: " + cmpnt.mergeType);
@@ -110,7 +110,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
                 for (ExtentRecord extent : database.getComponentExtents(cmpnt.id)) {
                     writer.println(linePrefix + "            EXTENT (" + extent.name + ")");
                     writer.println(linePrefix + "              Name: " + extent.name);
-                    writer.println(linePrefix + "              flags: 0x" + String.format("%4x", extent.flags & 0xFFF0));
+                    writer.println(linePrefix + "              flags: 0x" + "%4x".formatted(extent.flags & 0xFFF0));
                     writer.println(linePrefix + "              Database Id: " + extent.id);
                     writer.println(linePrefix + "              Disk Offset: " + extent.diskOffsetLba + " (Sectors)");
                     writer.println(linePrefix + "              Volume Offset: " + extent.offsetInVolumeLba + " (Sectors)");

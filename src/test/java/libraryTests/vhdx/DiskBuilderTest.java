@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class DiskBuilderTest {
+class DiskBuilderTest {
     private SparseStream diskContent;
 
     public DiskBuilderTest() throws Exception {
@@ -76,7 +76,7 @@ public class DiskBuilderTest {
     }
 
     @Test
-    public void buildEmptyDynamic() throws Exception {
+    void buildEmptyDynamic() throws Exception {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(DiskType.Dynamic);
         builder.setContent(new SparseMemoryStream());
@@ -91,7 +91,7 @@ public class DiskBuilderTest {
     }
 
     @Test
-    public void buildDynamic() throws Exception {
+    void buildDynamic() throws Exception {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(DiskType.Dynamic);
         builder.setContent(diskContent);

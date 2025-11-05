@@ -23,6 +23,8 @@
 package discUtils.ntfs;
 
 import java.io.PrintWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
@@ -31,8 +33,12 @@ import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Sizes;
 import vavi.util.ByteUtil;
 
+import static java.lang.System.getLogger;
+
 
 class BiosParameterBlock {
+
+    private static final Logger logger = getLogger(BiosParameterBlock.class.getName());
 
     static final String NTFS_OEM_ID = "NTFS    ";
 
@@ -250,6 +256,7 @@ class BiosParameterBlock {
         // Let's rather check OemId here, so we don't fail hard.
         if (!isValidOemId() || totalSectors16 != 0 || totalSectors32 != 0 || totalSectors64 == 0 || getMftRecordSize() == 0 ||
             mftCluster == 0 || bytesPerSector == 0) {
+logger.log(Level.TRACE, "isValidOemId: %s, totalSectors16(Z): %d, totalSectors32(Z): %d, totalSectors64(NZ): %d, getMftRecordSize(NZ): %d, mftCluster(NZ): %d, bytesPerSector(NZ): %d".formatted(isValidOemId(), totalSectors16, totalSectors32, totalSectors64, getMftRecordSize(), mftCluster, bytesPerSector));
             return false;
         }
 
@@ -270,7 +277,7 @@ class BiosParameterBlock {
         }
         byte val = 0;
         while (size != 1) {
-            size = (size >>> 1) & 0x7FFFFFFF;
+            size = (size >>> 1) & 0x7fff_ffff;
             val++;
         }
         return (byte) -val;

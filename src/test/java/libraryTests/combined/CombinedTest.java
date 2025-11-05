@@ -35,9 +35,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class CombinedTest {
+class CombinedTest {
+
     @Test
-    public void simpleVhdFat() throws Exception {
+    void simpleVhdFat() throws Exception {
         try (Disk disk = Disk.initializeDynamic(new MemoryStream(), Ownership.Dispose, 16 * 1024 * 1024)) {
             BiosPartitionTable.initialize(disk, WellKnownPartitionType.WindowsFat);
             try (FatFileSystem fs = FatFileSystem.formatPartition(disk, 0, null)) {
@@ -47,7 +48,7 @@ public class CombinedTest {
     }
 
     @Test
-    public void formatSecondFatPartition() throws Exception {
+    void formatSecondFatPartition() throws Exception {
         MemoryStream ms = new MemoryStream();
         VirtualDisk disk = Disk.initializeDynamic(ms, Ownership.Dispose, 30 * 1024 * 1204);
         PartitionTable pt = BiosPartitionTable.initialize(disk);

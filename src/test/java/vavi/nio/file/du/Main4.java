@@ -25,6 +25,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import vavi.net.fuse.Base;
 import vavi.net.fuse.Fuse;
+import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
@@ -51,6 +52,9 @@ public class Main4 {
     String discImage;
     @Property
     int volumeNumber;
+    // set "EMU" when discImage is dealt by vavi-nio-file-emu
+    @Property
+    String forceType;
     @Property
     String mountPoint;
 
@@ -59,12 +63,16 @@ public class Main4 {
 
     @BeforeEach
     public void before() throws Exception {
-        PropsEntity.Util.bind(this);
+        if (localPropertiesExists()) {
+            PropsEntity.Util.bind(this);
+        }
 
         URI uri = DuFileSystemProvider.createURI(discImage);
+Debug.println(uri);
 
         Map<String, Object> env = new HashMap<>();
         env.put(CachedFileSystemDriver.ENV_IGNORE_APPLE_DOUBLE, true); // mandatory
+        if (forceType != null && !forceType.isEmpty()) env.put("forceType", forceType);
         env.put("volumeNumber", volumeNumber);
 
         fs = FileSystems.newFileSystem(uri, env);
@@ -98,7 +106,8 @@ public class Main4 {
     @Test
     @DisabledIfSystemProperty(named = "vavi.test", matches = "ide")
     void testX() throws Exception {
-        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
+        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.javafs.JavaFSFuseProvider");
+//        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
 
         try (Fuse fuse = Fuse.getFuse()) {
             fuse.mount(fs, mountPoint, options);
@@ -111,8 +120,8 @@ public class Main4 {
 
     /** */
     public static void main(String[] args) throws Exception {
-//        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.javafs.JavaFSFuseProvider");
-        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
+        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.javafs.JavaFSFuseProvider");
+//        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
 //        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.fusejna.FuseJnaFuseProvider");
 
         Main4 app = new Main4();

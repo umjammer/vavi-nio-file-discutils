@@ -30,12 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class SampleDataTests {
+class SampleDataTests {
 
     private static final String FS = File.separator;
 
     @Test
-    public void xfsVhdxZip() throws Exception {
+    void xfsVhdxZip() throws Exception {
         File fs = new File(URI.create(getClass().getResource("xfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
@@ -59,7 +59,7 @@ public class SampleDataTests {
     }
 
     @Test
-    public void xfs5VhdxZip() throws Exception {
+    void xfs5VhdxZip() throws Exception {
         File fs = new File(URI.create(getClass().getResource("xfs5.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
@@ -87,7 +87,7 @@ public class SampleDataTests {
         assertTrue(xfs.fileExists("folder" + FS + "nested" + FS + "file"));
         assertEquals(0, xfs.getFileSystemEntries("empty").size());
         for (int i = 1; i <= 1000; i++) {
-            assertTrue(xfs.fileExists(String.format("folder" + FS + "file.%d", i)), String.format("File file.%d not found", i));
+            assertTrue(xfs.fileExists("folder" + FS + "file.%d".formatted(i)), "File file.%d not found".formatted(i));
         }
 
         try (Stream file = xfs.openFile("folder" + FS + "file.100", FileMode.Open); MemoryStream ms = new MemoryStream()) {
@@ -96,7 +96,7 @@ public class SampleDataTests {
             byte[] checksum = md5.digest(ms.toArray());
             assertEquals("620f0b67a91f7f74151bc5be745b7110",
                          IntStream.range(0, checksum.length)
-                                 .mapToObj(i -> String.format("%02x", checksum[i]))
+                                 .mapToObj(i -> "%02x".formatted(checksum[i]))
                                  .collect(Collectors.joining()));
         }
 
@@ -106,11 +106,11 @@ public class SampleDataTests {
             byte[] checksum = md5.digest(ms.toArray());
             assertEquals("9a202a11d6e87688591eb97714ed56f1",
                          IntStream.range(0, checksum.length)
-                                 .mapToObj(i -> String.format("%02x", checksum[i]))
+                                 .mapToObj(i -> "%02x".formatted(checksum[i]))
                                  .collect(Collectors.joining()));
         }
         for (int i = 1; i <= 999; i++) {
-            assertTrue(xfs.fileExists(String.format("huge" + FS + "%d", i)), String.format("File huge/%d not found", i));
+            assertTrue(xfs.fileExists("huge" + FS + "%d".formatted(i)), "File huge/%d not found".formatted(i));
         }
     }
 }

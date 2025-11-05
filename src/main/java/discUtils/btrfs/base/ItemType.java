@@ -64,7 +64,7 @@ public enum ItemType {
     }
 
     public static ItemType valueOf(int value) {
-//logger.log(Level.DEBUG, String.format("%x", value));
+//logger.log(Level.DEBUG, "%x".formatted(value));
         return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
     }
 }

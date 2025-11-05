@@ -7,6 +7,10 @@
 package vavi.apps.qlgenerator;
 
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+
+
 /**
  * Chd.
  *
@@ -15,8 +19,10 @@ package vavi.apps.qlgenerator;
  */
 public class Chd {
 
+    private static final Logger logger = System.getLogger(Chd.class.getName());
+
     static String exec(String url) {
-System.err.println("@@@: " + url);
+logger.log(Level.TRACE, "@@@: " + url);
         return "Hello World!";
     }
 }

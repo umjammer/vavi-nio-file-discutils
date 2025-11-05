@@ -337,6 +337,7 @@ public final class GuidPartitionTable extends PartitionTable {
         this.diskGeometry = diskGeometry;
         disk.position(diskGeometry.getBytesPerSector());
         byte[] sector = StreamUtilities.readExact(disk, diskGeometry.getBytesPerSector());
+//logger.log(Level.TRACE, disk.position() + "\n" + StringUtil.getDump(sector));
         primaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
         if (!primaryHeader.readFrom(sector, 0) || !readEntries(primaryHeader)) {
             disk.position(disk.getLength() - diskGeometry.getBytesPerSector());
@@ -443,7 +444,7 @@ public final class GuidPartitionTable extends PartitionTable {
             startSector = MathUtilities.roundUp(entry.lastUsedLogicalBlock + 1, alignmentSectors);
         }
         if (diskGeometry.getTotalSectorsLong() - startSector < numSectors) {
-            throw new dotnet4j.io.IOException(String.format("Unable to find free space of %d sectors", numSectors));
+            throw new dotnet4j.io.IOException("Unable to find free space of %d sectors".formatted(numSectors));
         }
 
         return startSector;
@@ -543,7 +544,7 @@ public final class GuidPartitionTable extends PartitionTable {
             return position * primaryHeader.partitionEntrySize;
         }
 
-        throw new dotnet4j.io.IOException(String.format("No such partition: %d", index));
+        throw new dotnet4j.io.IOException("No such partition: %d".formatted(index));
     }
 
     private int getEntryIndex(UUID identity) {

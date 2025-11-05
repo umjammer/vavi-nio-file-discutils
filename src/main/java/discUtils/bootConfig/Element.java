@@ -100,7 +100,7 @@ public class Element {
      * @return A hex string.
      */
     public String toString() {
-        return String.format("%8x", identifier);
+        return "%8x".formatted(identifier);
     }
 
     @SuppressWarnings("incomplete-switch")
@@ -368,7 +368,7 @@ public class Element {
             }
         }
 
-        return String.format("%8x", identifier);
+        return "%8x".formatted(identifier);
     }
 
     private static ElementClass getClass(int identifier) {

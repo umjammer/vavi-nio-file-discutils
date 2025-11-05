@@ -113,7 +113,7 @@ public abstract class ElementValue {
      * @return The value as an object.
      */
     public static ElementValue forGuid(UUID value) {
-        return new GuidElementValue(String.format("{%s}", value));
+        return new GuidElementValue("{%s}".formatted(value));
     }
 
     /**
@@ -125,7 +125,7 @@ public abstract class ElementValue {
     public static ElementValue forGuidList(UUID[] values) {
         String[] strValues = new String[values.length];
         for (int i = 0; i < values.length; ++i) {
-            strValues[i] = String.format("{%s}", values[i]);
+            strValues[i] = "{%s}".formatted(values[i]);
         }
         return new GuidListElementValue(strValues);
     }

@@ -36,9 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class ZlibStreamTest {
+class ZlibStreamTest {
+
     @Test
-    public void testRoundtrip() throws Exception {
+    void testRoundtrip() throws Exception {
         byte[] testData = "This is a test string".getBytes(StandardCharsets.US_ASCII);
 
         MemoryStream compressedStream = new MemoryStream();
@@ -60,7 +61,7 @@ public class ZlibStreamTest {
     }
 
     @Test
-    public void testInvalidChecksum() throws Exception {
+    void testInvalidChecksum() throws Exception {
         byte[] testData = "This is a test string".getBytes(StandardCharsets.US_ASCII);
 
         MemoryStream compressedStream = new MemoryStream();

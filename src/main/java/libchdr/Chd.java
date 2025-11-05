@@ -296,7 +296,7 @@ public class Chd {
 
         @Override
         public String toString() {
-            return String.format("ChdFile[file=%s, header=%s, parent=%s]", file, header, parent);
+            return "ChdFile[file=%s, header=%s, parent=%s]".formatted(file, header, parent);
         }
     }
 //#endregion
@@ -985,7 +985,7 @@ public class Chd {
                 i1 = Integer.parseInt(m.group(2));
                 i2 = Integer.parseInt(m.group(3));
                 i3 = Integer.parseInt(m.group(4));
-                log.finer(String.format("CD Header i0=%d, i1=%d, i2=%d, i3=%d", i0, i1, i2, i3));
+                log.finer("CD Header i0=%d, i1=%d, i2=%d, i3=%d".formatted(i0, i1, i2, i3));
                 return i3;
             }
         }
@@ -1378,7 +1378,7 @@ public class Chd {
                     if (codec == null) {
                         return CHDERR_CODEC_ERROR;
                     }
-                    log.finer(String.format("V5 hunk#%d compressed with %s at 0x%X, size=0x%X, decompressed size=0x%X%s", hunknum, chd.codecintf[compressionType], blockoffs, blocklen, chd.header.hunkbytes, chd.parent != null ? ", from child" : ""));
+                    log.finer("V5 hunk#%d compressed with %s at 0x%X, size=0x%X, decompressed size=0x%X%s".formatted(hunknum, chd.codecintf[compressionType], blockoffs, blocklen, chd.header.hunkbytes, chd.parent != null ? ", from child" : ""));
                     err = chd.codecintf[compressionType].codec.decompress(codec, compressed_bytes, 0, blocklen, dest, destOffset, chd.header.hunkbytes);
                     if (err != CHDERR_NONE) {
                         return err;
@@ -1389,7 +1389,7 @@ public class Chd {
                     return CHDERR_NONE;
 
                 case COMPRESSION_NONE:
-                    log.finer(String.format("V5 hunk#%d uncompressed 0x%X, size=0x%X", hunknum, blockoffs, blocklen));
+                    log.finer("V5 hunk#%d uncompressed 0x%X, size=0x%X".formatted(hunknum, blockoffs, blocklen));
                     err = hunk_read_uncompressed(chd, blockoffs, blocklen, dest, destOffset);
                     if (err != CHDERR_NONE) {
                         return err;
@@ -1400,7 +1400,7 @@ public class Chd {
                     return CHDERR_NONE;
 
                 case COMPRESSION_SELF:
-                    log.finer(String.format("V5 hunk#%d compression self #%d", hunknum, blockoffs));
+                    log.finer("V5 hunk#%d compression self #%d".formatted(hunknum, blockoffs));
                     return hunk_read_into_memory(chd, (int) blockoffs, dest, destOffset);
 
                 case COMPRESSION_PARENT:
@@ -1409,7 +1409,7 @@ public class Chd {
                     }
                     int units_in_hunk = chd.header.hunkbytes / chd.header.unitbytes;
 
-                    log.finer(String.format("V5 hunk#%d compression parent #%d", hunknum, blockoffs / units_in_hunk));
+                    log.finer("V5 hunk#%d compression parent #%d".formatted(hunknum, blockoffs / units_in_hunk));
 
                     // blockoffs is aligned to units_in_hunk
                     if (blockoffs % units_in_hunk == 0) {

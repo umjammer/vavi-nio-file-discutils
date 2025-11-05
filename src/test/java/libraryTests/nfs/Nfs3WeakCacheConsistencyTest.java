@@ -39,9 +39,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class Nfs3WeakCacheConsistencyTest {
+class Nfs3WeakCacheConsistencyTest {
+
     @Test
-    public void roundTripTest() throws Exception {
+    void roundTripTest() throws Exception {
         Nfs3WeakCacheConsistency consistency = new Nfs3WeakCacheConsistency();
         Nfs3WeakCacheConsistencyAttr before = new Nfs3WeakCacheConsistencyAttr();
         before.setChangeTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))

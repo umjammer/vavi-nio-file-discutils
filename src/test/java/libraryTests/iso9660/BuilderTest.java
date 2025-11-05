@@ -36,12 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class BuilderTest {
+class BuilderTest {
 
     private static final String FS = File.separator;
 
     @Test
-    public void addFileStream() throws Exception {
+    void addFileStream() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("ADIR" + FS + "AFILE.TXT", new MemoryStream());
         CDReader fs = new CDReader(builder.build(), false);
@@ -49,7 +49,7 @@ public class BuilderTest {
     }
 
     @Test
-    public void addFileBytes() throws Exception {
+    void addFileBytes() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("ADIR" + FS + "AFILE.TXT", new byte[] {});
         CDReader fs = new CDReader(builder.build(), false);
@@ -57,7 +57,7 @@ public class BuilderTest {
     }
 
     @Test
-    public void bootImage() throws Exception {
+    void bootImage() throws Exception {
         byte[] memoryStream = new byte[33 * 512];
         for (int i = 0; i < memoryStream.length; ++i) {
             memoryStream[i] = (byte) i;

@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public final class BlockCacheStreamTest {
 
     @Test
-    public void bug5203_IncreaseSize() throws Exception {
+    void bug5203_IncreaseSize() throws Exception {
         MemoryStream ms = new MemoryStream();
         BlockCacheSettings settings = new BlockCacheSettings();
         try (BlockCacheStream bcs = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),

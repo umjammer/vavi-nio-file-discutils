@@ -233,7 +233,7 @@ public class IsoUtilities {
             ver = 1;
         }
 
-        parts[2] = String.format("%d", ver);
+        parts[2] = "%d".formatted(ver);
 
         return parts;
     }

@@ -259,7 +259,7 @@ logger.log(Level.DEBUG, "stream length < 512");
         byte[] bytes = StreamUtilities.readExact(stream, 512);
         short bpbBytesPerSec = ByteUtil.readLeShort(bytes, 11);
         if (bpbBytesPerSec != 512) {
-logger.log(Level.DEBUG, "bpb bytes per sec != 512");
+logger.log(Level.DEBUG, "bpb bytes per sec != 512: " + bpbBytesPerSec);
             return false;
         }
 
@@ -276,7 +276,7 @@ logger.log(Level.DEBUG, "bpb tot sec == 0");
         }
 
         int totalSectors = bpbTotSec16 + bpbTotSec32;
-logger.log(Level.DEBUG, String.format("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerSec <= stream.getLength()), totalSectors, stream.getLength()));
+logger.log(Level.DEBUG, "bpb total length: %s, %d, %d".formatted((totalSectors * (long) bpbBytesPerSec <= stream.getLength()), totalSectors, stream.getLength()));
         return totalSectors * (long) bpbBytesPerSec <= stream.getLength();
     }
 
@@ -586,7 +586,7 @@ logger.log(Level.DEBUG, String.format("bpb total length: %s, %d, %d", (totalSect
         long sourceEntryId = getDirectoryEntry(sourceFile, sourceDir);
 
         if (sourceDir[0] == null || sourceEntryId < 0) {
-            throw new FileNotFoundException(String.format("The source file '%s' was not found", sourceFile));
+            throw new FileNotFoundException("The source file '%s' was not found".formatted(sourceFile));
         }
 
         DirectoryEntry sourceEntry = sourceDir[0].getEntry(sourceEntryId);
@@ -603,12 +603,11 @@ logger.log(Level.DEBUG, String.format("bpb total length: %s, %d, %d", (totalSect
         long destEntryId = getDirectoryEntry(destinationFile, destDir);
 
         if (destDir[0] == null) {
-            throw new FileNotFoundException(String.format("The destination directory for '%s' was not found", destinationFile));
+            throw new FileNotFoundException("The destination directory for '%s' was not found".formatted(destinationFile));
         }
 
         // If the destination is a directory, use the old file name to construct
-        // a full
-        // path.
+        // a full path.
         if (destEntryId >= 0) {
             DirectoryEntry destEntry = destDir[0].getEntry(destEntryId);
             if (destEntry.getAttributes().contains(FatAttributes.Directory)) {
@@ -682,7 +681,7 @@ logger.log(Level.DEBUG, String.format("bpb total length: %s, %d, %d", (totalSect
     @Override public void deleteDirectory(String path) {
         Directory dir = getDirectory(path);
         if (dir == null) {
-            throw new FileNotFoundException(String.format("No such directory: %s", path));
+            throw new FileNotFoundException("No such directory: %s".formatted(path));
         }
 
         if (!dir.isEmpty()) {
@@ -780,7 +779,7 @@ logger.log(Level.DEBUG, String.format("bpb total length: %s, %d, %d", (totalSect
     @Override public List<String> getDirectories(String path) {
         Directory dir = getDirectory(path);
         if (dir == null) {
-            throw new FileNotFoundException(String.format("The directory '%s' was not found", path));
+            throw new FileNotFoundException("The directory '%s' was not found".formatted(path));
         }
 
         List<DirectoryEntry> entries = dir.getDirectories();
@@ -927,7 +926,7 @@ logger.log(Level.DEBUG, String.format("bpb total length: %s, %d, %d", (totalSect
         long sourceEntryId = getDirectoryEntry(sourceName, sourceDir);
 
         if (sourceDir[0] == null || sourceEntryId < 0) {
-            throw new FileNotFoundException(String.format("The source file '%s' was not found", sourceName));
+            throw new FileNotFoundException("The source file '%s' was not found".formatted(sourceName));
         }
 
         DirectoryEntry sourceEntry = sourceDir[0].getEntry(sourceEntryId);
@@ -943,7 +942,7 @@ logger.log(Level.DEBUG, String.format("bpb total length: %s, %d, %d", (totalSect
         long destEntryId = getDirectoryEntry(destinationName, destDir);
 
         if (destDir[0] == null) {
-            throw new FileNotFoundException(String.format("The destination directory for '%s' was not found", destinationName));
+            throw new FileNotFoundException("The destination directory for '%s' was not found".formatted(destinationName));
         }
 
         // If the destination is a directory, use the old file name to construct
@@ -1154,7 +1153,7 @@ logger.log(Level.DEBUG, String.format("bpb total length: %s, %d, %d", (totalSect
     private void doSearch(List<String> results, String path, Pattern regex, boolean subFolders, boolean dirs, boolean files) {
         Directory dir = getDirectory(path);
         if (dir == null) {
-            throw new FileNotFoundException(String.format("The directory '%s' was not found", path));
+            throw new FileNotFoundException("The directory '%s' was not found".formatted(path));
         }
 
         List<DirectoryEntry> entries = dir.getEntries();

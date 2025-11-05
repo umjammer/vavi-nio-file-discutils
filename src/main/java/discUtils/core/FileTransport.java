@@ -52,7 +52,7 @@ public final class FileTransport implements VirtualDiskTransport {
         extraInfo = uri.getFragment();
         String path = Utilities.getDirectoryFromPath(this.path);
         if (path == null || !Files.exists(Paths.get(path))) {
-            throw new dotnet4j.io.FileNotFoundException(String.format("No such file '%s'", uri));
+            throw new dotnet4j.io.FileNotFoundException("No such file '%s'".formatted(uri));
         }
     }
 

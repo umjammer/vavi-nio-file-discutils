@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class VirtualDiskTest {
+class VirtualDiskTest {
 
     @Test
-    public void testSignature() throws Exception {
+    void testSignature() throws Exception {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         discUtils.core.raw.Disk rawDisk = new discUtils.core.raw.Disk(ms, Ownership.Dispose);
@@ -44,7 +44,7 @@ public class VirtualDiskTest {
     }
 
     @Test
-    public void testMbr() throws Exception {
+    void testMbr() throws Exception {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         byte[] newMbr = new byte[512];
@@ -57,13 +57,13 @@ public class VirtualDiskTest {
         assertEquals(512, readMbr.length);
         for (int i = 0; i < 512; i++) {
             if (readMbr[i] != (byte) i) {
-                fail(String.format("Mismatch on byte %d, expected %2x was %2x", i, (byte) i, readMbr[i]));
+                fail("Mismatch on byte %d, expected %2x was %2x".formatted(i, (byte) i, readMbr[i]));
             }
         }
     }
 
     @Test
-    public void testMbr_Null() throws Exception {
+    void testMbr_Null() throws Exception {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         discUtils.core.raw.Disk rawDisk = new discUtils.core.raw.Disk(ms, Ownership.Dispose);
@@ -71,7 +71,7 @@ public class VirtualDiskTest {
     }
 
     @Test
-    public void testMbr_WrongSize() throws Exception {
+    void testMbr_WrongSize() throws Exception {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         discUtils.core.raw.Disk rawDisk = new discUtils.core.raw.Disk(ms, Ownership.Dispose);

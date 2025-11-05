@@ -79,7 +79,7 @@ public final class DiscContentBuffer extends Buffer {
     @Override public int read(long pos, byte[] buffer, int offset, int count) {
         Response response = sendRequest(() -> new Request.Builder().url(uri.toString())
                 .get()
-                .addHeader("Range", String.format("bytes=%d-%d", (int) pos, (int) (pos + count - 1)))
+                .addHeader("Range", "bytes=%d-%d".formatted((int) pos, (int) (pos + count - 1)))
                 .build());
         try (Stream s = new JavaIOStream(response.body().byteStream(), null)) {
             int total = (int) response.body().contentLength();

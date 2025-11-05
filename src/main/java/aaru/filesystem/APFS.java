@@ -112,7 +112,7 @@ public class APFS //: IFilesystem
 
         sbInformation.append("Apple File System").append("\n");
         sbInformation.append("\n");
-        sbInformation.append(String.format("%d bytes per block", nxSb.blockSize)).append("\n");
+        sbInformation.append("%d bytes per block".formatted(nxSb.blockSize)).append("\n");
 
         sbInformation.append(String.format("Container has %d bytes in %d blocks", nxSb.containerBlocks * nxSb.blockSize,
                 nxSb.containerBlocks)).append("\n");
