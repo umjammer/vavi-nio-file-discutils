@@ -34,9 +34,9 @@ public class HashStreamDotnet extends Stream {
 
     private Stream wrapped;
 
-    private Ownership ownWrapped;
+    private final Ownership ownWrapped;
 
-    private MessageDigest hashAlg;
+    private final MessageDigest hashAlg;
 
     private long hashPos;
 

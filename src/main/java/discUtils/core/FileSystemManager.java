@@ -91,7 +91,7 @@ public class FileSystemManager {
         BufferedStream detectStream = new BufferedStream(stream);
         List<FileSystemInfo> detected = new ArrayList<>();
         for (VfsFileSystemFactory factory : factories) {
-logger.log(Level.TRACE, factory);
+logger.log(Level.TRACE, factory.getClass().getName());
             detected.addAll(Arrays.asList(factory.detect(detectStream, volume)));
         }
 logger.log(detected.isEmpty() ? Level.WARNING : Level.DEBUG, detected.isEmpty() ? "no filesystem detected" : detected);

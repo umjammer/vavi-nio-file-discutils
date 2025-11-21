@@ -58,13 +58,13 @@ class File implements IVfsFileWithStreams {
         hasCompressionAttribute = this.context.getAttributes().find(new AttributeKey(this.nodeId, CompressionAttributeName)) != null;
     }
 
-    private Context context;
+    private final Context context;
 
     protected Context getContext() {
         return context;
     }
 
-    private CatalogNodeId nodeId;
+    private final CatalogNodeId nodeId;
 
     protected CatalogNodeId getNodeId() {
         return nodeId;

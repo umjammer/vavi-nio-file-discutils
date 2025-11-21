@@ -39,7 +39,7 @@ import discUtils.powerShell.conpat.PSDriveInfo;
 
 public final class VirtualDiskPSDriveInfo extends PSDriveInfo {
 
-    private VirtualDisk disk;
+    private final VirtualDisk disk;
 
     private VolumeManager volMgr;
 

@@ -130,7 +130,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
         return new ResidentAttributeRecord(buffer, offset, length);
     }
 
-    public static Comparator<AttributeRecord> compareStartVcns = Comparator.comparingLong(AttributeRecord::getStartVcn);
+    public static final Comparator<AttributeRecord> compareStartVcns = Comparator.comparingLong(AttributeRecord::getStartVcn);
 
     public abstract List<Range> getClusters();
 

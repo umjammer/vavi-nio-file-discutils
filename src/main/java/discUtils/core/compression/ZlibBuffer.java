@@ -34,7 +34,7 @@ import dotnet4j.io.Stream;
 public class ZlibBuffer extends Buffer {
 
     @SuppressWarnings("unused")
-    private Ownership ownership;
+    private final Ownership ownership;
 
     private final Stream stream;
 

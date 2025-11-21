@@ -159,7 +159,7 @@ logger.log(Level.DEBUG, "Lv: " + lvi.getIdentity() + ", " + lv.getExtentCount() 
         return null;
     }
 
-    private MetadataPhysicalVolumeSection getPhysicalVolumeMetadata(MetadataVolumeGroupSection vg, String name) {
+    private static MetadataPhysicalVolumeSection getPhysicalVolumeMetadata(MetadataVolumeGroupSection vg, String name) {
         for (MetadataPhysicalVolumeSection pv : vg.physicalVolumes) {
             if (pv.name.equals(name))
                 return pv;

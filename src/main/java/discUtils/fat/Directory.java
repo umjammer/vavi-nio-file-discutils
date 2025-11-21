@@ -41,7 +41,7 @@ import dotnet4j.io.Stream;
 
 public class Directory implements Closeable {
 
-    private Stream dirStream;
+    private final Stream dirStream;
 
     private Directory parent;
 
@@ -95,7 +95,7 @@ public class Directory implements Closeable {
         return new ArrayList<>(entries.values());
     }
 
-    private FatFileSystem fileSystem;
+    private final FatFileSystem fileSystem;
 
     public FatFileSystem getFileSystem() {
         return fileSystem;
@@ -321,12 +321,9 @@ public class Directory implements Closeable {
         parentEntryLocation = -1;
         while (dirStream.position() < dirStream.getLength()) {
             long streamPos = dirStream.position();
-            DirectoryEntry entry = new DirectoryEntry(fileSystem.getFatOptions(),
-                    dirStream,
-                                                      fileSystem.getFatVariant());
-            if (entry.getAttributes()
-                    .containsAll(EnumSet
-                            .of(FatAttributes.ReadOnly, FatAttributes.Hidden, FatAttributes.System, FatAttributes.VolumeId))) {
+            DirectoryEntry entry = new DirectoryEntry(fileSystem.getFatOptions(), dirStream, fileSystem.getFatVariant());
+            if (entry.getAttributes().containsAll(
+                    EnumSet.of(FatAttributes.ReadOnly, FatAttributes.Hidden, FatAttributes.System, FatAttributes.VolumeId))) {
                 // Long File Name entry
             } else if (entry.getName().isDeleted()) {
                 // E5 = Free Entry

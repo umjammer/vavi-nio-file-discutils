@@ -40,7 +40,7 @@ import dotnet4j.io.FileAccess;
  */
 public final class Session implements Closeable {
 
-    private static AtomicInteger nextInitiatorSessionId = new AtomicInteger(new SecureRandom().nextInt());
+    private static final AtomicInteger nextInitiatorSessionId = new AtomicInteger(new SecureRandom().nextInt());
 
     private final List<TargetAddress> addresses;
 
@@ -124,7 +124,7 @@ public final class Session implements Closeable {
         currentTaskTag = value;
     }
 
-    private int initiatorSessionId;
+    private final int initiatorSessionId;
 
     int getInitiatorSessionId() {
         return initiatorSessionId;

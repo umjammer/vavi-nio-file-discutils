@@ -29,9 +29,9 @@ import discUtils.iso9660.susp.SystemUseEntry;
 
 public final class PosixNameSystemUseEntry extends SystemUseEntry {
 
-    public byte flags;
+    public final byte flags;
 
-    public String nameData;
+    public final String nameData;
 
     public PosixNameSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 5, (byte) 1);

@@ -41,7 +41,7 @@ public class Range {
         this.count = count;
     }
 
-    private long count;
+    private final long count;
 
     /**
      * Gets the size of the range.
@@ -50,7 +50,7 @@ public class Range {
         return count;
     }
 
-    private long offset;
+    private final long offset;
 
     /**
      * Gets the offset (i.e. start) of the range.

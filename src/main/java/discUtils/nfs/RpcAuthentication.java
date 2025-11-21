@@ -28,7 +28,7 @@ import dotnet4j.io.MemoryStream;
 
 public class RpcAuthentication {
 
-    private byte[] body;
+    private final byte[] body;
 
     private RpcAuthFlavour flavour = RpcAuthFlavour.Null;
 

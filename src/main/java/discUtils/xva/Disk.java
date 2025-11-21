@@ -99,7 +99,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the display name of the disk, as shown by XenServer.
      */
-    private String displayName;
+    private final String displayName;
 
     public String getDisplayName() {
         return displayName;
@@ -126,7 +126,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the Unique id of the disk, as known by XenServer.
      */
-    private String uuid;
+    private final String uuid;
 
     public String getUuid() {
         return uuid;

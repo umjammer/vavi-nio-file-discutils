@@ -36,7 +36,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
 
     private static final UUID EMPTY = new UUID(0L, 0L);
 
-    private UUID guid;
+    private final UUID guid;
 
     private final SparseStreamOpenDelegate opener;
 
@@ -67,7 +67,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
     /**
      * Gets the one-byte BIOS type for this volume, which indicates the content.
      */
-    private byte biosType;
+    private final byte biosType;
 
     @Override public byte getBiosType() {
         return biosType;
@@ -91,7 +91,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
     /**
      * Gets the length of the volume (in bytes).
      */
-    private long length;
+    private final long length;
 
     @Override public long getLength() {
         return length;
@@ -116,7 +116,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
     /**
      * Gets the status of the logical volume, indicating volume health.
      */
-    private LogicalVolumeStatus status;
+    private final LogicalVolumeStatus status;
 
     public LogicalVolumeStatus getStatus() {
         return status;

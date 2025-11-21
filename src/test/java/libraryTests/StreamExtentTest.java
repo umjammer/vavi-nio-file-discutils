@@ -207,7 +207,7 @@ class StreamExtentTest {
         assertEquals(1, ranges.get(1).getCount());
     }
 
-    void compare(StreamExtent[] expected, List<StreamExtent> actual) throws Exception {
+    static void compare(StreamExtent[] expected, List<StreamExtent> actual) throws Exception {
         List<StreamExtent> eList = Arrays.asList(expected);
         List<StreamExtent> aList = new ArrayList<>(actual);
         boolean failed = false;

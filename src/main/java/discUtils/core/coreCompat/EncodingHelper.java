@@ -14,7 +14,7 @@ public class EncodingHelper {
 
     private static boolean registered;
 
-    static List<CodePage> codePages;
+    static final List<CodePage> codePages;
 
     static {
         try {
@@ -69,7 +69,7 @@ public class EncodingHelper {
                 .filter(cp -> cp.identifierAndName.equalsIgnoreCase(encoding))
                 .map(cp -> cp.oneByte)
                 .findFirst()
-                .get();
+                .orElseThrow();
     }
 
     // TODO check error
@@ -78,6 +78,6 @@ public class EncodingHelper {
                 .filter(cp -> cp.codePage == codePage)
                 .map(cp -> cp.identifierAndName)
                 .findFirst()
-                .get());
+                .orElseThrow());
     }
 }

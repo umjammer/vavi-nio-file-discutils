@@ -121,7 +121,7 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
         return newInode;
     }
 
-    private int dirInode = -1;
+    private final int dirInode = -1;
 
     /**
      * Deprecated and not used, it's always set to NULL (-1).

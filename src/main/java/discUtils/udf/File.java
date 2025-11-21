@@ -33,15 +33,15 @@ import discUtils.streams.util.EndianUtilities;
 
 public class File implements IVfsFile {
 
-    protected int blockSize;
+    protected final int blockSize;
 
     protected IBuffer content;
 
-    protected UdfContext context;
+    protected final UdfContext context;
 
-    protected FileEntry fileEntry;
+    protected final FileEntry fileEntry;
 
-    protected Partition partition;
+    protected final Partition partition;
 
     public File(UdfContext context, Partition partition, FileEntry fileEntry, int blockSize) {
         this.context = context;

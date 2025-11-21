@@ -39,7 +39,7 @@ public final class Metadata {
     private final Stream regionStream;
 
     @SuppressWarnings("unused")
-    private UUID page83Data;
+    private final UUID page83Data;
 
     public Metadata(Stream regionStream) {
         this.regionStream = regionStream;
@@ -71,37 +71,37 @@ public final class Metadata {
         void invoke(T val, byte[] buffer, int offset);
     }
 
-    private MetadataTable table;
+    private final MetadataTable table;
 
     public MetadataTable getTable() {
         return table;
     }
 
-    private FileParameters fileParameters;
+    private final FileParameters fileParameters;
 
     public FileParameters getFileParameters() {
         return fileParameters;
     }
 
-    private long diskSize;
+    private final long diskSize;
 
     public long getDiskSize() {
         return diskSize;
     }
 
-    private int logicalSectorSize;
+    private final int logicalSectorSize;
 
     public int getLogicalSectorSize() {
         return logicalSectorSize;
     }
 
-    private int physicalSectorSize;
+    private final int physicalSectorSize;
 
     public int getPhysicalSectorSize() {
         return physicalSectorSize;
     }
 
-    private ParentLocator parentLocator;
+    private final ParentLocator parentLocator;
 
     public ParentLocator getParentLocator() {
         return parentLocator;

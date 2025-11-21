@@ -11,7 +11,7 @@ import discUtils.streams.buffer.IBuffer;
 
 class MyFile implements IVfsFile {
 
-    private MyDirEntry dirEntry;
+    private final MyDirEntry dirEntry;
 
     public MyFile(MyDirEntry dirEntry) {
         this.dirEntry = dirEntry;

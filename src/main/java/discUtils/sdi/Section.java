@@ -36,7 +36,7 @@ public class Section {
     /**
      * Gets the zero-based index of this section.
      */
-    private int index;
+    private final int index;
 
     public int getIndex() {
         return index;

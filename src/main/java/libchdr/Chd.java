@@ -106,7 +106,7 @@ import static libchdr.HuffmanDecoder.HuffmanError.HUFFERR_NONE;
  */
 public class Chd {
 
-    public static Logger log = Logger.getLogger("libchdr");
+    public static final Logger log = Logger.getLogger("libchdr");
 
 //#region CONSTANTS
 
@@ -282,17 +282,17 @@ public class Chd {
         /** interface to the codec */
         public final CodecInterface[] codecintf = new CodecInterface[4];
         /** zlib codec data */
-        public ZlibCodecData zlibCodecData = new ZlibCodecData();
+        public final ZlibCodecData zlibCodecData = new ZlibCodecData();
         /** lzma codec data */
-        public LzmaCodecData lzmaCodecData = new LzmaCodecData();
+        public final LzmaCodecData lzmaCodecData = new LzmaCodecData();
         /** flac codec data */
-        public FlacCodecData flacCodecData = new FlacCodecData();
+        public final FlacCodecData flacCodecData = new FlacCodecData();
         /** cdzl codec data */
-        public CdzlCodecData cdzlCodecData = new CdzlCodecData();
+        public final CdzlCodecData cdzlCodecData = new CdzlCodecData();
         /** cdlz codec data */
-        public CdlzCodecData cdlzCodecData = new CdlzCodecData();
+        public final CdlzCodecData cdlzCodecData = new CdlzCodecData();
         /** cdfl codec data */
-        public CdflCodecData cdflCodecData = new CdflCodecData();
+        public final CdflCodecData cdflCodecData = new CdflCodecData();
 
         @Override
         public String toString() {
@@ -428,7 +428,7 @@ public class Chd {
      * extract a single map
      * entry from the datastream
      */
-    private void map_extract(byte[] base, int baseOffset, MapEntry entry) {
+    private static void map_extract(byte[] base, int baseOffset, MapEntry entry) {
         entry.offset = get_bigendian_uint64(base, baseOffset + 0);
         entry.crc = get_bigendian_uint32(base, baseOffset + 8);
         entry.length = get_bigendian_uint16(base, baseOffset + 12) | ((base[baseOffset + 14] & 0xff) << 16);
@@ -438,14 +438,14 @@ public class Chd {
     /**
      * calculate CHDv5 map size
      */
-    private int map_size_v5(ChdHeader header) {
+    private static int map_size_v5(ChdHeader header) {
         return header.hunkcount * header.mapentrybytes;
     }
 
     /**
      * calculate CRC16 (from hashing.cpp)
      */
-    private int crc16(byte[] data, int dataOffset, int length) {
+    private static int crc16(byte[] data, int dataOffset, int length) {
         int crc = 0xffff;
 
         int[] s_table = new int[] {
@@ -494,14 +494,14 @@ public class Chd {
     /**
      * test if CHD file is compressed
      */
-    private boolean chd_compressed(ChdHeader header) {
+    private static boolean chd_compressed(ChdHeader header) {
         return header.compression[0] != CHD_CODEC_NONE;
     }
 
     /**
      * decompress the v5 map
      */
-    private ChdError decompress_v5_map(ChdFile chd, ChdHeader header) {
+    private static ChdError decompress_v5_map(ChdFile chd, ChdHeader header) {
         int result = 0;
         int hunknum;
         int repcount = 0;
@@ -671,7 +671,7 @@ public class Chd {
      * extract a single map
      * entry in old format from the datastream
      */
-    private void map_extract_old(byte[] base, int baseOffset, MapEntry entry, int hunkbytes) {
+    private static void map_extract_old(byte[] base, int baseOffset, MapEntry entry, int hunkbytes) {
         entry.offset = get_bigendian_uint64(base, baseOffset + 0);
         entry.crc = 0;
         entry.length = (int) (entry.offset >> 44);
@@ -702,7 +702,7 @@ public class Chd {
         return err;
     }
 
-    public void chd_close(ChdFile chd) throws IOException {
+    public static void chd_close(ChdFile chd) throws IOException {
         // punt if NULL or invalid
         if (chd == null || chd.cookie != COOKIE_VALUE) {
             return;
@@ -776,7 +776,7 @@ public class Chd {
      * chd_get_header - return a pointer to the
      * extracted header data
      */
-    public ChdHeader chd_get_header(ChdFile chd) {
+    public static ChdHeader chd_get_header(ChdFile chd) {
         // punt if NULL or invalid
         if (chd == null || chd.cookie != COOKIE_VALUE) {
             return null;
@@ -1010,7 +1010,7 @@ public class Chd {
      * check the validity of a
      * CHD header
      */
-    private ChdError header_validate(ChdHeader header) {
+    private static ChdError header_validate(ChdHeader header) {
         int intfnum;
 
         // require a valid version
@@ -1208,7 +1208,7 @@ public class Chd {
      * hunk_read_compressed - read a compressed
      * hunk
      */
-    private byte[] hunk_read_compressed(ChdFile chd, long offset, int size) {
+    private static byte[] hunk_read_compressed(ChdFile chd, long offset, int size) {
         int bytes;
         chd.file.position(offset);
         bytes = chd.file.read(chd.compressed, 0, size);
@@ -1223,7 +1223,7 @@ public class Chd {
      * hunk
      */
 
-    private ChdError hunk_read_uncompressed(ChdFile chd, long offset, int size, byte[] dest, int destOffset) {
+    private static ChdError hunk_read_uncompressed(ChdFile chd, long offset, int size, byte[] dest, int destOffset) {
         int bytes;
         chd.file.position(offset);
         bytes = chd.file.read(dest, destOffset, size);
@@ -1238,7 +1238,7 @@ public class Chd {
      * memory at the given location
      */
 
-    private ChdError hunk_read_into_memory(ChdFile chd, int hunknum, byte[] dest, int destOffset) {
+    private static ChdError hunk_read_into_memory(ChdFile chd, int hunknum, byte[] dest, int destOffset) {
         ChdError err;
 
         // punt if no file
@@ -1505,7 +1505,7 @@ public class Chd {
     /**
      * find a metadata entry
      */
-    private ChdError metadata_find_entry(ChdFile chd, int metatag, int metaindex, MetaDataEntry metaentry) {
+    private static ChdError metadata_find_entry(ChdFile chd, int metatag, int metaindex, MetaDataEntry metaentry) {
         // start at the beginning
         metaentry.offset = chd.header.metaoffset;
         metaentry.prev = 0;
@@ -1554,7 +1554,7 @@ public class Chd {
     /**
      * read the initial sector map
      */
-    private ChdError map_read(ChdFile chd) {
+    private static ChdError map_read(ChdFile chd) {
         int entrysize = (chd.header.version < 3) ? OLD_MAP_ENTRY_SIZE : MAP_ENTRY_SIZE;
         byte[] raw_map_entries = new byte[MAP_STACK_ENTRIES * MAP_ENTRY_SIZE];
         long fileoffset, maxoffset = 0;

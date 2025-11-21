@@ -26,11 +26,11 @@ import discUtils.iso9660.IsoUtilities;
 
 public final class ContinuationSystemUseEntry extends SystemUseEntry {
 
-    public int block;
+    public final int block;
 
-    public int blockOffset;
+    public final int blockOffset;
 
-    public int length;
+    public final int length;
 
     public ContinuationSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 28, (byte) 1);

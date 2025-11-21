@@ -99,6 +99,6 @@ public enum LunClass {
     }
 
     public static LunClass valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
+        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().orElseThrow();
     }
 }

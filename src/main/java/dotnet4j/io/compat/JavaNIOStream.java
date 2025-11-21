@@ -22,7 +22,7 @@ import dotnet4j.io.Stream;
  */
 public class JavaNIOStream extends Stream {
 
-    protected boolean leaveOpen;
+    protected final boolean leaveOpen;
 
     protected SeekableByteChannel sbc;
 

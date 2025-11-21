@@ -202,18 +202,16 @@ public class ExtentDescriptor {
             if (source.charAt(idx) == '"') {
                 // A quoted value, find end of quotes...
                 int start = idx;
-                idx++;
-                while (idx < source.length() && source.charAt(idx) != '"') {
+                do {
                     idx++;
-                }
+                } while (idx < source.length() && source.charAt(idx) != '"');
                 result.add(source.substring(start, idx + 1));
             } else {
                 // An unquoted value, find end of value
                 int start = idx;
-                idx++;
-                while (idx < source.length() && source.charAt(idx) != ' ') {
+                do {
                     idx++;
-                }
+                } while (idx < source.length() && source.charAt(idx) != ' ');
                 result.add(source.substring(start, idx));
             }
             idx++;

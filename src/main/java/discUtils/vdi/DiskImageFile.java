@@ -236,5 +236,5 @@ public final class DiskImageFile extends VirtualDiskLayer {
         header.read(preHeader.version, stream);
     }
 
-    private BiConsumer<Object, Object[]> onWriteOccurred = (sender, e) -> writeOccurred = true;
+    private final BiConsumer<Object, Object[]> onWriteOccurred = (sender, e) -> writeOccurred = true;
 }

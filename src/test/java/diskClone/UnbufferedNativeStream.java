@@ -47,11 +47,11 @@ public class UnbufferedNativeStream extends SparseStream {
 
     private long position;
 
-    private Pointer handle;
+    private final Pointer handle;
 
     private int bufferAllocHandle;
 
-    private int[] buffer;
+    private final int[] buffer;
 
     public UnbufferedNativeStream(Pointer handle) {
         this.handle = handle;
@@ -129,7 +129,7 @@ public class UnbufferedNativeStream extends SparseStream {
             }
 
             int toCopy = Math.min(count - totalBytesRead, usefulData);
-            System.arraycopy(this.buffer, alignmentOffset, buffer[0], offset + totalBytesRead, toCopy);
+            System.arraycopy(this.buffer, alignmentOffset, buffer, offset + totalBytesRead, toCopy);
             totalBytesRead += toCopy;
             position += toCopy;
         }

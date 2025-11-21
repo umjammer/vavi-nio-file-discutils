@@ -43,7 +43,7 @@ public class UmdIsoFile extends SeekableInputStream {
     private byte[] currentSector;
     private int sectorOffset;
 
-    UmdIsoReader internalReader;
+    final UmdIsoReader internalReader;
 
     public UmdIsoFile(UmdIsoReader reader, int startSector, long lengthInBytes, Date timestamp, String name) throws IOException {
         this.startSectorNumber = startSector;
@@ -218,7 +218,7 @@ public class UmdIsoFile extends SeekableInputStream {
         if (currentOffset >= maxOffset) {
             throw new EOFException();
         }
-        read(b, off, len);
+        readNBytes(b, off, len);
     }
 
     @Override
@@ -226,7 +226,7 @@ public class UmdIsoFile extends SeekableInputStream {
         if (currentOffset >= maxOffset) {
             throw new EOFException();
         }
-        read(b);
+        readNBytes(b, 0, b.length);
     }
 
     @Override

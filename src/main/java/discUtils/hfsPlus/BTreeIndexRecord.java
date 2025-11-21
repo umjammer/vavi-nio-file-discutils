@@ -31,7 +31,7 @@ final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
 
     private final int size;
 
-    private Class<TKey> clazz;
+    private final Class<TKey> clazz;
 
     public BTreeIndexRecord(Class<TKey> clazz, int size) {
         this.size = size;

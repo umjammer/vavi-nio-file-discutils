@@ -12,11 +12,11 @@ class MyDirEntry extends VfsDirEntry {
 
     private static long nextId;
 
-    private boolean isDir;
+    private final boolean isDir;
 
-    private String name;
+    private final String name;
 
-    private long id;
+    private final long id;
 
     public MyDirEntry(String name, boolean isDir) {
         this.name = name;

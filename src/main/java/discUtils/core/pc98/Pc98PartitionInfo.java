@@ -6,6 +6,8 @@
 
 package discUtils.core.pc98;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.UUID;
 
 import discUtils.core.Geometry;
@@ -22,6 +24,8 @@ import vavix.io.partition.PC98PartitionEntry;
  * @version 0.00 2022/03/13 umjammer initial version <br>
  */
 public class Pc98PartitionInfo extends PartitionInfo {
+
+    private static final Logger logger = System.getLogger(Pc98PartitionInfo.class.getName());
 
     private final PC98PartitionEntry pe;
 
@@ -77,6 +81,7 @@ public class Pc98PartitionInfo extends PartitionInfo {
 
     @Override
     public SparseStream open() {
+logger.log(Level.TRACE, "pc98 partition open: " + pe);
         return table.open(pe);
     }
 }

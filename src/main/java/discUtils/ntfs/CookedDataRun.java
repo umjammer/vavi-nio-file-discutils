@@ -39,13 +39,13 @@ class CookedDataRun {
         }
     }
 
-    private NonResidentAttributeRecord attributeExtent;
+    private final NonResidentAttributeRecord attributeExtent;
 
     public NonResidentAttributeRecord getAttributeExtent() {
         return attributeExtent;
     }
 
-    private DataRun dataRun;
+    private final DataRun dataRun;
 
     public DataRun getDataRun() {
         return dataRun;
@@ -73,7 +73,7 @@ class CookedDataRun {
         startLcn = value;
     }
 
-    private long startVcn;
+    private final long startVcn;
 
     public long getStartVcn() {
         return startVcn;

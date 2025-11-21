@@ -33,7 +33,7 @@ public class Crc16Context {
     final boolean inverse;
     short[][] table;
     final boolean useCcitt;
-    short[] hashInt = new short[1];
+    final short[] hashInt = new short[1];
 
     /** Initializes the CRC16 table with a custom polynomial and seed */
     public Crc16Context(short polynomial, short seed, short[][] table, boolean inverse) {

@@ -92,7 +92,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
 
     private static final String FS = java.io.File.separator;
 
-    private Stream baseStream;
+    private final Stream baseStream;
 
     // -------------------------------------
     // CONFIG
@@ -168,9 +168,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
 
     private int numScheduledCheckpoints;
 
-    private Class<TFileSystem> fileSystemClass;
+    private final Class<TFileSystem> fileSystemClass;
 
-    private Class<TChecker> checkerClass;
+    private final Class<TChecker> checkerClass;
 
     /**
      * Creates a new instance.

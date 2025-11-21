@@ -64,7 +64,7 @@ public final class UnicastDnsClient extends DnsClient {
 
     private static final int responseTimeout = 2000;
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     /**
      * Initializes a new instance of the UnicastDnsClient class.

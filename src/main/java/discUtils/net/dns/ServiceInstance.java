@@ -65,7 +65,7 @@ public final class ServiceInstance {
      * Gets the network name for the service instance (think of this as the
      * unique key).
      */
-    private String name;
+    private final String name;
 
     public String getName() {
         return name;

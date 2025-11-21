@@ -96,7 +96,7 @@ public final class FatFileSystem extends DiscFileSystem {
     public FatFileSystem(Stream data) {
         super(new FatFileSystemOptions());
         dirCache = new HashMap<>();
-        timeConverter = this::defaultTimeConverter;
+        timeConverter = FatFileSystem::defaultTimeConverter;
         initialize(data, null);
     }
 
@@ -111,7 +111,7 @@ public final class FatFileSystem extends DiscFileSystem {
     public FatFileSystem(Stream data, Ownership ownsData) {
         super(new FatFileSystemOptions());
         dirCache = new HashMap<>();
-        timeConverter = this::defaultTimeConverter;
+        timeConverter = FatFileSystem::defaultTimeConverter;
         initialize(data, null);
         this.ownsData = ownsData;
     }
@@ -161,7 +161,7 @@ public final class FatFileSystem extends DiscFileSystem {
         if (parameters != null && parameters.getTimeConverter() != null) {
             timeConverter = parameters.getTimeConverter();
         } else {
-            timeConverter = this::defaultTimeConverter;
+            timeConverter = FatFileSystem::defaultTimeConverter;
         }
         initialize(data, bs);
         this.ownsData = ownsData;
@@ -871,8 +871,8 @@ logger.log(Level.DEBUG, "bpb total length: %s, %d, %d".formatted((totalSectors *
         List<String> result = new ArrayList<>(entries.size());
         for (DirectoryEntry dirEntry : entries) {
             if (re.matcher(dirEntry.getName().getSearchName(getFatOptions().getFileNameEncoding())).find()) {
-                result.add(Utilities.combinePaths(path,
-                                                  dirEntry.getName().getDisplayName(getFatOptions().getFileNameEncoding())));
+                result.add(Utilities.combinePaths(
+                        path, dirEntry.getName().getDisplayName(getFatOptions().getFileNameEncoding())));
             }
         }
         return result;
@@ -909,8 +909,9 @@ logger.log(Level.DEBUG, "bpb total length: %s, %d, %d".formatted((totalSectors *
             throw new dotnet4j.io.IOException("Source directory doesn't exist");
         }
 
-        destParent[0].attachChildDirectory(FileName.fromPath(destinationDirectoryName, getFatOptions().getFileNameEncoding()),
-                                           getDirectory(sourceDirectoryName));
+        destParent[0].attachChildDirectory(
+                FileName.fromPath(destinationDirectoryName, getFatOptions().getFileNameEncoding()),
+                getDirectory(sourceDirectoryName));
         sourceParent[0].deleteEntry(sourceId, false);
     }
 
@@ -946,8 +947,7 @@ logger.log(Level.DEBUG, "bpb total length: %s, %d, %d".formatted((totalSectors *
         }
 
         // If the destination is a directory, use the old file name to construct
-        // a full
-        // path.
+        // a full path.
         if (destEntryId >= 0) {
             DirectoryEntry destEntry = destDir[0].getEntry(destEntryId);
             if (destEntry.getAttributes().contains(FatAttributes.Directory)) {
@@ -1072,7 +1072,7 @@ logger.log(Level.DEBUG, "bpb total length: %s, %d, %d".formatted((totalSectors *
         return (path == null || path.isEmpty()) || path.equals(FS);
     }
 
-    private long defaultTimeConverter(long time, boolean toUtc) {
+    private static long defaultTimeConverter(long time, boolean toUtc) {
         return toUtc ? Instant.ofEpochMilli(time).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli()
                      : Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
@@ -1096,7 +1096,7 @@ logger.log(Level.DEBUG, "bpb total length: %s, %d, %d".formatted((totalSectors *
     private void loadRootDirectory() {
         Stream fatStream;
         if (bs.getFatVariant() != FatType.Fat32) {
-//logger.log(Level.DEBUG, String.format(Level.FINE, "%016x, %016x\n", (bs.getReservedSectorCount() + (long) bs.getFatCount() * bs.getFatSize16()) * bs.getBytesPerSector(), bs.getMaxRootDirectoryEntries() * 32L));
+logger.log(Level.DEBUG, "%016x, %016x".formatted((bs.getReservedSectorCount() + (long) bs.getFatCount() * bs.getFatSize16()) * bs.getBytesPerSector(), bs.getMaxRootDirectoryEntries() * 32L));
             fatStream = new SubStream(data,
                     (bs.getReservedSectorCount() + (long) bs.getFatCount() * bs.getFatSize16()) * bs.getBytesPerSector(),
                     bs.getMaxRootDirectoryEntries() * 32L);

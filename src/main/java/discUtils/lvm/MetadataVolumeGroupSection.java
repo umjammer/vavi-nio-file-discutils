@@ -40,7 +40,7 @@ public class MetadataVolumeGroupSection {
 
     public String format;
 
-    public EnumSet<VolumeGroupStatus> status = EnumSet.noneOf(VolumeGroupStatus.class);
+    public final EnumSet<VolumeGroupStatus> status = EnumSet.noneOf(VolumeGroupStatus.class);
 
     public String[] flags;
 
@@ -61,7 +61,7 @@ public class MetadataVolumeGroupSection {
         String line;
         while (data.hasNextLine()) {
             line = Metadata.readLine(data);
-            if (line.equals(""))
+            if (line.isEmpty())
                 continue;
 
             if (line.contains("=")) {
@@ -129,12 +129,12 @@ public class MetadataVolumeGroupSection {
         }
     }
 
-    private List<MetadataLogicalVolumeSection> parseLogicalVolumeSection(Scanner data) {
+    private static List<MetadataLogicalVolumeSection> parseLogicalVolumeSection(Scanner data) {
         List<MetadataLogicalVolumeSection> result = new ArrayList<>();
         String line;
         while (data.hasNextLine()) {
             line = Metadata.readLine(data);
-            if (line.equals(""))
+            if (line.isEmpty())
                 continue;
             if (line.endsWith("{")) {
                 MetadataLogicalVolumeSection pv = new MetadataLogicalVolumeSection();
@@ -147,12 +147,12 @@ public class MetadataVolumeGroupSection {
         return result;
     }
 
-    private List<MetadataPhysicalVolumeSection> parsePhysicalVolumeSection(Scanner data) {
+    private static List<MetadataPhysicalVolumeSection> parsePhysicalVolumeSection(Scanner data) {
         List<MetadataPhysicalVolumeSection> result = new ArrayList<>();
         String line;
         while (data.hasNextLine()) {
             line = Metadata.readLine(data);
-            if (line.equals(""))
+            if (line.isEmpty())
                 continue;
             if (line.endsWith("{")) {
                 MetadataPhysicalVolumeSection pv = new MetadataPhysicalVolumeSection();

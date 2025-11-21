@@ -149,9 +149,9 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         return openVolume(database.getVolume(volumeId));
     }
 
-    private static Comparator<ExtentRecord> ExtentOffsets = Comparator.comparingLong(x -> x.offsetInVolumeLba);
+    private static final Comparator<ExtentRecord> ExtentOffsets = Comparator.comparingLong(x -> x.offsetInVolumeLba);
 
-    private static Comparator<ExtentRecord> ExtentInterleaveOrder = Comparator.comparingLong(x -> x.interleaveOrder);
+    private static final Comparator<ExtentRecord> ExtentInterleaveOrder = Comparator.comparingLong(x -> x.interleaveOrder);
 
     private static LogicalVolumeStatus worstOf(LogicalVolumeStatus x, LogicalVolumeStatus y) {
         return LogicalVolumeStatus.values()[Math.max(x.ordinal(), y.ordinal())];

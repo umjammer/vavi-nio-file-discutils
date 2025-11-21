@@ -36,9 +36,9 @@ import discUtils.streams.util.Ownership;
 
 public class File implements IVfsFile {
 
-    protected IsoContext context;
+    protected final IsoContext context;
 
-    protected ReaderDirEntry dirEntry;
+    protected final ReaderDirEntry dirEntry;
 
     public File(IsoContext context, ReaderDirEntry dirEntry) {
         this.context = context;

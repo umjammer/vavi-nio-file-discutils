@@ -87,7 +87,7 @@ public abstract class Resource {
         name = value;
     }
 
-    private String type;
+    private final String type;
 
     public String getType() {
         return type;

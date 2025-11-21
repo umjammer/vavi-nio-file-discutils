@@ -18,12 +18,12 @@ public class Bitstream {
     /** number of bits in the accumulator */
     public int bits;
     /** read pointer */
-    public byte[] read;
-    public int readOffset;
+    public final byte[] read;
+    public final int readOffset;
     /** byte offset within the data */
     public int doffset;
     /** length of the data */
-    public int dlength;
+    public final int dlength;
 
     public Bitstream(byte[] src, int srcOffset, int srcLength) {
         read = src;

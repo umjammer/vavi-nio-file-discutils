@@ -24,7 +24,6 @@ import discUtils.fat.FatFileSystem;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
-import vavi.util.StringUtil;
 import vavi.util.serdes.Serdes;
 import vavix.io.fat.PC98BiosParameterBlock;
 

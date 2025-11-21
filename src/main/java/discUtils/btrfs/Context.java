@@ -104,7 +104,7 @@ public class Context extends VfsContext {
         rootTreeRoot = value;
     }
 
-    private Map<Long, NodeHeader> fsTrees;
+    private final Map<Long, NodeHeader> fsTrees;
 
     Map<Long, NodeHeader> getFsTrees() {
         return fsTrees;
@@ -184,7 +184,7 @@ public class Context extends VfsContext {
         }
     }
 
-    private void checkStriping(EnumSet<BlockGroupFlag> flags) {
+    private static void checkStriping(EnumSet<BlockGroupFlag> flags) {
         if (flags.contains(BlockGroupFlag.Raid0))
             throw new IOException("Raid0 not supported");
 

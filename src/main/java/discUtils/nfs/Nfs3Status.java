@@ -153,6 +153,6 @@ public enum Nfs3Status {
     }
 
     public static Nfs3Status valueOf(int value) {
-        return Arrays.stream(values()).filter(e -> e.getValue() == value).findFirst().get();
+        return Arrays.stream(values()).filter(e -> e.getValue() == value).findFirst().orElseThrow();
     }
 }

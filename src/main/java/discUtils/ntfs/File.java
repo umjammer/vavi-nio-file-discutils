@@ -47,7 +47,7 @@ class File {
 
     private final List<NtfsAttribute> attributes;
 
-    protected INtfsContext context;
+    protected final INtfsContext context;
 
     private final ObjectCache<String, Index> indexCache;
 

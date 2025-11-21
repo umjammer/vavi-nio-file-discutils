@@ -98,7 +98,7 @@ public final class SparseMemoryBuffer extends Buffer {
     /**
      * Gets the size of each allocation chunk.
      */
-    private int chunkSize;
+    private final int chunkSize;
 
     public int getChunkSize() {
         return chunkSize;

@@ -60,19 +60,19 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
         }
     }
 
-    public long accessTime;
+    public final long accessTime;
 
-    public long attributesTime;
+    public final long attributesTime;
 
-    public long backupTime;
+    public final long backupTime;
 
-    public long creationTime;
+    public final long creationTime;
 
-    public long effectiveTime;
+    public final long effectiveTime;
 
-    public long expirationTime;
+    public final long expirationTime;
 
-    public long modifyTime;
+    public final long modifyTime;
 
     public EnumSet<Timestamps> timestampsPresent = EnumSet.noneOf(Timestamps.class);
 

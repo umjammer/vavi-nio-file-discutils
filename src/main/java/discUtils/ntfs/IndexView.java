@@ -32,9 +32,9 @@ import dotnet4j.util.compat.Tuple;
 
 public class IndexView<K extends IByteArraySerializable, D extends IByteArraySerializable> {
 
-    private Class<K> keyClass;
+    private final Class<K> keyClass;
 
-    private Class<D> valueClass;
+    private final Class<D> valueClass;
 
     private final Index index;
 

@@ -22,6 +22,8 @@
 
 package discUtils.core;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.UUID;
 
 import discUtils.core.partitions.GuidPartitionInfo;
@@ -37,6 +39,8 @@ import discUtils.streams.util.Ownership;
  * entire disk.
  */
 public final class PhysicalVolumeInfo extends VolumeInfo {
+
+    private static final Logger logger = System.getLogger(PhysicalVolumeInfo.class.getName());
 
     private static final UUID EMPTY = new UUID(0L, 0L);
 
@@ -58,6 +62,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
         this.diskId = diskId;
         this.disk = disk;
         streamOpener = partitionInfo::open;
+logger.log(Level.TRACE, "partitionInfo: " + partitionInfo.getClass().getName());
         volumeType = partitionInfo.getVolumeType();
         partition = partitionInfo;
     }
@@ -174,7 +179,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
     /**
      * Gets the type of the volume.
      */
-    private PhysicalVolumeType volumeType;
+    private final PhysicalVolumeType volumeType;
 
     public PhysicalVolumeType getVolumeType() {
         return volumeType;

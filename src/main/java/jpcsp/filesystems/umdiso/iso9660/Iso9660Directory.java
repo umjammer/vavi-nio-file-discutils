@@ -38,7 +38,7 @@ public class Iso9660Directory {
         // parse directory sector
         UmdIsoFile dataStream = new UmdIsoFile(r, directorySector, directorySize, null, null);
 
-        files = new ArrayList<Iso9660File>();
+        files = new ArrayList<>();
 
         byte[] b = new byte[256];
 

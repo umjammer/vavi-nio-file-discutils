@@ -58,7 +58,7 @@ public final class HuffmanTree {
         build();
     }
 
-    private int[] lengths;
+    private final int[] lengths;
 
     public int[] getLengths() {
         return lengths;

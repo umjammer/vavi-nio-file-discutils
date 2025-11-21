@@ -35,7 +35,7 @@ public final class RockRidgeExtension extends SuspExtension {
         this.identifier = identifier;
     }
 
-    private String identifier;
+    private final String identifier;
 
     @Override public String getIdentifier() {
         return identifier;

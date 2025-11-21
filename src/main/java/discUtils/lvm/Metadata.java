@@ -65,7 +65,7 @@ public class Metadata {
         List<MetadataVolumeGroupSection> vgSection = new ArrayList<>();
         while (data.hasNextLine()) {
             line = readLine(data);
-            if (line.equals(""))
+            if (line.isEmpty())
                 continue;
 
             if (line.contains("=")) {

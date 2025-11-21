@@ -41,7 +41,7 @@ public class LunCapacity {
     /**
      * Gets the size of each logical block.
      */
-    private int blockSize;
+    private final int blockSize;
 
     public int getBlockSize() {
         return blockSize;
@@ -50,7 +50,7 @@ public class LunCapacity {
     /**
      * Gets the number of logical blocks in the LUN.
      */
-    private long logicalBlockCount;
+    private final long logicalBlockCount;
 
     public long getLogicalBlockCount() {
         return logicalBlockCount;

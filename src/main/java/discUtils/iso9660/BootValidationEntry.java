@@ -33,11 +33,11 @@ public class BootValidationEntry {
 
     private byte[] data;
 
-    public byte headerId;
+    public final byte headerId;
 
-    public String manfId;
+    public final String manfId;
 
-    public byte platformId;
+    public final byte platformId;
 
     public BootValidationEntry() {
         headerId = 1;

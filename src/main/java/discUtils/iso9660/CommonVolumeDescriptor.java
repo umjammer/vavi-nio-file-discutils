@@ -31,59 +31,59 @@ import vavi.util.ByteUtil;
 
 public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
 
-    public String abstractFileIdentifier;
+    public final String abstractFileIdentifier;
 
-    public String applicationIdentifier;
+    public final String applicationIdentifier;
 
-    public String bibliographicFileIdentifier;
+    public final String bibliographicFileIdentifier;
 
-    public Charset characterEncoding;
+    public final Charset characterEncoding;
 
-    public String copyrightFileIdentifier;
+    public final String copyrightFileIdentifier;
 
-    public long creationDateAndTime;
+    public final long creationDateAndTime;
 
-    public String dataPreparerIdentifier;
+    public final String dataPreparerIdentifier;
 
-    public long effectiveDateAndTime;
+    public final long effectiveDateAndTime;
 
-    public long expirationDateAndTime;
+    public final long expirationDateAndTime;
 
-    public byte fileStructureVersion;
+    public final byte fileStructureVersion;
 
-    protected short logicalBlockSize;
+    protected final short logicalBlockSize;
 
     public int getLogicalBlockSize() {
         return logicalBlockSize;
     }
 
-    public long modificationDateAndTime;
+    public final long modificationDateAndTime;
 
     public int optionalTypeLPathTableLocation;
 
     public int optionalTypeMPathTableLocation;
 
-    public int pathTableSize;
+    public final int pathTableSize;
 
-    public String publisherIdentifier;
+    public final String publisherIdentifier;
 
-    public DirectoryRecord rootDirectory;
+    public final DirectoryRecord rootDirectory;
 
-    public String systemIdentifier;
+    public final String systemIdentifier;
 
-    public int typeLPathTableLocation;
+    public final int typeLPathTableLocation;
 
-    public int typeMPathTableLocation;
+    public final int typeMPathTableLocation;
 
     public String volumeIdentifier;
 
-    public short volumeSequenceNumber;
+    public final short volumeSequenceNumber;
 
-    public String volumeSetIdentifier;
+    public final String volumeSetIdentifier;
 
-    public short volumeSetSize;
+    public final short volumeSetSize;
 
-    public int volumeSpaceSize;
+    public final int volumeSpaceSize;
 
     public CommonVolumeDescriptor(byte[] src, int offset, Charset enc) {
         super(src, offset);

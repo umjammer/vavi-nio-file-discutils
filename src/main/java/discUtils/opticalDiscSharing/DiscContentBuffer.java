@@ -45,13 +45,13 @@ public final class DiscContentBuffer extends Buffer {
 
     private String authHeader;
 
-    private String password;
+    private final String password;
 
-    private URI uri;
+    private final URI uri;
 
-    private String userName;
+    private final String userName;
 
-    OkHttpClient client;
+    final OkHttpClient client;
 
     public DiscContentBuffer(URI uri, String userName, String password) {
         this.uri = uri;
@@ -70,7 +70,7 @@ public final class DiscContentBuffer extends Buffer {
         return false;
     }
 
-    private long capacity;
+    private final long capacity;
 
     @Override public long getCapacity() {
         return capacity;

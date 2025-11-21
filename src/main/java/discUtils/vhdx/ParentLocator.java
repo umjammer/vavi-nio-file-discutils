@@ -39,7 +39,7 @@ class ParentLocator implements IByteArraySerializable {
 
     public UUID locatorType = LocatorTypeGuid;
 
-    public short reserved = 0;
+    public final short reserved = 0;
 
     public Map<String, String> getEntries() {
         return entries;

@@ -52,7 +52,7 @@ public final class TextRecord extends ResourceRecord {
      * For data fidelity, the data is returned in byte form - typically
      * the encoded data is actually ASCII or UTF-8.
      */
-    private Map<String, byte[]> values;
+    private final Map<String, byte[]> values;
 
     public Map<String, byte[]> getValues() {
         return values;

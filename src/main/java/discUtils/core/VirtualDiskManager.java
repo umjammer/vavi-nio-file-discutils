@@ -55,7 +55,7 @@ public class VirtualDiskManager {
         return typeMap.keySet();
     }
 
-    private static Map<String, VirtualDiskFactory> typeMap;
+    private static final Map<String, VirtualDiskFactory> typeMap;
 
     public static Map<String, VirtualDiskFactory> getTypeMap() {
         return typeMap;
@@ -79,8 +79,8 @@ public class VirtualDiskManager {
                 }
             }
         }
-logger.log(Level.DEBUG, "typeMap: " + typeMap);
-logger.log(Level.DEBUG, "extensionMap: " + extensionMap);
+logger.log(Level.DEBUG, "typeMap: " + typeMap.keySet());
+logger.log(Level.DEBUG, "extensionMap: " + extensionMap.keySet());
 
         ServiceLoader<VirtualDiskTransport> transports = ServiceLoader.load(VirtualDiskTransport.class);
 
@@ -90,6 +90,6 @@ logger.log(Level.DEBUG, "extensionMap: " + extensionMap);
                 diskTransports.put(annotation.scheme().toUpperCase(), transport);
             }
         }
-logger.log(Level.DEBUG, "diskTransports: " + diskTransports);
+logger.log(Level.DEBUG, "diskTransports: " + diskTransports.keySet());
     }
 }

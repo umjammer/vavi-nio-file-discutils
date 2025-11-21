@@ -64,7 +64,7 @@ public class CHDFileSectorDevice extends AbstractFileSectorDevice {
         }
         chdFile = res[0];
 
-        header = chd.chd_get_header(chdFile);
+        header = Chd.chd_get_header(chdFile);
         if (header == null) {
             throw new IOException("Could not access the CHD file header '%s'".formatted(fileAccess));
         }
@@ -72,7 +72,7 @@ public class CHDFileSectorDevice extends AbstractFileSectorDevice {
         numberFrames = header.totalhunks * CD_FRAMES_PER_HUNK;
         frameSize = CD_MAX_SECTOR_DATA + CD_MAX_SUBCODE_DATA;
 
-        final byte[] metadata = new byte[512];
+        byte[] metadata = new byte[512];
         int[] resultLength = new int[1];
         err = chd.chd_get_metadata(chdFile, CDROM_TRACK_METADATA2_TAG, 0, metadata, metadata.length, resultLength, null, null);
         if (err == CHDERR_NONE) {
@@ -118,8 +118,8 @@ public class CHDFileSectorDevice extends AbstractFileSectorDevice {
             String[] parentFileNames = searchParentFileNames(fileName);
             if (parentFileNames != null) {
                 // Try to find the matching parent
-                for (int i = 0; i < parentFileNames.length; i++) {
-                    err = openChdFile(parentFileNames[i], res);
+                for (String parentFileName : parentFileNames) {
+                    err = openChdFile(parentFileName, res);
                     if (err == CHDERR_NONE) {
                         ChdFile parent = res[0];
                         // Try to reopen the child CHD with the potential parent CHD
@@ -130,7 +130,7 @@ public class CHDFileSectorDevice extends AbstractFileSectorDevice {
                         }
 
                         // This is not the matching parent, close it and try for the next one
-                        chd.chd_close(parent);
+                        Chd.chd_close(parent);
                     }
                 }
             }
@@ -210,15 +210,15 @@ public class CHDFileSectorDevice extends AbstractFileSectorDevice {
         String childPrefix = childFileName.substring(lastDir + 1, lastDot);
         String childSuffix = childFileName.substring(lastDot);
         String[] parentFileNames = null;
-        for (int i = 0; i < dirEntries.length; i++) {
-            if (dirEntries[i].isFile()) {
-                String parentFileName = dirEntries[i].getName();
+        for (File dirEntry : dirEntries) {
+            if (dirEntry.isFile()) {
+                String parentFileName = dirEntry.getName();
                 lastDot = parentFileName.lastIndexOf('.');
                 if (lastDot >= 0) {
                     String parentPrefix = parentFileName.substring(0, lastDot);
                     String parentSuffix = parentFileName.substring(lastDot);
                     if (isParentFileNameMatching(childPrefix, childSuffix, parentPrefix, parentSuffix)) {
-                        parentFileNames = add(parentFileNames, dirEntries[i].getPath());
+                        parentFileNames = add(parentFileNames, dirEntry.getPath());
                     }
                 }
             }

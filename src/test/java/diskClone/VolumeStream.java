@@ -28,7 +28,7 @@ import diskClone.NativeMethods.NtfsVolumeData;
 
 public final class VolumeStream extends UnbufferedNativeStream {
 
-    private long length;
+    private final long length;
 
     public VolumeStream(Pointer handle) {
         super(handle);

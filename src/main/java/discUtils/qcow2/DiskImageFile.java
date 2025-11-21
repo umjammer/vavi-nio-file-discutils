@@ -7,6 +7,8 @@
 package discUtils.qcow2;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,8 @@ import dotnet4j.io.Stream;
  * @version 0.00 2025/10/01 umjammer initial version <br>
  */
 public final class DiskImageFile extends VirtualDiskLayer {
+
+    private static final Logger logger = System.getLogger(DiskImageFile.class.getName());
 
     private Image disk;
 
@@ -106,7 +110,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
             fileName = locator.getFileFromPath(path);
         } catch (IOException e) {
-e.printStackTrace(System.err);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new dotnet4j.io.IOException(e);
         }
     }

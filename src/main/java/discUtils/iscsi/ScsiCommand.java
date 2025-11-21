@@ -35,7 +35,7 @@ public abstract class ScsiCommand implements IByteArraySerializable {
         return false;
     }
 
-    private long targetLun;
+    private final long targetLun;
 
     public long getTargetLun() {
         return targetLun;

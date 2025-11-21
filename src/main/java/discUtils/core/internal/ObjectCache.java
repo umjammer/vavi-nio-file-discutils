@@ -92,7 +92,7 @@ public class ObjectCache<K, V> {
                 break;
             }
         }
-        return entries.remove(key).get();
+        return entries.remove((K) key).get();
     }
 
     private synchronized void pruneEntries() {

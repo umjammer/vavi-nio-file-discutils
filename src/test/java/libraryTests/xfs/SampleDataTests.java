@@ -82,7 +82,7 @@ class SampleDataTests {
         }
     }
 
-    private void validateContent(DiscFileSystem xfs) throws Exception {
+    private static void validateContent(DiscFileSystem xfs) throws Exception {
         assertTrue(xfs.directoryExists(""));
         assertTrue(xfs.fileExists("folder" + FS + "nested" + FS + "file"));
         assertEquals(0, xfs.getFileSystemEntries("empty").size());

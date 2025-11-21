@@ -46,9 +46,7 @@ public class Lzma extends BaseCodec {
     }
 
     public static ChdError lzmaDecompress(byte[] src, int srcOffset, int complen, byte[] dest, int destOffset, int destlen) {
-        LZMAInputStream lzmaInputStream = null;
-        try {
-            lzmaInputStream = new LZMAInputStream(new ByteArrayInputStream(src, srcOffset, complen), destlen & 0xFFFFFFFFL, propsByte, dictSize);
+        try (LZMAInputStream lzmaInputStream = new LZMAInputStream(new ByteArrayInputStream(src, srcOffset, complen), destlen & 0xFFFFFFFFL, propsByte, dictSize)) {
             while (destlen > 0) {
                 int readLength = lzmaInputStream.read(dest, destOffset, destlen);
                 if (readLength <= 0) {
@@ -59,14 +57,6 @@ public class Lzma extends BaseCodec {
             }
         } catch (IOException e) {
             return CHDERR_DECOMPRESSION_ERROR;
-        } finally {
-            if (lzmaInputStream != null) {
-                try {
-                    lzmaInputStream.close();
-                } catch (IOException e) {
-                    logger.log(Level.TRACE, e.getMessage(), e);
-                }
-            }
         }
 
         return CHDERR_NONE;

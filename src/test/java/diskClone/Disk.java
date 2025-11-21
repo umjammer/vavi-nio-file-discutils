@@ -36,9 +36,9 @@ import discUtils.streams.SparseStream;
 
 public class Disk extends VirtualDisk {
 
-    private String path;
+    private final String path;
 
-    private Pointer handle;
+    private final Pointer handle;
 
     private SparseStream stream;
 

@@ -53,7 +53,7 @@ import org.xml.sax.SAXException;
 
 public class Plist {
 
-    private static DocumentBuilderFactory dbf;
+    private static final DocumentBuilderFactory dbf;
 
     static {
         dbf = DocumentBuilderFactory.newInstance();

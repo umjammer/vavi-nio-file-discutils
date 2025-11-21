@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import vavi.net.fuse.Base;
@@ -31,18 +32,14 @@ import vavi.util.properties.annotation.PropsEntity;
 
 
 /**
- * Main4. (fuse)
+ * DU FuseTest.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2021/11/20 umjammer initial version <br>
  */
 @EnabledIf("localPropertiesExists")
 @PropsEntity(url = "file://${user.dir}/local.properties")
-public class Main4 {
-
-    static {
-        System.setProperty("vavi.util.logging.VaviFormatter.extraClassMethod", "co\\.paralleluniverse\\.fuse\\.LoggedFuseFilesystem#log");
-    }
+public class FuseTest {
 
     static boolean localPropertiesExists() {
         return Files.exists(Paths.get("local.properties"));
@@ -104,7 +101,7 @@ Debug.println(uri);
     //
 
     @Test
-    @DisabledIfSystemProperty(named = "vavi.test", matches = "ide")
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
     void testX() throws Exception {
         System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.javafs.JavaFSFuseProvider");
 //        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
@@ -124,7 +121,7 @@ Debug.println(uri);
 //        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
 //        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.fusejna.FuseJnaFuseProvider");
 
-        Main4 app = new Main4();
+        FuseTest app = new FuseTest();
         app.before();
 
         try (Fuse fuse = Fuse.getFuse()) {

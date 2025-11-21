@@ -42,7 +42,7 @@ public final class PointerRecord extends ResourceRecord {
     /**
      * Gets the DNS name pointed to.
      */
-    private String targetName;
+    private final String targetName;
 
     public String getTargetName() {
         return targetName;

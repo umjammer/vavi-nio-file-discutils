@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class TargetInfo {
 
-    private List<TargetAddress> addresses;
+    private final List<TargetAddress> addresses;
 
     /**
      * Initializes a new instance of the TargetInfo class.
@@ -55,7 +55,7 @@ public class TargetInfo {
     /**
      * Gets the name of the Target.
      */
-    private String name;
+    private final String name;
 
     public String getName() {
         return name;

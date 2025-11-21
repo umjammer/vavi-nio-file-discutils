@@ -36,9 +36,9 @@ public class CSOFileSectorDevice extends AbstractFileSectorDevice {
 
     private static final Logger logger = getLogger(CSOFileSectorDevice.class.getName());
 
-    protected int offsetShift;
-    protected int numSectors;
-    protected long[] sectorOffsets;
+    protected final int offsetShift;
+    protected final int numSectors;
+    protected final long[] sectorOffsets;
     private static final long sectorOffsetMask = 0x7fff_ffffL;
 
     public CSOFileSectorDevice(RandomAccessFile fileAccess, byte[] header) throws IOException {

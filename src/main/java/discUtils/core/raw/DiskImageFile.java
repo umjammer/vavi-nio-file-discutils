@@ -99,7 +99,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the geometry of the file.
      */
-    private Geometry geometry;
+    private final Geometry geometry;
 
     @Override public Geometry getGeometry() {
         return geometry;

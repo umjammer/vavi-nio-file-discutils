@@ -29,12 +29,12 @@ import discUtils.streams.buffer.SubBuffer;
 public class PhysicalPartition extends Partition {
 
     @SuppressWarnings("unused")
-    private PartitionDescriptor descriptor;
+    private final PartitionDescriptor descriptor;
 
     private final IBuffer parentBuffer;
 
     @SuppressWarnings("unused")
-    private short partitionNumber;
+    private final short partitionNumber;
 
     public PhysicalPartition(PartitionDescriptor descriptor, IBuffer buffer, int sectorSize) {
         partitionNumber = descriptor.partitionNumber;
@@ -45,7 +45,7 @@ public class PhysicalPartition extends Partition {
         this.descriptor = descriptor;
     }
 
-    private IBuffer content;
+    private final IBuffer content;
 
     @Override
     public IBuffer getContent() {

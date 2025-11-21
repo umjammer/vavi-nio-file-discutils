@@ -33,13 +33,13 @@ public interface ISectorDevice {
     /**
      * The size in bytes of a sector.
      */
-    public static final int sectorLength = 2048;
+    int sectorLength = 2048;
 
     /**
      * @return the total number of sectors for this device
      * @throws IOException
      */
-    public int getNumSectors() throws IOException;
+    int getNumSectors() throws IOException;
 
     /**
      * Read one sector of the device.
@@ -50,7 +50,7 @@ public interface ISectorDevice {
      * @param offset       the offset inside the buffer where to start storing the read bytes.
      * @throws IOException
      */
-    public void readSector(int sectorNumber, byte[] buffer, int offset) throws IOException;
+    void readSector(int sectorNumber, byte[] buffer, int offset) throws IOException;
 
     /**
      * Read multiple sectors of the device.
@@ -63,7 +63,7 @@ public interface ISectorDevice {
      * @return
      * @throws IOException
      */
-    public int readSectors(int sectorNumber, int numberSectors, byte[] buffer, int offset) throws IOException;
+    int readSectors(int sectorNumber, int numberSectors, byte[] buffer, int offset) throws IOException;
 
     /**
      * Write one sector of the device.
@@ -76,7 +76,7 @@ public interface ISectorDevice {
      * @param offset       the offset inside the buffer where the bytes are stored.
      * @throws IOException
      */
-    public void writeSector(int sectorNumber, byte[] buffer, int offset) throws IOException;
+    void writeSector(int sectorNumber, byte[] buffer, int offset) throws IOException;
 
     /**
      * Write multiple sectors of the device.
@@ -90,7 +90,7 @@ public interface ISectorDevice {
      * @param offset        the offset inside the buffer where the bytes are stored.
      * @throws IOException
      */
-    public void writeSectors(int sectorNumber, int numberSectors, byte[] buffer, int offset) throws IOException;
+    void writeSectors(int sectorNumber, int numberSectors, byte[] buffer, int offset) throws IOException;
 
     /**
      * Close any associated resource.
@@ -98,5 +98,5 @@ public interface ISectorDevice {
      *
      * @throws IOException
      */
-    public void close() throws IOException;
+    void close() throws IOException;
 }

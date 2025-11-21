@@ -9,7 +9,6 @@ package libchdr;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 import jpcsp.filesystems.umdiso.UmdIsoReader;
 import vavi.util.Debug;
@@ -17,6 +16,7 @@ import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 
@@ -49,6 +49,7 @@ class ChdTest {
     private UmdIsoReader reader;
 
     @Test
+    @DisplayName("walk by api")
     void test1() throws Exception {
 Debug.println(chdFile);
         reader = new UmdIsoReader(chdFile);

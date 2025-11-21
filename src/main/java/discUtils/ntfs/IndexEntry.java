@@ -93,7 +93,7 @@ public class IndexEntry {
         flags = value;
     }
 
-    private boolean isFileIndexEntry;
+    private final boolean isFileIndexEntry;
 
     protected boolean isFileIndexEntry() {
         return isFileIndexEntry;

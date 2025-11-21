@@ -47,7 +47,7 @@ public class Pc98PartitionTable extends PartitionTable {
     /**
      * The partition entries
      */
-    private Map<PC98PartitionEntry, Pc98PartitionInfo> partitions = new HashMap<>();
+    private final Map<PC98PartitionEntry, Pc98PartitionInfo> partitions = new HashMap<>();
 
     /**
      * Create a new instance

@@ -36,7 +36,7 @@ public final class ExtendedAttribute {
      * Gets the data contained in the attribute.
      * The format of the data will depend on the identifier.
      */
-    private byte[] data;
+    private final byte[] data;
 
     public byte[] getData() {
         return data;
@@ -46,7 +46,7 @@ public final class ExtendedAttribute {
      * Gets the value of the identifier of this attribute.
      * A typical identifier is "*UDF DVD CGMS Info".
      */
-    private String identifier;
+    private final String identifier;
 
     public String getIdentifier() {
         return identifier;

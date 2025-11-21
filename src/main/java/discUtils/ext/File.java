@@ -41,19 +41,19 @@ public class File implements IVfsFile {
         this.inode = inode;
     }
 
-    private Context context;
+    private final Context context;
 
     protected Context getContext() {
         return context;
     }
 
-    private Inode inode;
+    private final Inode inode;
 
     public Inode getInode() {
         return inode;
     }
 
-    private int inodeNumber;
+    private final int inodeNumber;
 
     public int getInodeNumber() {
         return inodeNumber;

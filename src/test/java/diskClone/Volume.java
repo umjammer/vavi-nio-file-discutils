@@ -39,11 +39,11 @@ public final class Volume implements Closeable {
 
     private String path;
 
-    private Pointer handle;
+    private final Pointer handle;
 
     private Stream stream;
 
-    private long length;
+    private final long length;
 
     public Volume(String path, long length) {
         this.path = path.replaceFirst(StringUtilities.escapeForRegex("\\*$"), "");

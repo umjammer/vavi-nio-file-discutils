@@ -67,7 +67,7 @@ public final class FileName {
             byte b = bytes[nameIdx++];
             if ((b & 0xff) < 0x20 || contains(InvalidBytes, b)) {
 //logger.log(Level.DEBUG, name + ", " + encoding + ", " + Arrays.toString(bytes));
-                throw new IllegalArgumentException("Invalid character in file name '%1$c', %1$02x: %2$s".formatted(b, name));
+                throw new IllegalArgumentException("Invalid character in file name '%1$c', %1$02x: %2$s, encoding: %3$3s".formatted(b, name, encoding));
             }
 
             raw[rawIdx++] = b;

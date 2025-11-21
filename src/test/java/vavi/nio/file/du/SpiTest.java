@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
- * DiscUtilsTest.
+ * DiscUtils (DU) SPI Test.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/11/18 umjammer initial version <br>
  */
 @EnabledIf("localPropertiesExists")
 @PropsEntity(url = "file://${user.dir}/local.properties")
-class DiscUtilsTest {
+class SpiTest {
 
     static boolean localPropertiesExists() {
         return Files.exists(Paths.get("local.properties"));
@@ -86,7 +86,7 @@ class DiscUtilsTest {
     @Test
     @DisplayName("raw/fat")
     void test2() throws Exception {
-        String file = DiscUtilsTest.class.getResource("/fat16.dmg").getPath();
+        String file = SpiTest.class.getResource("/fat16.dmg").getPath();
         URI uri = DuFileSystemProvider.createURI(file);
         Map<String, Object> env = new HashMap<>();
         env.put("forceType", "RAW");

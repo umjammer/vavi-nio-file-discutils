@@ -52,7 +52,7 @@ public class LunInfo {
     /**
      * Gets the type (or class) of this device.
      */
-    private LunClass deviceType;
+    private final LunClass deviceType;
 
     public LunClass getDeviceType() {
         return deviceType;
@@ -61,7 +61,7 @@ public class LunInfo {
     /**
      * Gets the Logical Unit Number of this device.
      */
-    private long lun;
+    private final long lun;
 
     public long getLun() {
         return lun;
@@ -70,7 +70,7 @@ public class LunInfo {
     /**
      * Gets the product id (name) for this device.
      */
-    private String productId;
+    private final String productId;
 
     public String getProductId() {
         return productId;
@@ -79,7 +79,7 @@ public class LunInfo {
     /**
      * Gets the product revision for this device.
      */
-    private String productRevision;
+    private final String productRevision;
 
     public String getProductRevision() {
         return productRevision;
@@ -88,7 +88,7 @@ public class LunInfo {
     /**
      * Gets a value indicating whether this Lun has removable media.
      */
-    private boolean removable;
+    private final boolean removable;
 
     public boolean getRemovable() {
         return removable;
@@ -97,7 +97,7 @@ public class LunInfo {
     /**
      * Gets info about the target hosting this LUN.
      */
-    private TargetInfo target;
+    private final TargetInfo target;
 
     public TargetInfo getTarget() {
         return target;
@@ -106,7 +106,7 @@ public class LunInfo {
     /**
      * Gets the vendor id (registered name) for this device.
      */
-    private String vendorId;
+    private final String vendorId;
 
     public String getVendorId() {
         return vendorId;

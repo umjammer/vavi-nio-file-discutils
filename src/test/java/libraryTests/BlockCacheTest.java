@@ -299,7 +299,7 @@ class BlockCacheTest {
 
     }
 
-    private MemoryStream createSequencedMemStream(int length, boolean writable) {
+    private static MemoryStream createSequencedMemStream(int length, boolean writable) {
         byte[] buffer = new byte[length];
         for (int i = 0; i < length; ++i) {
             buffer[i] = (byte) i;
@@ -307,11 +307,11 @@ class BlockCacheTest {
         return new MemoryStream(buffer, writable);
     }
 
-    private void assertSequenced(byte[] buffer, int seqOffset) {
+    private static void assertSequenced(byte[] buffer, int seqOffset) {
         assertSequenced(buffer, 0, buffer.length, seqOffset);
     }
 
-    private void assertSequenced(byte[] buffer, int offset, int count, int seqOffset) {
+    private static void assertSequenced(byte[] buffer, int offset, int count, int seqOffset) {
         for (int i = 0; i < count; ++i) {
             if (buffer[i + offset] != (byte) (i + seqOffset)) {
                 fail(String.format("Expected %2x at index %d, was %2x",

@@ -36,7 +36,7 @@ public final class RpcClient implements IRpcClient {
 
     private Map<Integer, RpcTcpTransport> transports = new HashMap<>();
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     public RpcClient(String address, RpcCredentials credential) {
         serverAddress = address;
@@ -45,7 +45,7 @@ public final class RpcClient implements IRpcClient {
         transports.put(PortMap2.ProgramIdentifier, new RpcTcpTransport(address, 111));
     }
 
-    private RpcCredentials credentials;
+    private final RpcCredentials credentials;
 
     @Override
     public RpcCredentials getCredentials() {

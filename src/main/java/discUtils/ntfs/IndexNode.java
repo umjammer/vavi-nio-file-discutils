@@ -94,7 +94,7 @@ class IndexNode {
         return entries;
     }
 
-    private IndexHeader header;
+    private final IndexHeader header;
 
     public IndexHeader getHeader() {
         return header;

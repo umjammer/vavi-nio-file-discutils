@@ -33,7 +33,7 @@ public class MetadataPartition extends LogicalPartition {
     private final File metadataFile;
 
     @SuppressWarnings("unused")
-    private MetadataPartitionMap partitionMap;
+    private final MetadataPartitionMap partitionMap;
 
     public MetadataPartition(UdfContext context, LogicalVolumeDescriptor volumeDescriptor, MetadataPartitionMap partitionMap) {
         super(context, volumeDescriptor);

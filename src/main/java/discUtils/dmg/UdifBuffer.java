@@ -64,7 +64,7 @@ public class UdifBuffer extends Buffer {
         }
     }
 
-    private List<CompressedBlock> blocks;
+    private final List<CompressedBlock> blocks;
 
     public List<CompressedBlock> getBlocks() {
         return blocks;

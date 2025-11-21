@@ -86,7 +86,7 @@ class Connection implements Closeable {
         return expectedStatusSequenceNumber;
     }
 
-    private short id;
+    private final short id;
 
     short getId() {
         return id;
@@ -99,7 +99,7 @@ class Connection implements Closeable {
         };
     }
 
-    private Session session;
+    private final Session session;
 
     Session getSession() {
         return session;
