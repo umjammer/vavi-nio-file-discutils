@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Naohide Sano, All rights reserved.
+ * Copyright (c) 2025 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
@@ -7,6 +7,8 @@
 package discUtils.emu;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -17,15 +19,21 @@ import discUtils.streams.util.Ownership;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import vavi.emu.disk.phisical.D88;
+import vavi.util.StringUtil;
 
 
 /**
  * DiskStream.
  *
+ * TODO separate D88(CHD) dedicated stream
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
- * @version 0.00 2022/07/28 umjammer initial version <br>
+ * @version 0.00 2025/11/05 umjammer initial version <br>
  */
 public class DiskStream extends SparseStream {
+
+    private static final Logger logger = System.getLogger(DiskStream.class.getName());
 
     private boolean atEof;
 
@@ -82,13 +90,39 @@ public class DiskStream extends SparseStream {
     @Override public long position() {
         checkDisposed();
 //logger.log(Level.DEBUG, "GETPOS: %08x".formatted((fileStream.position() - disk.getOffset())));
-        return fileStream.position() - disk.getOffset();
+        if (fileStream.position() == 0) {
+            return 0;
+        } else {
+            return fileStream.position() - disk.getOffset();
+        }
+    }
+
+    /** for D88 */
+    private int[] chs;
+    /** for D88 */
+    private int pos;
+
+    /** */
+    private void positionInternal(long value) {
+        if (value != 0 && disk instanceof D88) {
+            // for NOT solid disk (TODO this is ad-hoc because VirtualDisk is for solid disk)
+            int sectorOffset = (((int) value / disk.getSectorSize()) * disk.getSectorSize()) + (int) disk.getOffset() - 16;
+            chs = disk.search(sectorOffset);
+            if (chs == null) {
+logger.log(Level.TRACE, "no such sector of offset: argument: %08x, actual: %08x".formatted(sectorOffset, sectorOffset + disk.getOffset() - 16));
+                throw new dotnet4j.io.IOException("no such sector of offset: %08x".formatted(sectorOffset));
+            }
+logger.log(Level.TRACE, "hit sector of offset: chs[%d,%d,%d], argument: %08x, search: %08x".formatted(chs[0], chs[1], chs[2], value, sectorOffset));
+            this.pos = (int) value;
+        } else {
+            fileStream.position(value + disk.getOffset());
+        }
     }
 
     @Override public void position(long value) {
         checkDisposed();
 //logger.log(Level.DEBUG, "SETPOS: %08x".formatted(value));
-        fileStream.position(value + disk.getOffset());
+        positionInternal(value);
         atEof = false;
     }
 
@@ -101,7 +135,7 @@ public class DiskStream extends SparseStream {
     @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 //new Exception().printStackTrace(System.err);
-//logger.log(Level.DEBUG, "READ: %08x, %d, %d".formatted(fileStream.position(), offset, count));
+logger.log(Level.DEBUG, "READ: %08x, %d, %d".formatted(disk instanceof D88 ? pos : fileStream.position(), offset, count));
         if (atEof || fileStream.position() > disk.getLength()) {
             atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
@@ -112,7 +146,17 @@ public class DiskStream extends SparseStream {
             return 0;
         }
 
-        StreamUtilities.readExact(fileStream, buffer, offset, count);
+        if (position() != 0 && disk instanceof D88) {
+            // for NOT solid disk (TODO this is ad-hoc because VirtualDisk is for solid disk)
+            byte[] sectorData = disk.getSector(chs[0], chs[1], chs[2]).data;
+            int secPos = pos % disk.getSectorSize();
+            System.arraycopy(sectorData, secPos, buffer, offset, Math.min(count, sectorData.length - secPos)); // TODO multiple sector reading
+logger.log(Level.TRACE, "sector[c: %d, h: %d, s: %s] ofs: %08x, len: %08x, sec: %08x%n%s".formatted(chs[0], chs[1], chs[2], offset % disk.getSectorSize(), count, disk.getSectorSize(), StringUtil.getDump(buffer, offset, count)));
+        } else {
+if (position() == 0) { logger.log(Level.TRACE, "position: 0"); }
+            // for solid disk (both jnode and vavi-nio-file-emu)
+            StreamUtilities.readExact(fileStream, buffer, offset, count);
+        }
 
         return count;
     }
@@ -120,9 +164,9 @@ public class DiskStream extends SparseStream {
     @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
         long effectiveOffset = offset;
-        if (origin == SeekOrigin.Current) {
+        if (origin == dotnet4j.io.SeekOrigin.Current) {
             effectiveOffset += fileStream.position();
-        } else if (origin == SeekOrigin.End) {
+        } else if (origin == dotnet4j.io.SeekOrigin.End) {
             effectiveOffset += disk.getLength();
         }
 
@@ -131,7 +175,7 @@ public class DiskStream extends SparseStream {
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-        fileStream.position(disk.getOffset() + effectiveOffset);
+        positionInternal(disk.getOffset() + effectiveOffset);
         return fileStream.position() - disk.getOffset();
     }
 

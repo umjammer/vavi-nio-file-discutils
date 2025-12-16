@@ -8,3 +8,4 @@ discUtils.fat.FileSystemFactory
 discUtils.xfs.FileSystemFactory
 discUtils.opticalDisk.FileSystemFactory
 discUtils.core.pc98.Pc98FileSystemFactory
+discUtils.emu.FileSystemFactory
