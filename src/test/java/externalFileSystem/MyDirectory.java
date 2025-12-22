@@ -10,7 +10,7 @@ import dotnet4j.util.compat.StringUtilities;
 
 class MyDirectory extends MyFile implements IVfsDirectory<MyDirEntry, MyFile> {
 
-    private List<MyDirEntry> entries;
+    private final List<MyDirEntry> entries;
 
     public MyDirectory(MyDirEntry dirEntry, boolean isRoot) {
         super(dirEntry);

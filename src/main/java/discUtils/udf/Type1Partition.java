@@ -28,7 +28,7 @@ import discUtils.streams.buffer.IBuffer;
 public class Type1Partition extends LogicalPartition {
 
     @SuppressWarnings("unused")
-    private Type1PartitionMap partitionMap;
+    private final Type1PartitionMap partitionMap;
 
     private final PhysicalPartition physical;
 

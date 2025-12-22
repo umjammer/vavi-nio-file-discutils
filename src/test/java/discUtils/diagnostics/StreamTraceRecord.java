@@ -27,11 +27,11 @@ package discUtils.diagnostics;
  */
 public final class StreamTraceRecord {
 
-    private int id;
+    private final int id;
 
-    private String fileAction;
+    private final String fileAction;
 
-    private long filePosition;
+    private final long filePosition;
 
     private long countArg;
 
@@ -39,7 +39,7 @@ public final class StreamTraceRecord {
 
     private Exception exThrown;
 
-    private StackTraceElement[] stack;
+    private final StackTraceElement[] stack;
 
     public StreamTraceRecord(int id, String fileAction, long filePosition, StackTraceElement[] stack) {
         this.id = id;

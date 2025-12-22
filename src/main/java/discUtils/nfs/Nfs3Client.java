@@ -59,13 +59,13 @@ public final class Nfs3Client implements Closeable {
         cachedStats = new HashMap<>();
     }
 
-    private Nfs3FileSystemInfo fileSystemInfo;
+    private final Nfs3FileSystemInfo fileSystemInfo;
 
     public Nfs3FileSystemInfo getFileSystemInfo() {
         return fileSystemInfo;
     }
 
-    private Nfs3FileHandle rootHandle;
+    private final Nfs3FileHandle rootHandle;
 
     public Nfs3FileHandle getRootHandle() {
         return rootHandle;

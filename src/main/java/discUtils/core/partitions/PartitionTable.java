@@ -92,7 +92,7 @@ public abstract class PartitionTable {
      */
     public static boolean isPartitioned(Stream content) {
         for (PartitionTableFactory partTableFactory : factories) {
-logger.log(Level.TRACE, "partition check: " + partTableFactory);
+logger.log(Level.TRACE, "partition check: " + partTableFactory.getClass().getName());
             if (partTableFactory.detectIsPartitioned(content)) {
                 return true;
             }

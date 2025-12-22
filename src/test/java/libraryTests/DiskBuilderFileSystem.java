@@ -42,7 +42,7 @@ import dotnet4j.io.Stream;
  */
 public class DiskBuilderFileSystem extends DiscFileSystem {
 
-    private Map<String, DiskImageFileSpecification> files;
+    private final Map<String, DiskImageFileSpecification> files;
 
     public DiskBuilderFileSystem(List<DiskImageFileSpecification> fileSpecs) {
         files = new HashMap<>();

@@ -112,6 +112,6 @@ public enum AttributeType {
     }
 
     public static AttributeType valueOf(int value) {
-        return Arrays.stream(values()).filter(e -> e.getValue() == value).findFirst().get();
+        return Arrays.stream(values()).filter(e -> e.getValue() == value).findFirst().orElseThrow();
     }
 }

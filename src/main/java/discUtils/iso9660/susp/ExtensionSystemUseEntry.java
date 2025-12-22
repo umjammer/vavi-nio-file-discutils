@@ -35,7 +35,7 @@ public final class ExtensionSystemUseEntry extends SystemUseEntry {
 
     public String extensionSource;
 
-    public byte extensionVersion;
+    public final byte extensionVersion;
 
     public ExtensionSystemUseEntry(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {
         checkAndSetCommonProperties(name, length, version, (byte) 8, (byte) 1);

@@ -45,7 +45,7 @@ public final class BuildFileInfo extends BuildDirectoryMember {
 
     private String contentPath;
 
-    private long contentSize;
+    private final long contentSize;
 
     private Stream contentStream;
 
@@ -79,7 +79,7 @@ public final class BuildFileInfo extends BuildDirectoryMember {
     /**
      * The parent directory, or {@code null} if none.
      */
-    private BuildDirectoryInfo parent;
+    private final BuildDirectoryInfo parent;
 
     @Override public BuildDirectoryInfo getParent() {
         return parent;

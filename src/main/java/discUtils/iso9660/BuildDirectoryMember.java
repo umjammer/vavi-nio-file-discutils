@@ -67,7 +67,7 @@ public abstract class BuildDirectoryMember {
     /**
      * Gets the Joliet compliant name of the file or directory.
      */
-    private String name;
+    private final String name;
 
     public String getName() {
         return name;
@@ -81,7 +81,7 @@ public abstract class BuildDirectoryMember {
     /**
      * Gets the ISO 9660 compliant name of the file or directory.
      */
-    private String shortName;
+    private final String shortName;
 
     public String getShortName() {
         return shortName;

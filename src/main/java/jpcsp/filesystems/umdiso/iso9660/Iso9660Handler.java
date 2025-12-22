@@ -43,11 +43,11 @@ public class Iso9660Handler extends Iso9660Directory {
         }
         ByteArrayInputStream byteStream = new ByteArrayInputStream(sector);
 
-        byteStream.skip(157); // reach rootDirTocHeader
+        byteStream.skipNBytes(157); // reach rootDirTocHeader
 
         byte[] b = new byte[38];
 
-        byteStream.read(b);
+        byteStream.readNBytes(b, 0, b.length);
         Iso9660File rootDirEntry = new Iso9660File(b, b.length, r.hasJolietExtension());
 
         int rootLBA = rootDirEntry.getLBA();

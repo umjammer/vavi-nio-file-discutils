@@ -30,7 +30,7 @@ import discUtils.streams.util.EndianUtilities;
 
 abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializable {
 
-    protected Class<TKey> keyClass;
+    protected final Class<TKey> keyClass;
 
     public BTreeNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
         keyClass = clazz;
@@ -38,7 +38,7 @@ abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializ
         this.descriptor = descriptor;
     }
 
-    private BTreeNodeDescriptor descriptor;
+    private final BTreeNodeDescriptor descriptor;
 
     protected BTreeNodeDescriptor getDescriptor() {
         return descriptor;
@@ -54,7 +54,7 @@ abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializ
         records = value;
     }
 
-    private BTree<?> tree;
+    private final BTree<?> tree;
 
     protected BTree<?> getTree() {
         return tree;

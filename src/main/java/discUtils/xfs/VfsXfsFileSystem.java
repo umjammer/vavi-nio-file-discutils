@@ -154,7 +154,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
      * @see "https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L829"
      * XFS_AGB_TO_DADDR
      */
-    private long xFS_AGB_TO_DADDR(SuperBlock sb, int agno, int agbno) {
+    private static long xFS_AGB_TO_DADDR(SuperBlock sb, int agno, int agbno) {
         return fsbToBb(sb, (long) agno * sb.getAgBlocks()) + agbno;
     }
 
@@ -162,7 +162,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
      * @see "https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L587"
      * XFS_FSB_TO_BB
      */
-    private long fsbToBb(SuperBlock sb, long fsbno) {
+    private static long fsbToBb(SuperBlock sb, long fsbno) {
         return fsbno << (sb.getBlocksizeLog2() - BBSHIFT);
     }
 
@@ -170,7 +170,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
      * @see "https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L716"
      * XFS_AGF_DADDR
      */
-    private long xFS_AGF_DADDR(SuperBlock sb) {
+    private static long xFS_AGF_DADDR(SuperBlock sb) {
         return 1L << (sb.getSectorSizeLog2() - BBSHIFT);
     }
 }

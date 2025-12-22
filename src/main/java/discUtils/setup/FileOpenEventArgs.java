@@ -33,7 +33,7 @@ import dotnet4j.io.Stream;
  */
 public class FileOpenEventArgs /* extends EventArgs */ {
 
-    private FileOpenDelegate opener;
+    private final FileOpenDelegate opener;
 
     public FileOpenEventArgs(String fileName, FileMode mode, FileAccess access, FileShare share, FileOpenDelegate opener) {
         this.fileName = fileName;

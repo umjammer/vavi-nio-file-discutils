@@ -51,9 +51,9 @@ class NtfsAttribute implements IDiagnosticTraceable {
 
     protected FileRecordReference containingFile;
 
-    protected Map<AttributeReference, AttributeRecord> extents;
+    protected final Map<AttributeReference, AttributeRecord> extents;
 
-    protected File file;
+    protected final File file;
 
     protected AttributeRecord primaryRecord;
 

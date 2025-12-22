@@ -42,13 +42,13 @@ public class File implements IVfsFile {
         this.inodeRef = inodeRef;
     }
 
-    private Context context;
+    private final Context context;
 
     protected Context getContext() {
         return context;
     }
 
-    private Inode inode;
+    private final Inode inode;
 
     public Inode getInode() {
         return inode;

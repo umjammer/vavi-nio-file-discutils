@@ -80,18 +80,18 @@ logger.log(Level.DEBUG, "part[0]: " + rawSchemeSpecificParts[0]);
 logger.log(Level.DEBUG, "file: " + file);
 
         VirtualDisk disk = VirtualDisk.openDisk(file, forceType, FileAccess.Read, null, null);
-logger.log(Level.DEBUG, "disk: " + disk);
+logger.log(Level.DEBUG, "DISK: " + disk.getClass().getName());
         VolumeManager manager = new VolumeManager();
-logger.log(Level.DEBUG, "manager: " + manager);
+logger.log(Level.DEBUG, "MANAGER: " + manager.getClass().getName());
         manager.addDisk(disk);
         LogicalVolumeInfo lvi = manager.getLogicalVolumes().get(volumeNumber);
-logger.log(Level.DEBUG, "lvi: " + lvi + " / " + manager.getLogicalVolumes().size());
+logger.log(Level.DEBUG, "LVI: " + lvi + " / " + manager.getLogicalVolumes().size());
         if (FileSystemManager.detectFileSystems(lvi).isEmpty())
             throw new IllegalArgumentException("no filesystems found in " + file);
         FileSystemInfo fsi = FileSystemManager.detectFileSystems(lvi).get(0);
-logger.log(Level.DEBUG, "fsi: " + fsi + " / " + FileSystemManager.detectFileSystems(lvi).size());
+logger.log(Level.DEBUG, "FSI: " + fsi + " / " + FileSystemManager.detectFileSystems(lvi).size());
         DiscFileSystem fs = fsi.open(lvi, new FileSystemParameters());
-logger.log(Level.DEBUG, "fs: " + fs);
+logger.log(Level.DEBUG, "FS: " + fs + ", " + fs.getClass().getSimpleName());
         DuFileStore fileStore = new DuFileStore(fs, factoryProvider.getAttributesFactory());
         return new DuFileSystemDriver(fileStore, factoryProvider, fs, env);
     }

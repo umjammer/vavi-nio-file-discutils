@@ -143,7 +143,7 @@ public class MetadataSegmentSection {
         }
     }
 
-    private List<MetadataStripe> parseStripesSection(Scanner data) {
+    private static List<MetadataStripe> parseStripesSection(Scanner data) {
         List<MetadataStripe> result = new ArrayList<>();
         String line;
         while (data.hasNextLine()) {

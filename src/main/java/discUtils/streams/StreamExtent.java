@@ -55,7 +55,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
     /**
      * Gets the start of the extent (in bytes).
      */
-    private long length;
+    private final long length;
 
     public long getLength() {
         return length;
@@ -64,7 +64,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
     /**
      * Gets the start of the extent (in bytes).
      */
-    private long start;
+    private final long start;
 
     public long getStart() {
         return start;

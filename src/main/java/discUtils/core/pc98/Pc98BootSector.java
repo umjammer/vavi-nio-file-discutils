@@ -8,6 +8,8 @@ package discUtils.core.pc98;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 
 import discUtils.fat.BootSector;
 import discUtils.fat.FatType;
@@ -25,6 +27,8 @@ import vavix.io.fat.PC98BiosParameterBlock;
  */
 public class Pc98BootSector implements BootSector {
 
+    private static final Logger logger = System.getLogger(Pc98BootSector.class.getName());
+
     private final PC98BiosParameterBlock bpb;
 
     public Pc98BootSector(Stream stream) {
@@ -34,9 +38,10 @@ public class Pc98BootSector implements BootSector {
 
             this.bpb = new PC98BiosParameterBlock();
             Serdes.Util.deserialize(bais, bpb);
-//logger.log(Level.TRACE, "■ bootRecord ----\n" + bpb);
+logger.log(Level.TRACE, "■ bootRecord ----\n" + bpb);
             bpb.compute();
-//logger.log(Level.TRACE, "■ bootRecord ----\n" + bpb);
+logger.log(Level.TRACE, "■ bootRecord ----\n" + bpb);
+logger.log(Level.TRACE, "fat: " + getFatVariant());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }

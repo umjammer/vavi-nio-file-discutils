@@ -37,13 +37,13 @@ public abstract class BuilderExtent implements Closeable {
         this.length = length;
     }
 
-    protected long length;
+    protected final long length;
 
     public long getLength() {
         return length;
     }
 
-    protected long start;
+    protected final long start;
 
     public long getStart() {
         return start;

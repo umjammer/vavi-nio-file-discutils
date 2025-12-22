@@ -32,7 +32,7 @@ public class DescriptorFileEntry {
         this.type = type;
     }
 
-    private String key;
+    private final String key;
 
     public String getKey() {
         return key;

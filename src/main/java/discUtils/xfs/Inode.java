@@ -536,7 +536,7 @@ public class Inode implements IByteArraySerializable {
         return size();
     }
 
-    private long readTimestamp(byte[] buffer, int offset) {
+    private static long readTimestamp(byte[] buffer, int offset) {
         long seconds = ByteUtil.readBeInt(buffer, offset);
         long nanoSeconds = ByteUtil.readBeInt(buffer, offset + 0x4);
         return Instant.ofEpochSecond(seconds, nanoSeconds).toEpochMilli();

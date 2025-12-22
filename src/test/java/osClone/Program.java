@@ -55,9 +55,9 @@ public class Program extends ProgramBase {
     private static final String FS = java.io.File.separator;
 
     // Shared to avoid continual re-allocation of a large buffer
-    private static byte[] copyBuffer = new byte[10 * 1024 * 1024];
+    private static final byte[] copyBuffer = new byte[10 * 1024 * 1024];
 
-    private static String[] excludedFiles = new String[] {
+    private static final String[] excludedFiles = new String[] {
         FS + "PAGEFILE.SYS", FS + "HIBERFIL.SYS", FS + "SYSTEM VOLUME INFORMATION"
     };
 
@@ -73,7 +73,7 @@ public class Program extends ProgramBase {
     @Option(option = "l", argName = "label", args = 1, description = "The volume label for the NTFS file system created.")
     private String labelSwitch = "name";
 
-    private Map<Long, String> uniqueFiles = new HashMap<>();
+    private final Map<Long, String> uniqueFiles = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -84,7 +84,7 @@ public class Program extends ProgramBase {
     // return StandardSwitches.OutputFormatAndAdapterType |
     // StandardSwitches.UserAndPassword | StandardSwitches.DiskSize;
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     @Override
     protected void doRun() throws IOException {
@@ -221,7 +221,7 @@ public class Program extends ProgramBase {
         }
     }
 
-    private void copyFile(NtfsFileSystem sourceNtfs, NtfsFileSystem destNtfs, String path) throws IOException {
+    private static void copyFile(NtfsFileSystem sourceNtfs, NtfsFileSystem destNtfs, String path) throws IOException {
         if (isExcluded(path)) {
             return;
         }

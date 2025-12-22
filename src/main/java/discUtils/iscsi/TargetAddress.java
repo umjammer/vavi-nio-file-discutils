@@ -52,7 +52,7 @@ public class TargetAddress {
     /**
      * Gets the IP address (or FQDN) of the Target.
      */
-    private String networkAddress;
+    private final String networkAddress;
 
     public String getNetworkAddress() {
         return networkAddress;
@@ -61,7 +61,7 @@ public class TargetAddress {
     /**
      * Gets the network port of the Target.
      */
-    private int networkPort;
+    private final int networkPort;
 
     public int getNetworkPort() {
         return networkPort;
@@ -70,7 +70,7 @@ public class TargetAddress {
     /**
      * Gets the Group Tag of the Target.
      */
-    private String targetGroupTag;
+    private final String targetGroupTag;
 
     public String getTargetGroupTag() {
         return targetGroupTag;

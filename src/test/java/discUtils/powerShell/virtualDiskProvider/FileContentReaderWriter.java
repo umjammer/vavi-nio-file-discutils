@@ -41,9 +41,9 @@ import dotnet4j.io.StreamWriter;
 
 public final class FileContentReaderWriter implements IContentWriter, IContentReader {
 
-    private Provider provider;
+    private final Provider provider;
 
-    private Stream contentStream;
+    private final Stream contentStream;
 
     private ContentEncoding encoding = ContentEncoding.Unknown;
 

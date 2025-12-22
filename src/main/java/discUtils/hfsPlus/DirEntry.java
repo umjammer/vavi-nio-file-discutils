@@ -37,7 +37,7 @@ final class DirEntry extends VfsDirEntry {
         catalogFileInfo = parseDirEntryData(dirEntryData);
     }
 
-    private CommonCatalogFileInfo catalogFileInfo;
+    private final CommonCatalogFileInfo catalogFileInfo;
 
     public CommonCatalogFileInfo getCatalogFileInfo() {
         return catalogFileInfo;
@@ -51,7 +51,7 @@ final class DirEntry extends VfsDirEntry {
         return UnixFileType.toFileAttributes(getCatalogFileInfo().fileSystemInfo.getFileType());
     }
 
-    private String fileName;
+    private final String fileName;
 
     @Override public String getFileName() {
         return fileName;

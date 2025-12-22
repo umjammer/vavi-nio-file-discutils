@@ -86,7 +86,7 @@ Debug.printf("in: %s", chdFile);
         Chd.ChdFile chdFile = res[0];
 Debug.printf("chdFile=%s, err=%s", chdFile, err);
 
-        ChdHeader header = chd.chd_get_header(chdFile);
+        ChdHeader header = Chd.chd_get_header(chdFile);
         int numberFrames = header.totalhunks * CD_FRAMES_PER_HUNK;
         int frameSize = CD_MAX_SECTOR_DATA + CD_MAX_SUBCODE_DATA;
 
@@ -128,7 +128,7 @@ Debug.printf("chdRead hunknum=%d, err=%s", i, err);
                 }
             }
         }
-        chd.chd_close(chdFile);
+        Chd.chd_close(chdFile);
         vFileOut.close();
 
         long end = System.currentTimeMillis();

@@ -58,7 +58,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Gets the file system options, which can be modified.
      */
-    private DiscFileSystemOptions options;
+    private final DiscFileSystemOptions options;
 
     public DiscFileSystemOptions getOptions() {
         return options;

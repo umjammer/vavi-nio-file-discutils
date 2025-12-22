@@ -23,6 +23,8 @@
 package discUtils.streams;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +35,8 @@ import dotnet4j.io.Stream;
 
 
 public class SubStream extends MappedStream {
+
+    private static final Logger logger = System.getLogger(SubStream.class.getName());
 
     private final long first;
 
@@ -49,6 +53,7 @@ public class SubStream extends MappedStream {
         this.first = first;
         this.length = length;
         ownsParent = Ownership.None;
+logger.log(Level.TRACE, "sub: first: %d, length: %d".formatted(first, length));
 
         if (this.first + this.length > this.parent.getLength()) {
             throw new IllegalArgumentException("Substream extends beyond end of parent stream");
@@ -128,6 +133,7 @@ public class SubStream extends MappedStream {
             return 0;
         }
 
+logger.log(Level.TRACE, "sub: position: " + (first + position) + ", " + first + ", " + position);
         parent.position(first + position);
         int numRead = parent.read(buffer, offset, (int) Math.min(count, Math.min(length - position, Integer.MAX_VALUE)));
 //if (numRead > 1) logger.log(Level.DEBUG, parent + ", " + first + ", " + position + ", " + numRead + "\n" + StringUtil.getDump(buffer, offset, Math.min(64, numRead)));

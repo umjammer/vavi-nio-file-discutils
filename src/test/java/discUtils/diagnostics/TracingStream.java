@@ -44,16 +44,16 @@ public final class TracingStream extends Stream {
 
     private Stream wrapped;
 
-    private Ownership ownsWrapped;
+    private final Ownership ownsWrapped;
 
-    private List<StreamTraceRecord> records;
+    private final List<StreamTraceRecord> records;
 
     private boolean active;
 
     private boolean captureStack;
 
     @SuppressWarnings("unused")
-    private boolean captureStackFileDetails = false;
+    private final boolean captureStackFileDetails = false;
 
     private boolean traceReads;
 

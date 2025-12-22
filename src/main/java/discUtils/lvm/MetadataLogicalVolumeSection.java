@@ -47,7 +47,7 @@ public class MetadataLogicalVolumeSection {
 
     public UUID identity;
 
-    public EnumSet<LogicalVolumeStatus> status = EnumSet.noneOf(LogicalVolumeStatus.class);
+    public final EnumSet<LogicalVolumeStatus> status = EnumSet.noneOf(LogicalVolumeStatus.class);
 
     public String[] flags;
 
@@ -195,7 +195,7 @@ public class MetadataLogicalVolumeSection {
         return new SubStream(pv.getContent(), Ownership.None, start, length);
     }
 
-    private Comparator<MetadataSegmentSection> compareSegments = (x, y) -> {
+    private final Comparator<MetadataSegmentSection> compareSegments = (x, y) -> {
         if (x.startExtent > y.startExtent) {
             return 1;
         } else if (x.startExtent < y.startExtent) {

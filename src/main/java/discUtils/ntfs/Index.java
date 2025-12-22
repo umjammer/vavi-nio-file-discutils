@@ -50,15 +50,15 @@ class Index implements Closeable {
 
     private final ObjectCache<Long, IndexBlock> blockCache;
 
-    protected BiosParameterBlock bpb;
+    protected final BiosParameterBlock bpb;
 
     private final Comparator<byte[]> comparer;
 
-    protected File file;
+    protected final File file;
 
     private Bitmap indexBitmap;
 
-    protected String name;
+    protected final String name;
 
     private final IndexRoot root;
 
@@ -148,7 +148,7 @@ class Index implements Closeable {
         return root.getIndexAllocationSize();
     }
 
-    private boolean isFileIndex;
+    private final boolean isFileIndex;
 
     boolean isFileIndex() {
         return isFileIndex;

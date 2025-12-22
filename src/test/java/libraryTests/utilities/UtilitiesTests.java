@@ -22,7 +22,7 @@ class UtilitiesTests {
         checkResolvePath(FS + "TEMP" + FS + "Foo.txt", ".." + FS + ".." + FS + "Bar.txt", FS + "Bar.txt");
     }
 
-    private void checkResolvePath(String basePath, String relativePath, String expectedResult) {
+    private static void checkResolvePath(String basePath, String relativePath, String expectedResult) {
         String result = Utilities.resolvePath(basePath, relativePath);
         assertEquals(expectedResult, result);
     }

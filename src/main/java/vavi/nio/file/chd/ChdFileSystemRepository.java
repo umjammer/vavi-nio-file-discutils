@@ -20,7 +20,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import com.github.fge.filesystem.driver.FileSystemDriver;
 import com.github.fge.filesystem.provider.FileSystemRepositoryBase;
 import jpcsp.filesystems.umdiso.UmdIsoReader;
-import vavi.util.Debug;
 
 import static java.lang.System.getLogger;
 

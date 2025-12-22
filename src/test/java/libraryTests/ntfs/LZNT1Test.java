@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Disabled("not implemented yet")
 class LZNT1Test {
 
-    private byte[] uncompressedData;
+    private final byte[] uncompressedData;
 
     public LZNT1Test() {
         Random rng = new Random(3425);

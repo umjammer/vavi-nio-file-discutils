@@ -62,7 +62,7 @@ public final class ServiceRecord extends ResourceRecord {
     /**
      * Gets the DNS name at which the service can be accessed.
      */
-    private String target;
+    private final String target;
 
     public String getTarget() {
         return target;

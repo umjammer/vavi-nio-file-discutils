@@ -91,7 +91,7 @@ class Program extends ProgramBase {
 
     private static final String FS = java.io.File.separator;
 
-    private void copyDirectory(DiscDirectoryInfo source, Path target, boolean recurse) throws IOException {
+    private static void copyDirectory(DiscDirectoryInfo source, Path target, boolean recurse) throws IOException {
         if (recurse) {
             for (DiscDirectoryInfo childDiscDirectory : source.getDirectories()) {
                 Path childDirectory = Files.createDirectory(target.resolve(childDiscDirectory.getName()));

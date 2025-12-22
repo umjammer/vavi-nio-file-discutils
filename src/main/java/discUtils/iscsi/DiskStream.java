@@ -54,7 +54,7 @@ public class DiskStream extends SparseStream {
         canRead = access != FileAccess.Write;
     }
 
-    private boolean canRead;
+    private final boolean canRead;
 
     @Override public boolean canRead() {
         return canRead;
@@ -64,7 +64,7 @@ public class DiskStream extends SparseStream {
         return true;
     }
 
-    private boolean canWrite;
+    private final boolean canWrite;
 
     @Override public boolean canWrite() {
         return canWrite;

@@ -40,7 +40,7 @@ public class Program extends ProgramBase {
             description = "Indicates the geometry adjustment to apply.  Set this parameter to match the translation " +
                           "configured in the BIOS of the machine that will boot from the disk - " +
                           "auto should work in most cases for modern BIOS.")
-    private GeometryTranslation translation = GeometryTranslation.Auto;
+    private final GeometryTranslation translation = GeometryTranslation.Auto;
 
     @Option(option = "volume",
             description = "Volumes to clone.  The volumes should all be on the same disk.",

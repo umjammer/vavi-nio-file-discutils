@@ -27,7 +27,7 @@ import com.sun.jna.Pointer;
 
 public final class DiskStream extends UnbufferedNativeStream {
 
-    private long length;
+    private final long length;
 
     public DiskStream(Pointer handle) {
         super(handle);

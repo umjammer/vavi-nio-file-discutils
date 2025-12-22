@@ -29,7 +29,7 @@ public abstract class RpcProgram {
 
     public static final int RpcVersion = 2;
 
-    protected IRpcClient client;
+    protected final IRpcClient client;
 
     protected RpcProgram(IRpcClient client) {
         this.client = client;

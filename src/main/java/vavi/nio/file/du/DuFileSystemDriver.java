@@ -42,7 +42,7 @@ import static vavi.nio.file.Util.toPathString;
  */
 public final class DuFileSystemDriver extends ExtendedFileSystemDriver<DiscFileSystemInfo> {
 
-    private DiscFileSystem fileSystem;
+    private final DiscFileSystem fileSystem;
 
     public DuFileSystemDriver(FileStore fileStore,
                               FileSystemFactoryProvider provider,

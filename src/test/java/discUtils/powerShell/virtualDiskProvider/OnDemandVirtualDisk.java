@@ -44,9 +44,9 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
 
     private DiscFileSystem fileSystem;
 
-    private String path;
+    private final String path;
 
-    private FileAccess access;
+    private final FileAccess access;
 
     public OnDemandVirtualDisk(String path, FileAccess access) {
         this.path = path;
@@ -189,11 +189,11 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
 
     private static class StreamWrapper extends SparseStream {
 
-        private DiscFileSystem fileSystem;
+        private final DiscFileSystem fileSystem;
 
-        private String path;
+        private final String path;
 
-        private FileAccess access;
+        private final FileAccess access;
 
         private long position;
 

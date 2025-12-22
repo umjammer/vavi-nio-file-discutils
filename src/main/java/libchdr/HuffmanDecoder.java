@@ -97,9 +97,9 @@ import java.util.Arrays;
 public class HuffmanDecoder {
 
     /** number of total codes being processed */
-    protected int numcodes;
+    protected final int numcodes;
     /** maximum bits per code */
-    protected int maxbits;
+    protected final int maxbits;
     /** value of the previous data (for delta-RLE encoding) */
     protected int prevdata;
     /** number of RLE bytes remaining (for delta-RLE encoding) */

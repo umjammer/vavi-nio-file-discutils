@@ -75,31 +75,31 @@ public final class UnixBuildFileRecord {
         this.modificationTime = modificationTime;
     }
 
-    private EnumSet<UnixFilePermissions> fileMode;
+    private final EnumSet<UnixFilePermissions> fileMode;
 
     public EnumSet<UnixFilePermissions> getFileMode() {
         return fileMode;
     }
 
-    private int groupId;
+    private final int groupId;
 
     public int getGroupId() {
         return groupId;
     }
 
-    private long modificationTime;
+    private final long modificationTime;
 
     public long getModificationTime() {
         return modificationTime;
     }
 
-    private String name;
+    private final String name;
 
     public String getName() {
         return name;
     }
 
-    private int ownerId;
+    private final int ownerId;
 
     public int getOwnerId() {
         return ownerId;

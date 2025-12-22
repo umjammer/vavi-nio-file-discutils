@@ -11,10 +11,8 @@ import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import discUtils.core.DiscFileSystem;
 import discUtils.core.FileSystemInfo;
@@ -23,7 +21,6 @@ import discUtils.core.FileSystemParameters;
 import discUtils.core.LogicalVolumeInfo;
 import discUtils.core.VirtualDisk;
 import discUtils.core.VolumeManager;
-import discUtils.fat.FatFileSystem;
 import dotnet4j.io.FileAccess;
 import vavi.nio.file.du.DuFileSystemProvider;
 import vavi.util.Debug;
@@ -34,9 +31,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
-
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**

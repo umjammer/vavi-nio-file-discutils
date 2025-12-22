@@ -36,7 +36,7 @@ public class MetadataPhysicalVolumeSection {
 
     public String device;
 
-    public EnumSet<PhysicalVolumeStatus> status = EnumSet.noneOf(PhysicalVolumeStatus.class);
+    public final EnumSet<PhysicalVolumeStatus> status = EnumSet.noneOf(PhysicalVolumeStatus.class);
 
     public String[] flags;
 

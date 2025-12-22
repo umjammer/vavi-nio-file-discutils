@@ -231,7 +231,7 @@ public class UmdIsoReader implements IBrowser {
         return buffer;
     }
 
-    private int removePath(String[] path, int index, int length) {
+    private static int removePath(String[] path, int index, int length) {
         if (index < 0 || index >= length) {
             return length;
         }
@@ -493,8 +493,6 @@ public class UmdIsoReader implements IBrowser {
         try {
             String[] files = listDirectory("");
             return getFileNameRecursive(fileStartSector, "", files);
-        } catch (FileNotFoundException e) {
-            // Ignore Exception
         } catch (IOException e) {
             // Ignore Exception
         }
@@ -510,7 +508,7 @@ public class UmdIsoReader implements IBrowser {
             int fileStart = 0;
             long fileLength = 0;
 
-            if (path.length() == 0) {
+            if (path.isEmpty()) {
                 filePath = file;
             }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Naohide Sano, All rights reserved.
+ * Copyright (c) 2024 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
@@ -7,6 +7,9 @@
 package discUtils.emu;
 
 import java.io.IOException;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +26,18 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
+import vavi.emu.disk.LogicalDisk;
 
 
 /**
  * Represents a single emu disk file.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
- * @version 0.00 2022/07/23 umjammer initial version <br>
+ * @version 0.00 2024/05/26 umjammer initial version <br>
  */
 public final class DiskImageFile extends VirtualDiskLayer {
+
+    private static final Logger logger = System.getLogger(DiskImageFile.class.getName());
 
     private vavi.emu.disk.Disk disk;
 
@@ -98,6 +104,18 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         try {
             disk = vavi.emu.disk.Disk.read(Paths.get(locator.getFullPath(path)));
+            if (disk.getSectorSize() == -1) {
+logger.log(Level.DEBUG, "no sector size, try to post read");
+                try {
+                    LogicalDisk logicalDisk = LogicalDisk.read(Path.of(locator.getFullPath(path)), disk);
+logger.log(Level.DEBUG, "logicalDisk: " + logicalDisk.getClass().getSimpleName() + ", bps: " + disk.getSectorSize() + ", offset: " + disk.getOffset());
+                    FileSystemFactory.logicalDisk.set(logicalDisk);
+                } catch (IllegalArgumentException e) { // not found for logicalDisk
+                    FileSystemFactory.logicalDisk.set(null);
+logger.log(Level.DEBUG, "no logicalDisk: " + e);
+                }
+            }
+            assert disk.getSectorSize() != -1 : "bytes per sector should be defined";
 
             fileStream = locator.open(path, FileMode.Open, access, share);
             ownership = Ownership.Dispose;
@@ -105,7 +123,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
             fileName = locator.getFileFromPath(path);
         } catch (IOException e) {
-e.printStackTrace(System.err);
+logger.log(Level.ERROR, e.getMessage(), e);
             throw new dotnet4j.io.IOException(e);
         }
     }

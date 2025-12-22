@@ -46,7 +46,7 @@ public class NtfsStream {
         attribute = attr;
     }
 
-    private NtfsAttribute attribute;
+    private final NtfsAttribute attribute;
 
     public NtfsAttribute getAttribute() {
         return attribute;

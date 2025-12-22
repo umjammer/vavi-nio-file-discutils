@@ -41,7 +41,7 @@ public final class DiskImageFileSpecification {
     /**
      * Gets name of the file.
      */
-    private String name;
+    private final String name;
 
     public String getName() {
         return name;

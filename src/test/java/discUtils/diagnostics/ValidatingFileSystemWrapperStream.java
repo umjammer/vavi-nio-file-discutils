@@ -38,17 +38,17 @@ import dotnet4j.io.Stream;
 
 public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem & IDiagnosticTraceable, Tc extends DiscFileSystemChecker> extends SparseStream {
 
-    private ValidatingFileSystem<Tfs, Tc> fileSystem;
+    private final ValidatingFileSystem<Tfs, Tc> fileSystem;
 
     interface StreamOpenFn<TFileSystem> {
         SparseStream invoke(TFileSystem fs);
     }
 
-    StreamOpenFn<Tfs> openFn;
+    final StreamOpenFn<Tfs> openFn;
 
-    private long replayHandle;
+    private final long replayHandle;
 
-    private static AtomicLong nextReplayHandle = new AtomicLong();
+    private static final AtomicLong nextReplayHandle = new AtomicLong();
 
     private long shadowPosition;
 

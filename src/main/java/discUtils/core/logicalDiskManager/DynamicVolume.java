@@ -42,7 +42,7 @@ public class DynamicVolume {
         return getRecord().biosType;
     }
 
-    private UUID identity;
+    private final UUID identity;
 
     public UUID getIdentity() {
         return identity;

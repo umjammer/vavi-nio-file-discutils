@@ -38,7 +38,7 @@ public final class CanonicalNameRecord extends ResourceRecord {
     /**
      * Gets the canonical name.
      */
-    private String canonicalName;
+    private final String canonicalName;
 
     public String getCanonicalName() {
         return canonicalName;

@@ -64,7 +64,7 @@ public final class OpticalDiscService {
 
     private String userName;
 
-    static OkHttpClient client;
+    static final OkHttpClient client;
 
     static {
         client = new OkHttpClient().newBuilder().followRedirects(false).followSslRedirects(false).build();

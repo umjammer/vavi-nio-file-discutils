@@ -87,7 +87,7 @@ public final class Geometry {
     /**
      * Gets the number of bytes in each sector.
      */
-    private int bytesPerSector;
+    private final int bytesPerSector;
 
     public int getBytesPerSector() {
         return bytesPerSector;
@@ -103,7 +103,7 @@ public final class Geometry {
     /**
      * Gets the number of cylinders.
      */
-    private int cylinders;
+    private final int cylinders;
 
     public int getCylinders() {
         return cylinders;
@@ -112,7 +112,7 @@ public final class Geometry {
     /**
      * Gets the number of heads (aka platters).
      */
-    private int headsPerCylinder;
+    private final int headsPerCylinder;
 
     public int getHeadsPerCylinder() {
         return headsPerCylinder;
@@ -160,7 +160,7 @@ public final class Geometry {
     /**
      * Gets the number of sectors per track.
      */
-    private int sectorsPerTrack;
+    private final int sectorsPerTrack;
 
     public int getSectorsPerTrack() {
         return sectorsPerTrack;

@@ -429,7 +429,7 @@ logger.log(Level.TRACE, uri);
         }
 
         VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
-logger.log(Level.TRACE, transport.getExtraInfo());
+logger.log(Level.TRACE, "extraInfo: " + transport.getExtraInfo());
         transport.connect(uri, user, password);
         if (transport.isRawDisk()) {
             result = transport.openDisk(access);

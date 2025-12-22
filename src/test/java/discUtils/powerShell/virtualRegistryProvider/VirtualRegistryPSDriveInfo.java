@@ -32,7 +32,7 @@ import dotnet4j.io.Stream;
 
 public final class VirtualRegistryPSDriveInfo extends PSDriveInfo {
 
-    private Stream hiveStream;
+    private final Stream hiveStream;
 
     private RegistryHive hive;
 

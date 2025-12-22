@@ -278,7 +278,7 @@ public final class SquashFileSystemBuilder {
         parentDir.addChild(Utilities.getFileFromPath(path), dir);
     }
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     /**
      * Builds the file system, returning a new stream.

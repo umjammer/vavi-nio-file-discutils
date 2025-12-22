@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class DiskBuilderTest {
-    private SparseStream diskContent;
+    private final SparseStream diskContent;
 
     public DiskBuilderTest() throws Exception {
         MemoryStream fileStream = new MemoryStream();

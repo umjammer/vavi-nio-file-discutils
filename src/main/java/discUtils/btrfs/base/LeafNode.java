@@ -89,7 +89,7 @@ public class LeafNode extends NodeHeader {
         return size();
     }
 
-    private BaseItem createItem(NodeItem item, byte[] buffer, int offset) {
+    private static BaseItem createItem(NodeItem item, byte[] buffer, int offset) {
         byte[] data = EndianUtilities.toByteArray(buffer, (offset + item.getDataOffset()), item.getDataSize());
         BaseItem result = switch (item.getKey().getItemType()) {
             case ChunkItem -> new ChunkItem(item.getKey());

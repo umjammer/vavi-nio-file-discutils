@@ -37,15 +37,15 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
 
     protected ClusterStream activeStream;
 
-    protected long bytesPerCluster;
+    protected final long bytesPerCluster;
 
-    protected INtfsContext context;
+    protected final INtfsContext context;
 
-    protected CookedDataRuns cookedRuns;
+    protected final CookedDataRuns cookedRuns;
 
-    protected byte[] ioBuffer;
+    protected final byte[] ioBuffer;
 
-    protected RawClusterStream rawStream;
+    protected final RawClusterStream rawStream;
 
     public NonResidentDataBuffer(INtfsContext context, NonResidentAttributeRecord record) {
         this(context, new CookedDataRuns(record.getDataRuns(), record), false);

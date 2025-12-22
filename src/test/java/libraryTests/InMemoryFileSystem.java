@@ -42,7 +42,7 @@ import dotnet4j.io.IOException;
  */
 public class InMemoryFileSystem extends DiscFileSystem {
 
-    private Map<String, SparseMemoryBuffer> files;
+    private final Map<String, SparseMemoryBuffer> files;
 
     public InMemoryFileSystem() {
         files = new HashMap<>();

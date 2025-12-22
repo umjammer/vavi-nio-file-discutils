@@ -38,7 +38,7 @@ class XfsTests {
         assertEquals("init.d", symlink.getTargetPath());
     }
 
-    private byte[] getInodeBuffer() throws Exception {
+    private static byte[] getInodeBuffer() throws Exception {
         byte[] inodeBuffer = new byte[0x70];
         inodeBuffer[0x5] = (byte) InodeFormat.Local.ordinal();
         inodeBuffer[0x3F] = 6; // Length (di_size)

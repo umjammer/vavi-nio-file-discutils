@@ -32,7 +32,7 @@ public class DirectoryEntry {
         details = fileDetails;
     }
 
-    private FileNameRecord details;
+    private final FileNameRecord details;
 
     public FileNameRecord getDetails() {
         return details;
@@ -42,7 +42,7 @@ public class DirectoryEntry {
         return getDetails().flags.contains(FileAttributeFlags.Directory);
     }
 
-    private FileRecordReference reference;
+    private final FileRecordReference reference;
 
     public FileRecordReference getReference() {
         return reference;

@@ -48,7 +48,7 @@ public final class IP4AddressRecord extends ResourceRecord {
     /**
      * Gets the IPv4 address.
      */
-    private InetAddress address;
+    private final InetAddress address;
 
     public InetAddress getAddress() {
         return address;

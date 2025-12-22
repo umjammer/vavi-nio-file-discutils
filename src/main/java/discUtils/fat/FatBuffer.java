@@ -22,15 +22,21 @@
 
 package discUtils.fat;
 
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import dotnet4j.io.Stream;
+import vavi.util.StringUtil;
 
 
 public class FatBuffer {
+
+    private static final Logger logger = System.getLogger(FatBuffer.class.getName());
+
     /**
      * The End-of-chain marker to WRITE (SetNext). Don't use this value to test
      * for end of chain.
@@ -62,11 +68,12 @@ public class FatBuffer {
 
     private final Map<Integer, Integer> dirtySectors;
 
-    private FatType type;
+    private final FatType type;
 
     private int nextFreeCandidate;
 
     public FatBuffer(FatType type, byte[] buffer) {
+//logger.log(Level.TRACE, "\n" + StringUtil.getDump(buffer));
         this.type = type;
         this.buffer = buffer;
         dirtySectors = new HashMap<>();

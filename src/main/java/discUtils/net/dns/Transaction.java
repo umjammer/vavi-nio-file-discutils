@@ -36,7 +36,7 @@ final class Transaction implements Closeable {
         completeEvent = new CountDownLatch(1);
     }
 
-    private List<ResourceRecord> answers;
+    private final List<ResourceRecord> answers;
 
     public List<ResourceRecord> getAnswers() {
         return answers;

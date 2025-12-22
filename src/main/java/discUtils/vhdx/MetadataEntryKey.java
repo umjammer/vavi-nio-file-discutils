@@ -27,14 +27,14 @@ import java.util.UUID;
 
 public final class MetadataEntryKey {
 
-    private UUID itemId;
+    private final UUID itemId;
 
     public MetadataEntryKey(UUID itemId, boolean isUser) {
         this.itemId = itemId;
         this.isUser = isUser;
     }
 
-    private boolean isUser;
+    private final boolean isUser;
 
     public boolean isUser() {
         return isUser;

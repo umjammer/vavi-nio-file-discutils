@@ -65,9 +65,9 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
 
     private DatagramChannel udpClient;
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
-    private ExecutorService es = Executors.newSingleThreadExecutor();
+    private final ExecutorService es = Executors.newSingleThreadExecutor();
 
     /**
      * Initializes a new instance of the MulticastDnsClient class.

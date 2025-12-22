@@ -30,7 +30,7 @@ public final class BTreeLeafRecord<TKey extends BTreeKey<?>> extends BTreeNodeRe
 
     private final int size;
 
-    Class<TKey> clazz;
+    final Class<TKey> clazz;
 
     public BTreeLeafRecord(Class<TKey> clazz, int size) {
         this.size = size;

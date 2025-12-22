@@ -35,19 +35,19 @@ public class Message {
         additionalRecords = new ArrayList<>();
     }
 
-    private List<ResourceRecord> additionalRecords;
+    private final List<ResourceRecord> additionalRecords;
 
     public List<ResourceRecord> getAdditionalRecords() {
         return additionalRecords;
     }
 
-    private List<ResourceRecord> answers;
+    private final List<ResourceRecord> answers;
 
     public List<ResourceRecord> getAnswers() {
         return answers;
     }
 
-    private List<ResourceRecord> authorityRecords;
+    private final List<ResourceRecord> authorityRecords;
 
     public List<ResourceRecord> getAuthorityRecords() {
         return authorityRecords;
@@ -63,7 +63,7 @@ public class Message {
         flags = value;
     }
 
-    private List<Question> questions;
+    private final List<Question> questions;
 
     public List<Question> getQuestions() {
         return questions;

@@ -60,7 +60,7 @@ logger.log(Level.TRACE, this);
     /**
      * Gets the cylinder number (zero-based).
      */
-    private int cylinder;
+    private final int cylinder;
 
     public int getCylinder() {
         return cylinder;
@@ -69,7 +69,7 @@ logger.log(Level.TRACE, this);
     /**
      * Gets the head (zero-based).
      */
-    private int head;
+    private final int head;
 
     public int getHead() {
         return head;
@@ -78,7 +78,7 @@ logger.log(Level.TRACE, this);
     /**
      * Gets the sector number (one-based).
      */
-    private int sector;
+    private final int sector;
 
     public int getSector() {
         return sector;

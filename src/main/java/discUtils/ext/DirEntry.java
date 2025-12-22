@@ -70,7 +70,7 @@ public class DirEntry extends VfsDirEntry {
         throw new UnsupportedOperationException();
     }
 
-    private DirectoryRecord record;
+    private final DirectoryRecord record;
 
     public DirectoryRecord getRecord() {
         return record;

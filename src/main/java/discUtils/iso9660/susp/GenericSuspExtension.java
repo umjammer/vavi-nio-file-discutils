@@ -31,7 +31,7 @@ public final class GenericSuspExtension extends SuspExtension {
         this.identifier = identifier;
     }
 
-    private String identifier;
+    private final String identifier;
 
     @Override
     public String getIdentifier() {

@@ -72,6 +72,6 @@ public enum ScsiStatus {
     }
 
     public static ScsiStatus valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
+        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().orElseThrow();
     }
 }

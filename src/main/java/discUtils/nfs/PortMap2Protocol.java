@@ -39,6 +39,6 @@ public enum PortMap2Protocol {
     }
 
     public static PortMap2Protocol valueOf(int value) {
-        return Arrays.stream(values()).filter(e -> e.getValue() == value).findFirst().get();
+        return Arrays.stream(values()).filter(e -> e.getValue() == value).findFirst().orElseThrow();
     }
 }

@@ -147,7 +147,7 @@ public class DescriptorFile {
         setDiskDatabase(DiskDbSectors, String.valueOf(value.getSectorsPerTrack()));
     }
 
-    private List<ExtentDescriptor> extents;
+    private final List<ExtentDescriptor> extents;
 
     public List<ExtentDescriptor> getExtents() {
         return extents;

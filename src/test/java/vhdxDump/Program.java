@@ -165,7 +165,7 @@ public class Program extends ProgramBase {
         }
     }
 
-    private void writeHeaderInfo(HeaderInfo info) {
+    private static void writeHeaderInfo(HeaderInfo info) {
         System.err.println("Header Info");
         System.err.println("-----------");
         System.err.printf("    Header Signature: %s\n", info.getSignature());

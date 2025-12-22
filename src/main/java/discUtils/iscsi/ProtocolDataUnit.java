@@ -34,13 +34,13 @@ public class ProtocolDataUnit {
         this.contentData = contentData;
     }
 
-    private byte[] contentData;
+    private final byte[] contentData;
 
     public byte[] getContentData() {
         return contentData;
     }
 
-    private byte[] headerData;
+    private final byte[] headerData;
 
     public byte[] getHeaderData() {
         return headerData;

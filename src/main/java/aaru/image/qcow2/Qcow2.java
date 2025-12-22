@@ -270,7 +270,7 @@ logger.log(Level.DEBUG, "QCOW plugin: qHdr.sectors = %d".formatted(imageInfo.sec
         stream.read(l1TableB, 0, header.l1Size * 8);
         l1Table = new long[header.l1Size];
         ByteBuffer.wrap(l1TableB).order(ByteOrder.LITTLE_ENDIAN).asLongBuffer().put(l1Table);
-logger.log(Level.DEBUG, String.format("QCOW plugin: Reading L1 table"));
+logger.log(Level.DEBUG, "QCOW plugin: Reading L1 table");
 
         l1Mask = 0;
         int c = 0;

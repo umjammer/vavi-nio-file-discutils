@@ -24,9 +24,9 @@ package discUtils.udf;
 
 public abstract class LogicalPartition extends Partition {
 
-    protected UdfContext context;
+    protected final UdfContext context;
 
-    protected LogicalVolumeDescriptor volumeDescriptor;
+    protected final LogicalVolumeDescriptor volumeDescriptor;
 
     protected LogicalPartition(UdfContext context, LogicalVolumeDescriptor volumeDescriptor) {
         this.context = context;

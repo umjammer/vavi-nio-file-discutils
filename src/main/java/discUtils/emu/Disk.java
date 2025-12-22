@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 by Naohide Sano, All rights reserved.
+ * Copyright (c) 2024 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
@@ -26,7 +26,7 @@ import dotnet4j.io.FileAccess;
  * Represents a vavi-nio-file-emu-backed disk.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
- * @version 0.00 2022/07/24 umjammer initial version <br>
+ * @version 0.00 2024/05/26 umjammer initial version <br>
  */
 public final class Disk extends VirtualDisk {
 

@@ -32,27 +32,27 @@ import java.util.List;
  */
 public final class ReplayReport {
 
-    private Exception failureException;
+    private final Exception failureException;
 
-    private Exception replayException;
+    private final Exception replayException;
 
-    private List<StreamTraceRecord> globalTraceReport;
+    private final List<StreamTraceRecord> globalTraceReport;
 
-    private List<StreamTraceRecord> traceReport;
+    private final List<StreamTraceRecord> traceReport;
 
-    private int replayBufferSize;
+    private final int replayBufferSize;
 
-    private int eventsReplayed;
+    private final int eventsReplayed;
 
-    private long eventsBeforeLockdown;
+    private final long eventsBeforeLockdown;
 
-    private String replayPreVerificationReport;
+    private final String replayPreVerificationReport;
 
-    private boolean failedVerifyOnReplay;
+    private final boolean failedVerifyOnReplay;
 
-    private String replayVerificationReport;
+    private final String replayVerificationReport;
 
-    private String lastCheckpointReport;
+    private final String lastCheckpointReport;
 
     public ReplayReport(Exception failureEx,
             Exception replayEx,

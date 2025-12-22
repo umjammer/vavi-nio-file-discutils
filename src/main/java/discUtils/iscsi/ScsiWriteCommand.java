@@ -35,7 +35,7 @@ public class ScsiWriteCommand extends ScsiCommand {
         this.numBlocks = numBlocks;
     }
 
-    private short numBlocks;
+    private final short numBlocks;
 
     public int getNumBlocks() {
         return numBlocks & 0xffff;

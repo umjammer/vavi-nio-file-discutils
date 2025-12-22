@@ -74,7 +74,7 @@ public final class LogEntry {
         return descriptors.stream().map(d -> new Range(d.fileOffset, d.getFileLength())).collect(Collectors.toList());
     }
 
-    private long position;
+    private final long position;
 
     public long getPosition() {
         return position;

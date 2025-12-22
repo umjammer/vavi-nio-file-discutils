@@ -39,7 +39,7 @@ public class ResourceRecord {
     /**
      * Gets the class of record.
      */
-    private RecordClass clazz;
+    private final RecordClass clazz;
 
     public RecordClass getClass_() {
         return clazz;
@@ -48,7 +48,7 @@ public class ResourceRecord {
     /**
      * Gets the expiry time of the record.
      */
-    private long expiry;
+    private final long expiry;
 
     public long getExpiry() {
         return expiry;
@@ -57,7 +57,7 @@ public class ResourceRecord {
     /**
      * Gets the name of the resource (domain).
      */
-    private String name;
+    private final String name;
 
     public String getName() {
         return name;
@@ -66,7 +66,7 @@ public class ResourceRecord {
     /**
      * Gets the type of record.
      */
-    private RecordType recordType;
+    private final RecordType recordType;
 
     public RecordType getRecordType() {
         return recordType;

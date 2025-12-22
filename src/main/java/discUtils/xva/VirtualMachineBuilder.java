@@ -60,11 +60,11 @@ import dotnet4j.io.Stream;
 public final class VirtualMachineBuilder extends StreamBuilder implements Closeable {
 
     static class DiskRecord {
-        String item1;
+        final String item1;
 
-        SparseStream item2;
+        final SparseStream item2;
 
-        Ownership item3;
+        final Ownership item3;
 
         public DiskRecord(String label, SparseStream stream, Ownership ownership) {
             this.item1 = label;

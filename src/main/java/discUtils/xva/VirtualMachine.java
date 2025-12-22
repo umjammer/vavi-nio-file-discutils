@@ -86,7 +86,7 @@ public final class VirtualMachine implements Closeable {
         archive = new TarFile(fileStream);
     }
 
-    private TarFile archive;
+    private final TarFile archive;
 
     public TarFile getArchive() {
         return archive;

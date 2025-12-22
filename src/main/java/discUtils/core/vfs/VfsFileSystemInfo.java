@@ -57,7 +57,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
         this.openDelegate = openDelegate;
     }
 
-    private String description;
+    private final String description;
 
     /**
      * Gets a one-line description of the file system.
@@ -67,7 +67,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
         return description;
     }
 
-    private String name;
+    private final String name;
 
     /**
      * Gets the name of the file system.

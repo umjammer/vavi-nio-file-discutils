@@ -22,19 +22,18 @@ import vavi.util.properties.annotation.PropsEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
- * ChdFileSystemProviderTest.
+ * CHD SPI Test.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2025-09-30 nsano initial version <br>
  */
 @PropsEntity(url = "file:local.properties")
-class ChdFileSystemProviderTest {
+class SpiTest {
 
     static boolean localPropertiesExists() {
         return Files.exists(Paths.get("local.properties"));
@@ -54,7 +53,7 @@ class ChdFileSystemProviderTest {
     }
 
     @Test
-    @DisplayName("list")
+    @DisplayName("walk via spi")
     void test1() throws Exception {
 Debug.print("chd: " + chd);
         URI subUri = Path.of(chd).toUri();
@@ -73,7 +72,7 @@ Debug.print("uri: " + uri);
     }
 
     @Test
-    @DisplayName("download")
+    @DisplayName("download via spi")
     void test2() throws Exception {
 Debug.print("chd: " + chd);
         URI subUri = Path.of(chd).toUri();

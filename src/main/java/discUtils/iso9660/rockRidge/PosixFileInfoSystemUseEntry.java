@@ -27,15 +27,15 @@ import discUtils.iso9660.susp.SystemUseEntry;
 
 public final class PosixFileInfoSystemUseEntry extends SystemUseEntry {
 
-    public int fileMode;
+    public final int fileMode;
 
-    public int groupId;
+    public final int groupId;
 
     public int inode;
 
-    public int numLinks;
+    public final int numLinks;
 
-    public int userId;
+    public final int userId;
 
     public PosixFileInfoSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 36, (byte) 1);

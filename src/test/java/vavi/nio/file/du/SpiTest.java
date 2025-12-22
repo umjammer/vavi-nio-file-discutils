@@ -14,31 +14,34 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+
+import vavi.util.Debug;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
+import vavix.io.fat.PC98BiosParameterBlock;
+import vavix.util.Checksum;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
-import vavi.util.Debug;
-import vavi.util.properties.annotation.Property;
-import vavi.util.properties.annotation.PropsEntity;
-import vavix.util.Checksum;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
+import static discUtils.core.pc98.Pc98FileSystemFactory.VALIDATION_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
- * DiscUtilsTest.
+ * DiscUtils (DU) SPI Test.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/11/18 umjammer initial version <br>
  */
 @EnabledIf("localPropertiesExists")
 @PropsEntity(url = "file://${user.dir}/local.properties")
-class DiscUtilsTest {
+public class SpiTest {
 
     static boolean localPropertiesExists() {
         return Files.exists(Paths.get("local.properties"));
@@ -58,6 +61,8 @@ class DiscUtilsTest {
     String discImageVDI;
     @Property
     String discImageW10Reg = "src/test/resources/ntuser.dat";
+    @Property(name = "d88")
+    String d88;
 
     @BeforeEach
     void before() throws IOException {
@@ -65,14 +70,10 @@ class DiscUtilsTest {
     }
 
     @Test
-//    @Disabled
-    @DisplayName("vdi/ntfs")
+    @DisplayName("list root vdi/ntfs")
     void test() throws Exception {
         URI uri = DuFileSystemProvider.createURI(discImage);
-        Map<String, Object> env = new HashMap<>();
-        env.put("volumeNumber", volumeNumber);
-        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
-//        Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Map.of("volumeNumber", volumeNumber));
         Files.list(fs.getRootDirectories().iterator().next()).forEach(p -> {
             try {
                 System.err.println(p + ", " + Files.getLastModifiedTime(p));
@@ -84,45 +85,41 @@ class DiscUtilsTest {
     }
 
     @Test
-    @DisplayName("raw/fat")
+    @DisplayName("walk raw/fat16")
     void test2() throws Exception {
-        String file = DiscUtilsTest.class.getResource("/fat16.dmg").getPath();
+        String file = SpiTest.class.getResource("/fat16.dmg").getPath();
         URI uri = DuFileSystemProvider.createURI(file);
-        Map<String, Object> env = new HashMap<>();
-        env.put("forceType", "RAW");
-        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Map.of("forceType", "RAW"));
         Files.walk(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
         fs.close();
     }
 
     // TODO doesn't work, wip
     @Test
+    @DisplayName("raw/dd")
     @Disabled("doesn't work")
     void test3() throws Exception {
         String file = discImageDD;
         URI uri = DuFileSystemProvider.createURI(file);
-        Map<String, Object> env = new HashMap<>();
-        env.put("forceType", "RAW");
-        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Map.of("forceType", "RAW"));
         Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
         fs.close();
     }
 
     // TODO doesn't work, wip, not registered as a service provider
     @Test
+    @DisplayName("Win10 Registry")
     @Disabled("doesn't work")
     void test4() throws Exception {
         String file = discImageW10Reg;
         URI uri = DuFileSystemProvider.createURI(file);
-        Map<String, Object> env = new HashMap<>();
-        env.put("forceType", "RAW");
-        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Map.of("forceType", "RAW"));
         Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
         fs.close();
     }
 
     @Test
-    @DisplayName("vhd/fat16")
+    @DisplayName("download vhd/fat16")
     void test5() throws Exception {
         String file = discImageVHD;
         URI uri = DuFileSystemProvider.createURI(file);
@@ -142,7 +139,7 @@ class DiscUtilsTest {
 
     @Test
     @Disabled("no win95 disk")
-    @DisplayName("vdi/fat16")
+    @DisplayName("download vdi/fat16")
     void test6() throws Exception {
         String file = discImageVDI;
         URI uri = DuFileSystemProvider.createURI(file);
@@ -161,6 +158,26 @@ class DiscUtilsTest {
         assertEquals(Files.size(original), Files.size(to));
         assertEquals(Checksum.getChecksum(from), Checksum.getChecksum(to));
         assertEquals(Checksum.getChecksum(original), Checksum.getChecksum(to));
+        fs.close();
+    }
+
+    /** bpb validator specified by a system property {@link discUtils.core.pc98.Pc98FileSystemFactory#VALIDATION_KEY} */
+    public static boolean validate(PC98BiosParameterBlock bpb) {
+Debug.print(bpb);
+        return bpb.oemLabel.contains("NEC");
+    }
+
+    @Test
+    @DisplayName("walk d88/fat12")
+    @EnabledIfSystemProperty(named = "vavi.test", matches = "ide")
+    void test7() throws Exception {
+        System.setProperty(VALIDATION_KEY, "vavi.nio.file.du.SpiTest#validate");
+
+        String file = d88;
+        URI uri = DuFileSystemProvider.createURI(file);
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Map.of("forceType", "EMU"));
+
+        Files.walk(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
         fs.close();
     }
 }

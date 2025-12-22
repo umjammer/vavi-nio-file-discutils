@@ -55,7 +55,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
         members = new HashMap<>();
     }
 
-    private int hierarchyDepth;
+    private final int hierarchyDepth;
 
     public int getHierarchyDepth() {
         return hierarchyDepth;

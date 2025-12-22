@@ -32,10 +32,10 @@ public final class ChdFileSystemProvider extends FileSystemProviderBase {
 
     /** */
     public static class Entity {
-        UmdIsoReader manager;
+        final UmdIsoReader manager;
         boolean isDirectory;
-        Path path;
-        String name;
+        final Path path;
+        final String name;
 
         public Entity(UmdIsoReader manager, Path path, String file) {
             this.manager = manager;

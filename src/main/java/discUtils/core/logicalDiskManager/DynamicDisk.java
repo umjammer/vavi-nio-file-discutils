@@ -56,7 +56,7 @@ class DynamicDisk implements IDiagnosticTraceable {
         return disk.getContent();
     }
 
-    private Database database;
+    private final Database database;
 
     public Database getDatabase() {
         return database;
