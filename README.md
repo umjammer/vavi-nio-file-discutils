@@ -6,9 +6,11 @@
 
 # vavi-nio-file-discutils
 
+<img alt="logo" src="src/test/resources/duke_disk_blue.png" width="100" />
+
 A Java NIO FileSystem implementation over [DiscUtils](https://github.com/DiscUtils/DiscUtils)
 
-all formats are mounted by fuse also!
+you can also mount all formats using fuse.
 
 ### Status
 
@@ -31,7 +33,9 @@ all formats are mounted by fuse also!
 | iSCSI    | 🚫             |        |                |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)                                                                                |
 | NFS      | 🚫             |        |                |      |      |    |       |       |       | -      | server [nfs4j](https://github.com/dcache/nfs4j)                                                                                       |
 | ODS      | 🚫             |        |                |      |      |    |       |       |       | -      | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)                                                                       |
-| EMU      | ✅ (nhd)        |        |                |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
+| EMU      | ✅ (nhd:fat16)  |        |                |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
+| EMU      | ✅ (d88:fat12)  |        |                |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
+| EMU      | 🚧 (d88:n88)   |        |                |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
 | CHD      | ✅ (iso)        | -      | ✅ (iso)        | -    | -    | -  | -     | -     | -     | -      | [jpcsp(libchdr)](https://github.com/jpcsp/jpcsp)                                                                                      |
 | QCOW2    | ✅ (gpt/ntfs)   | -      |  (gpt)         | -    | -    | -  | -     | -     | -     | -      | [vavi-nio-file-qcow2](https://github.com/umjammer/vavi-nio-file-qcow2)                                                                |
 
@@ -94,6 +98,14 @@ as a java nio filesystem spi
  Fuse.getFuse().mount(fs, "/your/mountPoint", Collections.emptyMap());
 ```
 
+### system properties
+
+<!-- * `discUtils.core.file.encoding` ... filename encoding for `Charset#forName(String)`, default is `MS932` -->
+* `discUtils.core.pc98.validator.fat` ... , validator for finding fat literal default is `false`
+* `discUtils.core.pc98.validator.ipl` ... , validator for finding ipl literal default is `true`
+* `discUtils.core.pc98.validator.nec` ... , validator for finding nec literal, default is `true`
+* `discUtils.core.pc98.Pc98FileSystemFactory.validation` ... `true`: do default validation, `false`: no validation, *else*: validation function name `class#method`, the method must return `boolean`
+
 ### How to use the Library
 
 Here's a few really simple examples.
@@ -154,7 +166,7 @@ Again, start browsing the file system at floppy.Root.
 
 ## References
 
- * https://github.com/twiglet/cs2j
+ * ~~https://github.com/twiglet/cs2j~~ → use ai
  * https://github.com/feyris-tan/dotnetIo4j [(vavi patched)](https://github.com/umjammer/dotnet4j)
  * bcd ... https://thestarman.pcministry.com/asm/mbr/BCD.htm
  * raw (dd) ... https://github.com/Zapotek/raw2vmdk
@@ -176,7 +188,7 @@ Again, start browsing the file system at floppy.Root.
  * ~~file separator~~
    * test on windows 
  * ~~pc98 partition~~ (done)
- * d88 floppy disk
+ * ~~d88 floppy disk~~
  * ~~qcow2 (wip~~, ~~see [aaru](https://github.com/aaru-dps/Aaru)~~)
  * ~~chd (wip~~, ~~see aaru~~ libchdr in jpcsc)
    * qlgenerator (wip, see vavi.apps.qlgenerator package)
@@ -188,3 +200,7 @@ Again, start browsing the file system at floppy.Root.
  * ~~registry~~
  * ~~🐛 vdi check sector length?~~ -> Util#SeekableByteChannel*
  * ~~git tree might be corrupted~~
+
+---
+
+<sub>disk image by Apple Inc. edited by Nano Banana</sub>
