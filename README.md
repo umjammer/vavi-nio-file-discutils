@@ -87,7 +87,7 @@ META-INF/services/discUtils.core.partitions.PartitionTableFactory # From partiti
 
 ## Usage
 
-as a java nio filesystem spi
+### JSR-203 & fuse
 
 ```Java
  URI uri = URI.create("discutils:file:/Users/foo/bar.vdi");
@@ -101,10 +101,10 @@ as a java nio filesystem spi
 ### system properties
 
 <!-- * `discUtils.core.file.encoding` ... filename encoding for `Charset#forName(String)`, default is `MS932` -->
-* `discUtils.core.pc98.validator.fat` ... , validator for finding fat literal default is `false`
-* `discUtils.core.pc98.validator.ipl` ... , validator for finding ipl literal default is `true`
-* `discUtils.core.pc98.validator.nec` ... , validator for finding nec literal, default is `true`
-* `discUtils.core.pc98.Pc98FileSystemFactory.validation` ... `true`: do default validation, `false`: no validation, *else*: validation function name `class#method`, the method must return `boolean`
+* `vavix.io.partition.validator.fat` ... , validator for finding fat literal default is `false`
+* `vavix.io.partition.validator.ipl` ... , validator for finding ipl literal default is `true`
+* `vavix.io.partition.validator.nec` ... , validator for finding nec literal, default is `true`
+* `vavix.io.fat.PC98BiosParameterBlock.validation` ... `true`: do default validation, `false`: no validation, *else*: validation function name `class#method`, the method must return `boolean`
 
 ### How to use the Library
 

@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-import static discUtils.core.pc98.Pc98FileSystemFactory.VALIDATION_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static vavix.io.fat.PC98BiosParameterBlock.VALIDATION_KEY;
 
 
 /**
@@ -161,7 +161,7 @@ public class SpiTest {
         fs.close();
     }
 
-    /** bpb validator specified by a system property {@link discUtils.core.pc98.Pc98FileSystemFactory#VALIDATION_KEY} */
+    /** bpb validator specified by a system property {@link PC98BiosParameterBlock#VALIDATION_KEY} */
     public static boolean validate(PC98BiosParameterBlock bpb) {
 Debug.print(bpb);
         return bpb.oemLabel.contains("NEC");
