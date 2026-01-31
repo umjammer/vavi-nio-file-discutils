@@ -156,7 +156,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.14.0</version>
+        <version>5.14.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -196,7 +196,7 @@
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-nio-file-emu</artifactId>
-      <version>2.0.6</version>
+      <version>2.0.8</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.umjammer</groupId>
