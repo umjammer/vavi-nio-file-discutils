@@ -16,6 +16,8 @@ import discUtils.core.partitions.PartitionInfo;
 import discUtils.streams.SparseStream;
 import vavix.io.partition.PC98PartitionEntry;
 
+import static vavix.io.fat.PC98BiosParameterBlock.toLBA;
+
 
 /**
  * Pc98PartitionInfo.
@@ -39,14 +41,6 @@ public class Pc98PartitionInfo extends PartitionInfo {
     private final Pc98PartitionTable table;
 
     private final int heads, secs;
-
-    // TODO move to PC98PartitionEntry?
-    // @see "https://github.com/aaru-dps/Aaru.Helpers/blob/4640bb88d3eb907d0f0617d5ee5159fbc13c5653/CHS.cs"
-    public static int toLBA(int cyl, int head, int sector, int maxHead, int maxSector) {
-//logger.log(Level.DEBUG, "heads: %d, secs: %d".formatted(maxHead, maxSector));
-        return maxHead == 0 || maxSector == 0 ? (((cyl * 16)      + head) * 63)        + sector - 1
-                                              : (((cyl * maxHead) + head) * maxSector) + sector - 1;
-    }
 
     @Override
     public byte getBiosType() {

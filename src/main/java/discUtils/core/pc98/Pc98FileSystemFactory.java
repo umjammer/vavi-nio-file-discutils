@@ -10,7 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
-import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -31,6 +31,7 @@ import dotnet4j.io.Stream;
 import vavi.util.StringUtil;
 import vavi.util.serdes.Serdes;
 import vavix.io.fat.PC98BiosParameterBlock;
+import vavix.io.partition.Validator;
 
 import static java.lang.System.getLogger;
 
@@ -39,7 +40,11 @@ import static java.lang.System.getLogger;
  * Pc98FileSystemFactory.
  * <p>
  * system property
- * <li>{@link #VALIDATION_KEY} ... default true</li>
+ * <li>{@link PC98BiosParameterBlock#VALIDATION_KEY} ... default true</li>
+ * <li>{@code "vavix.io.partition.validator.fat"} ... , validator for finding fat literal default is {@code false}</li>
+ * <li>{@code "vavix.io.partition.validator.ipl"} ... , validator for finding ipl literal default is {@code true}</li>
+ * <li>{@code "vavix.io.partition.validator.nec"} ... , validator for finding nec literal, default is {@code true}</li>
+ * </p>
  * </p>
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2022-07-24 nsano initial version <br>
@@ -105,58 +110,8 @@ logger.log(Level.DEBUG, e);
         }
 
 logger.log(Level.DEBUG, "bpb.fileSystem: " + bpb.fileSystem);
-        boolean r = validate(bpb); // TODO w/o validation some tests will fail
+        boolean r = bpb.validate();
 if (!r) { logger.log(Level.INFO, "validation failed: " + bpb); }
         return r;
-    }
-
-    /** boot sector value validator */
-    public interface Validator {
-
-        Logger logger = Pc98FileSystemFactory.logger;
-
-        /** validation priority */
-        int weight();
-
-        /** use this validator nor not */
-        boolean enabled();
-
-        /** do validation */
-        boolean validate(byte[] firstSectors);
-    }
-
-    /**
-     * true: do default validation,
-     * false: no validation,
-     * else: validation function name "class#method", the method must return boolean and
-     *       w/ an argument PC98BiosParameterBlock and static.
-     */
-    public static final String VALIDATION_KEY = "discUtils.core.pc98.Pc98FileSystemFactory.validation";
-
-    /** @see #VALIDATION_KEY */
-    private static boolean validate(PC98BiosParameterBlock bpb) {
-        String validation = System.getProperty(VALIDATION_KEY, "true");
-        if (Boolean.parseBoolean(validation)) {
-logger.log(Level.DEBUG, "default validation");
-            return bpb.fileSystem.contains("FAT");
-        } else if (validation.equalsIgnoreCase("false")) {
-logger.log(Level.DEBUG, "no validation, accepting anyway");
-            return true;
-        } else {
-            try {
-                String[] parts = validation.split("#");
-                Class<?> clazz = Class.forName(parts[0]);
-                Method method = clazz.getDeclaredMethod(parts[1], PC98BiosParameterBlock.class);
-                if (method.getReturnType() != Boolean.TYPE) {
-                    throw new IllegalArgumentException("method %s return type is not boolean but %s".formatted(method.getName(), method.getReturnType().getName()));
-                }
-                boolean r = method.invoke(null, bpb).equals(Boolean.TRUE);
-logger.log(Level.DEBUG, "do user bpb validation %s#%s: %s".formatted(clazz.getSimpleName(), method.getName(), r));
-                return r;
-            } catch (Exception e) {
-logger.log(Level.WARNING, "validation function error, accepting anyway", e);
-                return true;
-            }
-        }
     }
 }
