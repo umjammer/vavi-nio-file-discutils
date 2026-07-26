@@ -289,6 +289,42 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- pure java iSCSI target, the server side for discUtils.iscsi -->
+    <dependency>
+      <groupId>org.jscsi</groupId>
+      <artifactId>target</artifactId>
+      <version>2.6.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <!-- only JCloudsStorageModule needs those, we serve a plain file -->
+        <exclusion>
+          <groupId>org.apache.jclouds</groupId>
+          <artifactId>jclouds-blobstore</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.jclouds.provider</groupId>
+          <artifactId>aws-s3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.jclouds.api</groupId>
+          <artifactId>filesystem</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.osgi</groupId>
+          <artifactId>org.osgi.core</artifactId>
+        </exclusion>
+        <!-- slf4j-jdk14 is the binding, see src/test/resources/logging.properties -->
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>

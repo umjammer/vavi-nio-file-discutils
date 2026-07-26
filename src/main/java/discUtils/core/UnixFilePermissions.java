@@ -95,7 +95,7 @@ public enum UnixFilePermissions {
     /**
      * Owner all permissions.
      */
-    public static final EnumSet<UnixFilePermissions> OwnerAll = EnumSet.of(OthersExecute, OthersWrite, OthersRead);
+    public static final EnumSet<UnixFilePermissions> OwnerAll = EnumSet.of(OwnerExecute, OwnerWrite, OwnerRead);
 
     private final int value = 1 << ordinal();
 
