@@ -37,7 +37,9 @@ public class RpcAuthentication {
     }
 
     public RpcAuthentication(XdrDataReader reader) {
-        flavour = RpcAuthFlavour.values()[reader.readInt32()];
+        int value = reader.readInt32();
+        flavour = RpcAuthFlavour.of(value)
+                .orElseThrow(() -> new RpcException("unknown rpc authentication flavour: " + value));
         body = reader.readBuffer(400);
     }
 
@@ -54,7 +56,7 @@ public class RpcAuthentication {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(flavour.ordinal());
+        writer.write(flavour.getValue());
         writer.writeBuffer(body);
     }
 

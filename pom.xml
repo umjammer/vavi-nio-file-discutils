@@ -289,6 +289,21 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- pure java NFS server, the server side for discUtils.nfs -->
+    <dependency>
+      <groupId>org.dcache</groupId>
+      <artifactId>nfs4j-core</artifactId>
+      <version>0.27.2</version>
+      <scope>test</scope>
+      <exclusions>
+        <!-- the berkeley db client store of nfs v4.1, not published anywhere reachable -->
+        <exclusion>
+          <groupId>com.sleepycat</groupId>
+          <artifactId>je</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <!-- pure java iSCSI target, the server side for discUtils.iscsi -->
     <dependency>
       <groupId>org.jscsi</groupId>

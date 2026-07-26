@@ -49,7 +49,7 @@ class Nfs3FileSystemInfoResultTest {
         Nfs3FileSystemInfoResult result = new Nfs3FileSystemInfoResult();
         Nfs3FileSystemInfo info = new Nfs3FileSystemInfo();
         info.setDirectoryPreferredBytes(1);
-        info.setFileSystemProperties(Nfs3FileSystemProperties.HardLinks);
+        info.setFileSystemProperties(EnumSet.of(Nfs3FileSystemProperties.HardLinks));
         info.setMaxFileSize(3);
         info.setReadMaxBytes(4);
         info.setReadMultipleSize(5);

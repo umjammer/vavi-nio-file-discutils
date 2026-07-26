@@ -22,6 +22,8 @@
 
 package discUtils.nfs;
 
+import java.util.EnumSet;
+
 
 public final class Nfs3FileSystemInfo {
 
@@ -57,13 +59,13 @@ public final class Nfs3FileSystemInfo {
     /**
      * A bit mask of file system properties.
      */
-    private Nfs3FileSystemProperties fileSystemProperties = Nfs3FileSystemProperties.None;
+    private EnumSet<Nfs3FileSystemProperties> fileSystemProperties = EnumSet.noneOf(Nfs3FileSystemProperties.class);
 
-    public Nfs3FileSystemProperties getFileSystemProperties() {
+    public EnumSet<Nfs3FileSystemProperties> getFileSystemProperties() {
         return fileSystemProperties;
     }
 
-    public void setFileSystemProperties(Nfs3FileSystemProperties value) {
+    public void setFileSystemProperties(EnumSet<Nfs3FileSystemProperties> value) {
         fileSystemProperties = value;
     }
 
@@ -198,7 +200,7 @@ public final class Nfs3FileSystemInfo {
         writer.write(directoryPreferredBytes);
         writer.write(maxFileSize);
         timePrecision.write(writer);
-        writer.write(fileSystemProperties.ordinal());
+        writer.write(Nfs3FileSystemProperties.valueOf(fileSystemProperties));
     }
 
     public boolean equals(Object obj) {
@@ -216,7 +218,7 @@ public final class Nfs3FileSystemInfo {
                other.writeMultipleSize == writeMultipleSize &&
                other.directoryPreferredBytes == directoryPreferredBytes &&
                other.maxFileSize == maxFileSize && other.timePrecision.equals(timePrecision) &&
-               other.fileSystemProperties == fileSystemProperties;
+               other.fileSystemProperties.equals(fileSystemProperties);
     }
 
     public int hashCode() {

@@ -35,7 +35,9 @@ public final class Nfs3MountResult extends Nfs3CallResult {
             int numAuthFlavours = reader.readInt32();
             authFlavours = new ArrayList<>(numAuthFlavours);
             for (int i = 0; i < numAuthFlavours; ++i) {
-                authFlavours.add(RpcAuthFlavour.values()[reader.readInt32()]);
+                // this is what the server accepts, not what we have to use, so a
+                // flavour we cannot name is no reason to fail the mount
+                RpcAuthFlavour.of(reader.readInt32()).ifPresent(authFlavours::add);
             }
         } else {
             throw new Nfs3Exception(status);
@@ -71,7 +73,7 @@ public final class Nfs3MountResult extends Nfs3CallResult {
             fileHandle.write(writer);
             writer.write(authFlavours.size());
             for (RpcAuthFlavour authFlavour : authFlavours) {
-                writer.write(authFlavour.ordinal());
+                writer.write(authFlavour.getValue());
             }
         }
     }
