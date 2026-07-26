@@ -54,7 +54,7 @@ public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
     protected final short logicalBlockSize;
 
     public int getLogicalBlockSize() {
-        return logicalBlockSize;
+        return logicalBlockSize & 0xffff;
     }
 
     public final long modificationDateAndTime;

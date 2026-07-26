@@ -9,9 +9,9 @@ package libraryTests.iso9660;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import discUtils.core.DiscFileSystem;
 import discUtils.iso9660.CDReader;
-import discUtils.iso9660.VfsCDReader;
+import discUtils.iso9660.CommonVolumeDescriptor;
+import discUtils.iso9660.Iso9660Variant;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileStream;
@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -86,12 +88,30 @@ Rock Ridge signatures version 1 found
 Rock Ridge id 'RRIP_1991A'
 
      */
+    /** the volume level meta data isoinfo -d prints, see above */
     @Test
     void test1() throws Exception {
-        CDReader fs = new CDReader(new FileStream(image, FileMode.Open, FileAccess.Read), true) {
-            {{
-                VfsCDReader vfs = (VfsCDReader) (DiscFileSystem) getRealFileSystem();
-            }}
-        };
+        try (CDReader fs = new CDReader(new FileStream(image, FileMode.Open, FileAccess.Read), true)) {
+            CommonVolumeDescriptor vd = fs.getVolumeDescriptor();
+            System.err.println("variant: " + fs.getActiveVariant());
+            System.err.println("System id: " + vd.systemIdentifier);
+            System.err.println("Volume id: " + vd.volumeIdentifier);
+            System.err.println("Volume set id: " + vd.volumeSetIdentifier);
+            System.err.println("Publisher id: " + vd.publisherIdentifier);
+            System.err.println("Data preparer id: " + vd.dataPreparerIdentifier);
+            System.err.println("Application id: " + vd.applicationIdentifier);
+            System.err.println("Copyright File id: " + vd.copyrightFileIdentifier);
+            System.err.println("Volume set size is: " + vd.volumeSetSize);
+            System.err.println("Volume set sequence number is: " + vd.volumeSequenceNumber);
+            System.err.println("Logical block size is: " + vd.getLogicalBlockSize());
+            System.err.println("Volume size is: " + vd.volumeSpaceSize);
+
+            // a joliet image is read through its supplementary descriptor
+            assertEquals(Iso9660Variant.Joliet, fs.getActiveVariant());
+            assertEquals(2048, vd.getLogicalBlockSize());
+            assertEquals(vd.volumeSpaceSize * 2048L, fs.getSize());
+            assertEquals(fs.getSize(), fs.getUsedSpace());
+            assertEquals(0, fs.getAvailableSpace());
+        }
     }
 }

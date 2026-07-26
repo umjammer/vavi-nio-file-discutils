@@ -176,7 +176,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                     setContext(context);
                     setRootDirectory(new ReaderDirectory(getContext(),
                                                          new ReaderDirEntry(getContext(), volDesc.rootDirectory)));
-                    activeVariant = Iso9660Variant.Iso9660;
+                    activeVariant = Iso9660Variant.Joliet;
                 }
                 break;
             case RockRidge:
@@ -280,7 +280,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
     }
 
     @Override public long getTotalClusters() {
-        return getContext().getVolumeDescriptor().volumeSpaceSize;
+        return getContext().getVolumeDescriptor().volumeSpaceSize & 0xffff_ffffL;
     }
 
     @Override public long clusterToOffset(long cluster) {
@@ -292,24 +292,36 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
     }
 
     /**
+     * Gets the volume descriptor of the variant this instance is reading, which
+     * carries the volume level meta data (volume identifier, publisher, ...).
+     */
+    public CommonVolumeDescriptor getVolumeDescriptor() {
+        return getContext().getVolumeDescriptor();
+    }
+
+    /**
      * Size of the Filesystem in bytes
      */
     @Override public long getSize() {
-        throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
+        return getTotalClusters() * getVolumeDescriptor().getLogicalBlockSize();
     }
 
     /**
-     * Used space of the Filesystem in bytes
+     * Used space of the Filesystem in bytes.
+     * <p>
+     * ISO 9660 is a read only, fully allocated medium, so all of it is in use.
      */
     @Override public long getUsedSpace() {
-        throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
+        return getSize();
     }
 
     /**
-     * Available space of the Filesystem in bytes
+     * Available space of the Filesystem in bytes.
+     * <p>
+     * Always zero, an ISO 9660 image cannot be grown.
      */
     @Override public long getAvailableSpace() {
-        throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
+        return 0;
     }
 
     @Override public List<Range> pathToClusters(String path) {

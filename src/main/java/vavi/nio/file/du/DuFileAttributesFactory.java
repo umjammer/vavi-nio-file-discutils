@@ -21,5 +21,6 @@ public final class DuFileAttributesFactory extends ExtendedFileAttributesFactory
     public DuFileAttributesFactory() {
         setMetadataClass(DiscFileSystemInfo.class);
         addImplementation("basic", DuBasicFileAttributesProvider.class);
+        addImplementation("user", DuUserDefinedFileAttributesProvider.class);
     }
 }
