@@ -22,7 +22,7 @@ you can also mount all formats using fuse.
 | HSF+     | ✅ (DMG)        |        |                |      |      |    |       | -     |       |        | 🚫 (ISO) same error on original                                                                                                       |
 | EXT      | 🚧 (VDI)       |        |                |      |      |    |       | -     |       |        |                                                                                                                                       |
 | XFS      |                |        |                |      |      |    |       | -     |       |        |                                                                                                                                       |
-| ISO      | 🚧             |        |                |      |      |    |       | -     |       | ✅      |                                                                                                                                       |
+| ISO      | ✅              |        | ✅              |      |      |    |       | -     |       | ✅      | volume descriptor as `user:attributes`                                                                                                |
 | VHD      | ✅ (fat16)      |        | ✅ (fat16)      |      |      |    |       | -     |       |        | ~~🐛 subdir w/ fuse~~                                                                                                                 |
 | VDI      | ✅ (ntfs,fat16) |        | ✅ (ntfs,fat16) |      |      |    |       | -     |       |        | ~~🐛 copy bytes slip out of place? w/ fuse~~                                                                                          |
 | XVA      |                |        |                |      |      |    |       | -     |       |        |                                                                                                                                       |
@@ -30,14 +30,14 @@ you can also mount all formats using fuse.
 | DMG      | ✅              |        |                |      |      |    |       |       |       |        |                                                                                                                                       |
 | Registry | ✅              |        |                |      |      |    |       | -     | -     | -      | Windows 10's registry                                                                                                                 |
 | ├ BCD    | ✅              |        |                |      |      |    |       | -     | -     | -      | Windows XP's bcd                                                                                                                      |
-| iSCSI    | 🚫             |        |                |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)                                                                                |
-| NFS      | 🚫             |        |                |      |      |    |       |       |       | -      | server [nfs4j](https://github.com/dcache/nfs4j)                                                                                       |
+| iSCSI    | ✅ (fat16)      | ✅      | ✅              |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI) (test scoped)                                                                  |
+| NFS      | ✅              | ✅      | ✅              |      |      |    |       |       |       | -      | server [nfs4j](https://github.com/dcache/nfs4j) (test scoped)                                                                         |
 | ODS      | 🚫             |        |                |      |      |    |       |       |       | -      | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)                                                                       |
 | EMU      | ✅ (nhd:fat16)  |        |                |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
 | EMU      | ✅ (d88:fat12)  |        |                |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
 | EMU      | 🚧 (d88:n88)   |        |                |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
 | CHD      | ✅ (iso)        | -      | ✅ (iso)        | -    | -    | -  | -     | -     | -     | -      | [jpcsp(libchdr)](https://github.com/jpcsp/jpcsp)                                                                                      |
-| QCOW2    | ✅ (gpt/ntfs)   | -      |  (gpt)         | -    | -    | -  | -     | -     | -     | -      | [vavi-nio-file-qcow2](https://github.com/umjammer/vavi-nio-file-qcow2)                                                                |
+| QCOW2    | ✅ (gpt/ntfs)   | -      | (gpt)          | -    | -    | -  | -     | -     | -     | -      | [vavi-nio-file-qcow2](https://github.com/umjammer/vavi-nio-file-qcow2)                                                                |
 
 ### Project Description
 
@@ -194,12 +194,16 @@ Again, start browsing the file system at floppy.Root.
    * qlgenerator (wip, see vavi.apps.qlgenerator package)
    * spi doesn't use discutil library. chd spi should be independent of this project
  * iso9660
-   * `CommonVolumeDescriptor` as `user:attributes` 
+   * ~~`CommonVolumeDescriptor` as `user:attributes`~~
    * https://github.com/Janix520/java-iso-tools
    * https://github.com/jpcsp/jpcsp/tree/master/src/jpcsp/filesystems/umdiso/iso9660
  * ~~registry~~
  * ~~🐛 vdi check sector length?~~ -> Util#SeekableByteChannel*
  * ~~git tree might be corrupted~~
+ * windows dependents
+   * discUtils.powerShell 
+   * diskClone
+   * msBuildTask
 
 ---
 
