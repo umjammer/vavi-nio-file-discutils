@@ -247,6 +247,12 @@
       <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-nio-file-qcow2</artifactId>
       <version>0.0.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-nio-file-base</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -275,6 +281,12 @@
       <artifactId>vavi-nio-file-fuse</artifactId>
       <version>${vavi-nio-file-fuse.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-nio-file-base</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>${vavi-nio-file-fuse.groupId}</groupId>
@@ -282,6 +294,12 @@
       <version>${vavi-nio-file-fuse.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-nio-file-base</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
