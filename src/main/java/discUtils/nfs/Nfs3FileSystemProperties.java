@@ -22,18 +22,46 @@
 
 package discUtils.nfs;
 
-public enum Nfs3FileSystemProperties {
-    None,
-    HardLinks,
-    SymbolicLinks,
-    __dummyEnum__3,
-    Homogeneous,
-    __dummyEnum__5,
-    __dummyEnum__6,
-    __dummyEnum__7,
-    SetTime;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.stream.Collectors;
 
-    public static Nfs3FileSystemProperties valueOf(int value) {
-        return values()[value];
+
+/**
+ * The properties a file system reports in FSINFO, a bit mask.
+ *
+ * @see "RFC 1813, 3.3.19 Procedure 19: FSINFO"
+ */
+public enum Nfs3FileSystemProperties {
+    /** the file system supports hard links */
+    HardLinks(0x0001),
+    /** the file system supports symbolic links */
+    SymbolicLinks(0x0002),
+    /** PATHCONF is the same for every file, so it need only be asked for once */
+    Homogeneous(0x0008),
+    /** the server can set the times of a file */
+    SetTime(0x0010);
+
+    private final int value;
+
+    Nfs3FileSystemProperties(int value) {
+        this.value = value;
+    }
+
+    /** the bit of this property in the mask */
+    public int getValue() {
+        return value;
+    }
+
+    /** Unpacks a mask, ignoring bits this implementation has no name for. */
+    public static EnumSet<Nfs3FileSystemProperties> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(property -> (value & property.value) != 0)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Nfs3FileSystemProperties.class)));
+    }
+
+    /** Packs properties back into a mask. */
+    public static int valueOf(EnumSet<Nfs3FileSystemProperties> properties) {
+        return properties.stream().mapToInt(Nfs3FileSystemProperties::getValue).reduce(0, (a, b) -> a | b);
     }
 }

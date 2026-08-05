@@ -79,6 +79,20 @@ public class NfsFileSystem extends DiscFileSystem {
     }
 
     /**
+     * Initializes a new instance of the NfsFileSystem class on an rpc client of
+     * your own, for a server which is not reachable the usual way, e.g. one
+     * whose programs are not registered with a portmapper.
+     *
+     * @param rpcClient The rpc client to reach the NFS server with.
+     * @param mountPoint The mount point on the server to root the file system.
+     * @see Nfs3Client#Nfs3Client(IRpcClient, String)
+     */
+    public NfsFileSystem(IRpcClient rpcClient, String mountPoint) {
+        super(new NfsFileSystemOptions());
+        client = new Nfs3Client(rpcClient, mountPoint);
+    }
+
+    /**
      * Gets whether this file system supports modification (true for NFS).
      */
     @Override
@@ -218,13 +232,18 @@ public class NfsFileSystem extends DiscFileSystem {
     @Override
     public void createDirectory(String path) {
         try {
-            Nfs3FileHandle parent = getParentDirectory(path);
-
             Nfs3SetAttributes setAttrs = new Nfs3SetAttributes();
             setAttrs.setMode(getNfsOptions().getNewDirectoryPermissions());
             setAttrs.setSetMode(true);
 
-            client.makeDirectory(parent, Utilities.getFileFromPath(path), setAttrs);
+            // as the other file systems of this library do, create missing parents too
+            Nfs3FileHandle handle = client.getRootHandle();
+            for (String element : Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
+                    .filter(e -> !e.isEmpty())
+                    .toArray(String[]::new)) {
+                Nfs3FileHandle child = client.lookup(handle, element);
+                handle = child != null ? child : client.makeDirectory(handle, element, setAttrs);
+            }
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
         }

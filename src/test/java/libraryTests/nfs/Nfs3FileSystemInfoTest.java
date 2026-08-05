@@ -23,6 +23,8 @@
 package libraryTests.nfs;
 
 import discUtils.nfs.Nfs3FileSystemInfo;
+import java.util.EnumSet;
+
 import discUtils.nfs.Nfs3FileSystemProperties;
 import discUtils.nfs.Nfs3FileTime;
 import discUtils.nfs.XdrDataReader;
@@ -39,7 +41,7 @@ class Nfs3FileSystemInfoTest {
     void roundTripTest() throws Exception {
         Nfs3FileSystemInfo attributes = new Nfs3FileSystemInfo();
         attributes.setDirectoryPreferredBytes(1);
-        attributes.setFileSystemProperties(Nfs3FileSystemProperties.HardLinks);
+        attributes.setFileSystemProperties(EnumSet.of(Nfs3FileSystemProperties.HardLinks));
         attributes.setMaxFileSize(2);
         attributes.setReadMaxBytes(3);
         attributes.setReadMultipleSize(4);

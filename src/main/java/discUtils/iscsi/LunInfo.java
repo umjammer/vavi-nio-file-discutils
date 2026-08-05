@@ -147,7 +147,12 @@ public class LunInfo {
             port = TargetAddress.DefaultPort;
         }
 
-        String[] uriSegments = uri.getPath().split("/"); // TODO check
+        // the path is '/[<targetGroupTag>/]<targetName>'
+        String path = uri.getPath() == null ? "" : uri.getPath();
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        String[] uriSegments = path.split("/");
         if (uriSegments.length == 1) {
             targetName = uriSegments[0];
         } else if (uriSegments.length == 2) {
@@ -159,7 +164,8 @@ public class LunInfo {
 
         TargetInfo targetInfo = new TargetInfo(targetName, Collections.singletonList(new TargetAddress(address, port, targetGroupTag)));
 
-        for (String queryElem : uri.getQuery().substring(1).split("&")) {
+        // note getQuery() is the query without the leading '?'
+        for (String queryElem : (uri.getQuery() == null ? "" : uri.getQuery()).split("&")) {
             if (queryElem.startsWith("LUN=")) {
                 lun = Long.parseLong(queryElem.substring(4));
                 if (lun < 256) {

@@ -112,23 +112,31 @@ public class IsoUtilities {
     }
 
     public static String readChars(byte[] buffer, int offset, int numBytes, Charset enc) {
-        char[] chars;
-
         // Special handling for 'magic' names '\00' and '\01', which indicate
         // root and parent, respectively
         if (numBytes == 1) {
-            chars = new char[1];
-            chars[0] = (char) (buffer[offset] & 0xff);
-        } else {
-            chars = new String(buffer, offset, numBytes, enc).toCharArray();
+            return String.valueOf((char) (buffer[offset] & 0xff)).replaceFirst(" *$", "");
         }
-        return new String(chars).replaceFirst(" *$", "");
+
+        // Work around burning software that pads fields with nul bytes rather
+        // than with the spaces the specification asks for
+        return new String(buffer, offset, numBytes, enc).replaceFirst("[ \0]*$", "");
     }
 
     static int writeString(byte[] buffer, int offset, int numBytes, boolean pad, String str, Charset enc) {
         return writeString(buffer, offset, numBytes, pad, str, enc, false);
     }
 
+    /**
+     * Writes {@code str} into a fixed width field.
+     *
+     * @param numBytes width of the field
+     * @param pad whether the remainder of the field is filled with spaces, as
+     *            the specification requires for a- and d-characters
+     * @param canTruncate whether a string too long for the field may be cut
+     *            short instead of being rejected
+     * @return the number of bytes written
+     */
     static int writeString(byte[] buffer,
                                   int offset,
                                   int numBytes,
@@ -136,17 +144,28 @@ public class IsoUtilities {
                                   String str,
                                   Charset enc,
                                   boolean canTruncate) {
-        String paddedString = pad ? str + new String(new char[numBytes]).replace('\0', ' ') : str;
+        byte[] space = " ".getBytes(enc);
 
-        // Assumption: never less than one byte per character
-
-        byte[] bytes = paddedString.substring(0, str.length()).getBytes(enc);
-        if (!canTruncate && numBytes < bytes.length) {
-            throw new IOException("Failed to write entire string");
+        byte[] bytes = str.getBytes(enc);
+        if (numBytes < bytes.length) {
+            if (!canTruncate) {
+                throw new IOException("Failed to write entire string");
+            }
+            // truncate on a character boundary, half a character is worse than one less
+            bytes = Arrays.copyOf(bytes, numBytes - numBytes % space.length);
         }
         System.arraycopy(bytes, 0, buffer, offset, bytes.length);
 
-        return bytes.length;
+        if (!pad) {
+            return bytes.length;
+        }
+
+        int written = bytes.length;
+        while (written + space.length <= numBytes) {
+            System.arraycopy(space, 0, buffer, offset + written, space.length);
+            written += space.length;
+        }
+        return written;
     }
 
     static boolean isValidAString(String str) {

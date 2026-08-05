@@ -71,6 +71,14 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
     }
 
     /**
+     * Gets the volume descriptor of the active variant, which carries the volume
+     * level meta data (volume identifier, publisher, dates, ...).
+     */
+    public CommonVolumeDescriptor getVolumeDescriptor() {
+        return VfsCDReader.class.cast(getRealFileSystem()).getVolumeDescriptor();
+    }
+
+    /**
      * Gets the emulation requested of BIOS when the image is loaded.
      */
     public BootDeviceEmulation getBootEmulation() {

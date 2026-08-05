@@ -135,9 +135,8 @@ public class TargetAddress {
      * @return The target address in the form: iscsi://host[:port][/grouptag].
      */
     public URI toUri() {
-        URI builder = URI.create("iscsi" + "://" + getNetworkAddress() +
-                                 (getNetworkPort() != DefaultPort ? ":" +getNetworkPort() : "") + "/" +
-                                 (getTargetGroupTag() == null || getTargetGroupTag().isEmpty() ? "" : getTargetGroupTag()));
-        return builder;
+        return URI.create("iscsi" + "://" + getNetworkAddress() +
+                          (getNetworkPort() != DefaultPort ? ":" + getNetworkPort() : "") +
+                          (getTargetGroupTag() == null || getTargetGroupTag().isEmpty() ? "" : "/" + getTargetGroupTag()));
     }
 }

@@ -3,7 +3,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-nio-file-discutils</artifactId>
-  <version>0.14.10</version>
+  <version>0.14.11</version>
 
   <properties>
     <vavi-nio-file-fuse.groupId>com.github.umjammer</vavi-nio-file-fuse.groupId> <!-- vavi / com.github.umjammer -->
@@ -149,6 +149,10 @@
       <id>gitlab-maven</id> <!-- vavi-nio-file-emu -->
       <url>https://gitlab.com/api/v4/projects/31203504/packages/maven</url>
     </repository>
+    <repository>
+      <id>dcache-releases</id> <!-- nfs4j, not on maven central -->
+      <url>https://download.dcache.org/nexus/content/repositories/releases</url>
+    </repository>
   </repositories>
 
   <dependencyManagement>
@@ -156,7 +160,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.14.1</version>
+        <version>6.0.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -167,14 +171,25 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.16</version>
+      <version>1.1.19</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- com.github.fge / com.github.umjammer -->
       <artifactId>vavi-nio-file-base</artifactId>
-      <version>0.0.17</version>
+      <version>0.0.18</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+<dependency>
+  <groupId>org.eclipse.jetty</groupId>
+  <artifactId>jetty-http</artifactId>
+  <version>12.1.11</version>
+</dependency>
 
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- moe.yo3explorer / com.github.umjammer -->
@@ -196,7 +211,7 @@
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-nio-file-emu</artifactId>
-      <version>2.0.8</version>
+      <version>2.0.9</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.umjammer</groupId>
@@ -208,7 +223,7 @@
     <dependency>
       <groupId>net.java.dev.jna</groupId>
       <artifactId>jna</artifactId>
-      <version>5.17.0</version>
+      <version>5.19.1</version>
     </dependency>
 
     <dependency>
@@ -220,7 +235,7 @@
     <dependency>
       <groupId>org.tukaani</groupId>
       <artifactId>xz</artifactId>
-      <version>1.10</version>
+      <version>1.11</version>
     </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
@@ -232,6 +247,12 @@
       <groupId>com.github.umjammer</groupId> <!-- vavi / com.github.umjammer -->
       <artifactId>vavi-nio-file-qcow2</artifactId>
       <version>0.0.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-nio-file-base</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -260,6 +281,12 @@
       <artifactId>vavi-nio-file-fuse</artifactId>
       <version>${vavi-nio-file-fuse.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-nio-file-base</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>${vavi-nio-file-fuse.groupId}</groupId>
@@ -267,6 +294,12 @@
       <version>${vavi-nio-file-fuse.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.umjammer</groupId>
+          <artifactId>vavi-nio-file-base</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -278,7 +311,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.9.9</version>
+      <version>3.9.16</version>
       <scope>test</scope>
     </dependency>
 
@@ -289,10 +322,61 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- pure java NFS server, the server side for discUtils.nfs -->
+    <dependency>
+      <groupId>org.dcache</groupId>
+      <artifactId>nfs4j-core</artifactId>
+      <version>0.28.4</version>
+      <scope>test</scope>
+      <exclusions>
+        <!-- the berkeley db client store of nfs v4.1, not published anywhere reachable -->
+        <exclusion>
+          <groupId>com.sleepycat</groupId>
+          <artifactId>je</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- pure java iSCSI target, the server side for discUtils.iscsi -->
+    <dependency>
+      <groupId>org.jscsi</groupId>
+      <artifactId>target</artifactId>
+      <version>2.6.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <!-- only JCloudsStorageModule needs those, we serve a plain file -->
+        <exclusion>
+          <groupId>org.apache.jclouds</groupId>
+          <artifactId>jclouds-blobstore</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.jclouds.provider</groupId>
+          <artifactId>aws-s3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.jclouds.api</groupId>
+          <artifactId>filesystem</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.osgi</groupId>
+          <artifactId>org.osgi.core</artifactId>
+        </exclusion>
+        <!-- slf4j-jdk14 is the binding, see src/test/resources/logging.properties -->
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
-      <version>1.7.36</version>
+      <version>2.0.18</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
