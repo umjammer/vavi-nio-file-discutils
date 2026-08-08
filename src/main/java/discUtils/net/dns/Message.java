@@ -106,9 +106,11 @@ public class Message {
         writer.write(transactionId);
         writer.write(flags.getValue());
         writer.write((short) questions.size());
-        writer.write((byte) 0);
-        writer.write((byte) 0);
-        writer.write((byte) 0);
+        // no answer, authority or additional records in a query - the counts are
+        // 16 bits each, spelled out rather than left to a byte widening itself
+        writer.write((short) 0);
+        writer.write((short) 0);
+        writer.write((short) 0);
         for (Question question : questions) {
             question.writeTo(writer);
         }

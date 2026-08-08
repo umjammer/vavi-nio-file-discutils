@@ -92,7 +92,7 @@ public final class PacketReader {
     }
 
     public int readInt() {
-        int result = ByteUtil.readBeShort(data, getPosition());
+        int result = ByteUtil.readBeInt(data, getPosition());
         position += 4;
         return result;
     }

@@ -69,6 +69,11 @@ public final class DiscTransport implements VirtualDiskTransport {
             String instance = pathParts[0];
             String volName = pathParts[1];
 
+            // this transport is the one instance the disk manager hands out, so a
+            // connect starts from nothing rather than from the last disc opened
+            disk = null;
+            service = null;
+
             odsClient = new OpticalDiscServiceClient();
             for (OpticalDiscService service : odsClient.lookupServices(domain)) {
 logger.log(Level.DEBUG, "service: " + service.getDisplayName());

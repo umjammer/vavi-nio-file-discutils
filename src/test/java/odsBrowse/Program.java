@@ -40,8 +40,10 @@ import org.klab.commons.cli.Options;
 public class Program extends ProgramBase {
 
     @Option(option = "host",
-            description = "The name of a Mac / PC sharing its optical disk(s).  For example \"My Computer\".",
-            required = true)
+            argName = "host",
+            args = 1,
+            description = "The name of a Mac / PC sharing its optical disk(s).  For example \"My Computer\".  " +
+                          "If not specified, every service found is listed.")
     private String host;
 
     public static void main(String[] args) throws Exception {
@@ -57,7 +59,7 @@ public class Program extends ProgramBase {
             boolean found = false;
             for (OpticalDiscService service : odsClient.lookupServices()) {
                 if (Utilities.equals(host, service.getDisplayName()) ||
-                    Utilities.equals(host, URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8))) {
+                    Utilities.equals(host, escape(service.getDisplayName()))) {
                     found = true;
 
                     System.err.println("Connecting to " + service.getDisplayName() + " - the owner may need to accept...");
@@ -83,8 +85,7 @@ public class Program extends ProgramBase {
     private static void showService(OpticalDiscService service) throws IOException {
         System.err.println();
         System.err.println("Service: " + service.getDisplayName());
-        System.err.println("  Safe Name: " + URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8) +
-                           "  (for URLs, copy+paste)");
+        System.err.println("  Safe Name: " + escape(service.getDisplayName()) + "  (for URLs, copy+paste)");
         System.err.println();
 
         boolean foundDisk = false;
@@ -93,13 +94,20 @@ public class Program extends ProgramBase {
             System.err.println("  Disk: " + disk.getVolumeLabel());
             System.err.println("    Name: " + disk.getName());
             System.err.println("    Type: " + disk.getVolumeType());
-            System.err.println("     Url: " +
-                               URLEncoder.encode("ods://local/" + service.getDisplayName() + "/" + disk.getVolumeLabel(),
-                                       StandardCharsets.UTF_8));
+            System.err.println("     Url: ods://local/" + escape(service.getDisplayName()) + "/" +
+                               escape(disk.getVolumeLabel()));
         }
 
         if (!foundDisk) {
             System.err.println("  [No disks found - try specifying host to connect for full list]");
         }
+    }
+
+    /**
+     * Escapes one path segment of an ods url. URLEncoder writes a form body rather
+     * than a url, where a blank is a '+' and not the %20 a path segment wants.
+     */
+    private static String escape(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20");
     }
 }
