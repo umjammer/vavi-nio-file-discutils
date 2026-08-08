@@ -3,7 +3,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-nio-file-discutils</artifactId>
-  <version>0.14.11</version>
+  <version>0.14.12</version>
 
   <properties>
     <vavi-nio-file-fuse.groupId>com.github.umjammer</vavi-nio-file-fuse.groupId> <!-- vavi / com.github.umjammer -->
@@ -319,6 +319,14 @@
       <groupId>com.github.k9mail</groupId>
       <artifactId>jutf7</artifactId>
       <version>b931e67a62</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- bonjour, what announces a shared disc for the discUtils.opticalDiscSharing test server -->
+    <dependency>
+      <groupId>org.jmdns</groupId>
+      <artifactId>jmdns</artifactId>
+      <version>3.6.2</version>
       <scope>test</scope>
     </dependency>
 

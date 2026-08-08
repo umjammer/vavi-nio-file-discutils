@@ -123,7 +123,11 @@ public enum RecordType {
     /**
      * Wildcard matching all records (*).
      */
-    All(255);
+    All(255),
+    /**
+     * Any record type this implementation does not model (NSEC, OPT, ...).
+     */
+    Unknown(-1);
 
     private final int value;
 
@@ -135,7 +139,12 @@ public enum RecordType {
         this.value = value;
     }
 
+    /**
+     * @param value a 16 bit TYPE field, unknown types map to {@link #Unknown} -
+     *              a responder is free to send us record types we do not model
+     */
     public static RecordType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().orElseThrow();
+        int type = value & 0xffff;
+        return Arrays.stream(values()).filter(v -> v.getValue() == type).findFirst().orElse(Unknown);
     }
 }

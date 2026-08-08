@@ -63,7 +63,13 @@ public enum RecordClass {
         this.value = value;
     }
 
+    /**
+     * @param value a 16 bit CLASS field. mDNS overloads the top bit of it as the
+     *              cache flush (in a response) / unicast response (in a question)
+     *              flag, so it is masked off here rather than failing the parse.
+     */
     public static RecordClass valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().orElseThrow();
+        int clazz = value & 0x7fff;
+        return Arrays.stream(values()).filter(v -> v.getValue() == clazz).findFirst().orElse(None);
     }
 }

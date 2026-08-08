@@ -32,8 +32,37 @@ import java.util.concurrent.CountDownLatch;
 final class Transaction implements Closeable {
 
     public Transaction() {
+        this(null, RecordType.None);
+    }
+
+    /**
+     * @param name the question this transaction asked, so a response that does not
+     *             echo our transaction id (a multicast mDNS response always carries
+     *             id 0) can still be matched against it
+     * @param type the record type asked for
+     */
+    public Transaction(String name, RecordType type) {
+        this.name = name;
+        this.type = type;
         answers = new ArrayList<>();
         completeEvent = new CountDownLatch(1);
+    }
+
+    private final String name;
+
+    public String getName() {
+        return name;
+    }
+
+    private final RecordType type;
+
+    public RecordType getType() {
+        return type;
+    }
+
+    /** @return whether the record answers the question this transaction asked */
+    public boolean matches(ResourceRecord record) {
+        return type == record.getRecordType() && name != null && name.equalsIgnoreCase(record.getName());
     }
 
     private final List<ResourceRecord> answers;

@@ -22,6 +22,7 @@
 
 package discUtils.opticalDiscSharing;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -41,7 +42,17 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public final class DiscContentBuffer extends Buffer {
+public final class DiscContentBuffer extends Buffer implements Closeable {
+
+    /**
+     * The user agent apple's remote disc client asks a disc's size with. An ODS
+     * server (see vavi-net-ods, pyods) serves the disc to that client only, so a
+     * request identifying itself as anything else is answered with 403.
+     */
+    private static final String STAT_USER_AGENT = "CCURLBS::statImage";
+
+    /** the user agent apple's remote disc client reads disc content with */
+    private static final String READ_USER_AGENT = "CCURLBS::readDataFork";
 
     private String authHeader;
 
@@ -58,8 +69,28 @@ public final class DiscContentBuffer extends Buffer {
         this.userName = userName;
         this.password = password;
         client = new OkHttpClient().newBuilder().followRedirects(false).followSslRedirects(false).build();
-        Response response = sendRequest(() -> new Request.Builder().url(uri.toString()).head().build());
-        capacity = response.body().contentLength();
+        try (Response response = sendRequest(() -> new Request.Builder().url(uri.toString())
+                .header("User-Agent", STAT_USER_AGENT)
+                .head()
+                .build())) {
+            capacity = contentLength(response);
+        }
+    }
+
+    /**
+     * @return the advertised length of the response body. A HEAD response carries no
+     *         body for okhttp to measure, so the header is what tells us the size.
+     */
+    private static long contentLength(Response response) {
+        String header = response.header("Content-Length");
+        if (header != null) {
+            try {
+                return Long.parseLong(header.trim());
+            } catch (NumberFormatException e) {
+                throw new dotnet4j.io.IOException("malformed Content-Length: " + header, e);
+            }
+        }
+        return response.body().contentLength();
     }
 
     @Override public boolean canRead() {
@@ -77,20 +108,37 @@ public final class DiscContentBuffer extends Buffer {
     }
 
     @Override public int read(long pos, byte[] buffer, int offset, int count) {
+        if (pos >= capacity || count == 0) {
+            return 0;
+        }
+
+        // never ask beyond the last byte, a server has nothing to answer with there
+        long last = Math.min(pos + count, capacity) - 1;
         Response response = sendRequest(() -> new Request.Builder().url(uri.toString())
+                .header("User-Agent", READ_USER_AGENT)
                 .get()
-                .addHeader("Range", "bytes=%d-%d".formatted((int) pos, (int) (pos + count - 1)))
+                .addHeader("Range", "bytes=%d-%d".formatted(pos, last))
                 .build());
-        try (Stream s = new JavaIOStream(response.body().byteStream(), null)) {
-            int total = (int) response.body().contentLength();
+        int wanted = (int) (last - pos + 1);
+        try (Response r = response; Stream s = new JavaIOStream(r.body().byteStream(), null)) {
             int read = 0;
-            while (read < Math.min(total, count)) {
-                read += s.read(buffer, offset + read, count - read);
+            while (read < wanted) {
+                int n = s.read(buffer, offset + read, wanted - read);
+                if (n <= 0) {
+                    break;
+                }
+                read += n;
             }
             return read;
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
+    }
+
+    /** Lets go of the connections held open for reading the disc. */
+    @Override public void close() {
+        client.dispatcher().executorService().shutdown();
+        client.connectionPool().evictAll();
     }
 
     @Override public void write(long pos, byte[] buffer, int offset, int count) {

@@ -44,7 +44,8 @@ public final class DiscImageFile extends VirtualDiskLayer {
     public static final int Mode1SectorSize = 2048;
 
     public DiscImageFile(URI uri, String userName, String password) {
-        content = new BufferStream(new DiscContentBuffer(uri, userName, password), FileAccess.Read);
+        buffer = new DiscContentBuffer(uri, userName, password);
+        content = new BufferStream(buffer, FileAccess.Read);
 
         BlockCacheSettings cacheSettings = new BlockCacheSettings();
         cacheSettings.setBlockSize((int) (32 * Sizes.OneKiB));
@@ -58,6 +59,8 @@ public final class DiscImageFile extends VirtualDiskLayer {
     }
 
     private SparseStream content;
+
+    private final DiscContentBuffer buffer;
 
     public SparseStream getContent() {
         return content;
@@ -98,6 +101,11 @@ public final class DiscImageFile extends VirtualDiskLayer {
 
     @Override
     public void close() throws IOException {
-        // TODO Auto-generated method stub
+        if (content != null) {
+            content.close();
+            content = null;
+        }
+
+        buffer.close();
     }
 }

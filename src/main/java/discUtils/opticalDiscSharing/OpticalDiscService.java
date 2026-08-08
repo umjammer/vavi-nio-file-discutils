@@ -28,7 +28,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,12 +150,24 @@ public final class OpticalDiscService {
      * @return The virtual disk.
      */
     public VirtualDisk openDisc(String name) {
+        // a disc is served as <name>.dmg, the extension the mac client asks with
+        URI uri = URI.create(baseUri() + "/" + name + ".dmg");
+        return new Disc(uri, userName, askToken);
+    }
+
+    /**
+     * @return the http root of this service. InetAddress renders itself as
+     *         "host/1.2.3.4", so the literal address is what the uri is built from.
+     */
+    private String baseUri() {
         ServiceInstanceEndPoint siep = instance.getEndPoints().get(0);
         List<InetSocketAddress> ipAddrs = new ArrayList<>(siep.getInetSocketAddresss());
+        if (ipAddrs.isEmpty()) {
+            throw new dotnet4j.io.IOException("no address advertised for " + instance.getName());
+        }
 
-        URI uri = URI.create(
-                "http" + "://" + ipAddrs.get(0).getAddress() + ":" + ipAddrs.get(0).getPort() + "/" + name + ".dmg");
-        return new Disc(uri, userName, askToken);
+        InetSocketAddress endPoint = ipAddrs.get(0);
+        return "http://" + endPoint.getAddress().getHostAddress() + ":" + endPoint.getPort();
     }
 
     private static String getAskToken(String askId, URI uri, int maxWaitSecs) {
@@ -170,8 +181,7 @@ public final class OpticalDiscService {
         Instant start = Instant.now();
         Duration maxWait = Duration.ofSeconds(maxWaitSecs);
 
-        while ("unknown".equals(askStatus) &&
-               maxWait.compareTo(Duration.between(start, Instant.now().atZone(ZoneId.of("UTC")))) > 0) {
+        while ("unknown".equals(askStatus) && maxWait.compareTo(Duration.between(start, Instant.now())) > 0) {
             try {
                 try {
                     Thread.sleep(1000);
@@ -247,10 +257,7 @@ public final class OpticalDiscService {
     }
 
     private void askForAccess(String userName, String computerName, int maxWaitSecs) {
-        ServiceInstanceEndPoint siep = instance.getEndPoints().get(0);
-        List<InetSocketAddress> ipAddrs = new ArrayList<>(siep.getInetSocketAddresss());
-
-        URI uri = URI.create("http" + "://" + ipAddrs.get(0).getAddress() + ":" + ipAddrs.get(0).getPort());
+        URI uri = URI.create(baseUri());
 
         String askId = initiateAsk(userName, computerName, uri);
 
@@ -266,8 +273,9 @@ public final class OpticalDiscService {
             String[] nvPairs = asString.split(",");
 
             for (String nvPair : nvPairs) {
-                String[] parts = nvPair.split("=");
-                result.put(parts[0], parts[1]);
+                // a value may well hold '=' itself, and a flag none at all
+                String[] parts = nvPair.split("=", 2);
+                result.put(parts[0], parts.length > 1 ? parts[1] : "");
             }
         }
 
