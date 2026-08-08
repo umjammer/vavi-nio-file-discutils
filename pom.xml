@@ -322,6 +322,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- bonjour, what announces a shared disc for the discUtils.opticalDiscSharing test server -->
+    <dependency>
+      <groupId>org.jmdns</groupId>
+      <artifactId>jmdns</artifactId>
+      <version>3.6.2</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- pure java NFS server, the server side for discUtils.nfs -->
     <dependency>
       <groupId>org.dcache</groupId>
