@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.fge.filesystem.driver.ExtendedFileSystemDriver;
-import com.github.fge.filesystem.exceptions.IsDirectoryException;
 import com.github.fge.filesystem.provider.FileSystemFactoryProvider;
 import discUtils.core.DiscDirectoryInfo;
 import discUtils.core.DiscFileInfo;
@@ -134,22 +133,22 @@ public final class DuFileSystemDriver extends ExtendedFileSystemDriver<DiscFileS
     @Override
     protected DiscFileSystemInfo moveEntry(DiscFileSystemInfo sourceEntry, DiscFileSystemInfo targetParentEntry, Path source, Path target, boolean targetIsParent) throws IOException {
         fileSystem.moveFile(toDuPathString(source), toDuPathString(target));
-        if (targetIsParent) {
-            return getEntry(target.resolve(source.getFileName()));
-        } else {
-            return getEntry(target);
-        }
+        return getEntry(target);
     }
 
     @Override
     protected DiscFileSystemInfo moveFolderEntry(DiscFileSystemInfo sourceEntry, DiscFileSystemInfo targetParentEntry, Path source, Path target, boolean targetIsParent) throws IOException {
-        // TODO java spec. allows empty folder
-        throw new IsDirectoryException("source can not be a folder: " + source);
+        fileSystem.moveDirectory(toDuPathString(source), toDuPathString(target));
+        return getEntry(target);
     }
 
     @Override
     protected DiscFileSystemInfo renameEntry(DiscFileSystemInfo sourceEntry, DiscFileSystemInfo targetParentEntry, Path source, Path target) throws IOException {
-        fileSystem.moveFile(toDuPathString(source), toDuPathString(target));
+        if (isFolder(sourceEntry)) {
+            fileSystem.moveDirectory(toDuPathString(source), toDuPathString(target));
+        } else {
+            fileSystem.moveFile(toDuPathString(source), toDuPathString(target));
+        }
         return getEntry(target);
     }
 

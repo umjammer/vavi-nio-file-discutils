@@ -179,6 +179,9 @@ Again, start browsing the file system at floppy.Root.
      * [vavi-nio-file-qcow](https://github.com/umjammer/vavi-nio-file-qcow) ... libqcow via jna doesn't work well
      * [vavi-nio-file-qcow2](https://github.com/umjammer/vavi-nio-file-qcow2) 🎯 ... backing files are not supported
      * [vavi-nio-file-qcow2go](https://github.com/umjammer/vavi-nio-file-qcow2go) ... read api?
+ * iso9660
+     * https://github.com/Janix520/java-iso-tools
+     * https://github.com/jpcsp/jpcsp/tree/master/src/jpcsp/filesystems/umdiso/iso9660
 
 ## TODO
 
@@ -193,10 +196,8 @@ Again, start browsing the file system at floppy.Root.
  * ~~chd (wip~~, ~~see aaru~~ libchdr in jpcsc)
    * qlgenerator (wip, see vavi.apps.qlgenerator package)
    * spi doesn't use discutil library. chd spi should be independent of this project
- * iso9660
+ * ~~iso9660~~
    * ~~`CommonVolumeDescriptor` as `user:attributes`~~
-   * https://github.com/Janix520/java-iso-tools
-   * https://github.com/jpcsp/jpcsp/tree/master/src/jpcsp/filesystems/umdiso/iso9660
  * ~~registry~~
  * ~~🐛 vdi check sector length?~~ -> Util#SeekableByteChannel*
  * ~~git tree might be corrupted~~
